@@ -12,7 +12,7 @@ struct Sound
     u_char num_channels;
     enum SoundType type;
     char* name;
-
+    FILE* file;
 };
 
 typedef struct Sound snd_t;
