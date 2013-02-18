@@ -1,12 +1,12 @@
 /*
 Any generic operation having to do with sound can be found here
 */
-#include "util.h"
 #include "types.h"
 
 /*
 TODO Determine arguments
 */
-snd_t* read_sound();
+snd_t* open_sound(char* path);
+void close_sound(snd_t* sound);
 void write_sound();
-smdtype_e determine_type();
+enum SoundType determine_type(FILE* in);

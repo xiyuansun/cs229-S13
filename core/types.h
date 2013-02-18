@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 enum SoundType {Cs, Wave};
 
 typedef unsigned int u_int;
