@@ -19,3 +19,17 @@ char* get_filename(char* path)
 
     return strncpy(ret, begin_name, size-1);
 }
+
+char* to_upper(char* str)
+{
+    char* cptr = str;
+    while(cptr)
+    {
+        if('a' <= (*cptr) && (*cptr) <= 'z')
+            (*cptr) -= 32;
+
+        ++cptr;
+    }
+
+    return str;
+}

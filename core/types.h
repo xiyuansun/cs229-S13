@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-enum SoundType {Cs, Wave};
+typedef enum SoundType {CS229, WAVE} sndtype;
 
 typedef unsigned int u_int;
 typedef unsigned char u_char;
@@ -12,7 +12,7 @@ struct Sound
     u_int len;
     u_char bitdepth;
     u_char num_channels;
-    enum SoundType type;
+    sndtype type;
     char* name;
     FILE* file;
 };
