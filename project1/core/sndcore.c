@@ -9,11 +9,11 @@ and stores it in a snd_t structure.
 */
 snd_t* open_sound(char* path)
 {
-    u_int rate;
-    u_int num_samples;
-    u_int len;
-    u_char bitdepth;
-    u_char num_channels;
+    u_int rate = -1;
+    u_int num_samples = -1;
+    u_int len = -1;
+    u_char bitdepth = -1;
+    u_char num_channels = -1;
     sndtype type;
     char* name;
     FILE* in;
@@ -29,7 +29,7 @@ snd_t* open_sound(char* path)
     return ret;
 }
 
-void read_header(snd_t* snd) /*FILE* snd, u_int* rate, u_int* samples, u_char* bitdepth, u_char* channels, sndtype* type)*/
+void read_header(snd_t* snd) 
 {
     determine_type(snd->file, &(snd->type));
     
@@ -41,7 +41,32 @@ void read_header(snd_t* snd) /*FILE* snd, u_int* rate, u_int* samples, u_char* b
 
 void read_header_cs229(snd_t* snd)
 {
+    //Will (probably) need to change this
+    char* line[1000];
 
+    do
+    {
+        fgets(line, 1000, snd->file);
+        to_upper(line);
+        
+        if(strncmp(line, "SAMPLERATE", 10) == 0)
+        {
+            snd->rate = parse_num(&line[10]);
+        }
+        else if(strncmp(line, "SAMPLES", 7) == 0)
+        {
+            snd->num_samples = parse_num(&line[7]);
+        }
+        else if(strncmp(line, "CHANNELS", 8) == 0)
+        {
+            snd->num_channels = parse_num(&line[8]);
+        }
+        else if(strncmp(line, "BITRES", 6) == 0)
+        {
+            snd->bitrate = parse_num(&line[6]);
+        }
+
+    } while(strncmp(line, "STARTDATA", 9) == 0)
 }
 
 /*
