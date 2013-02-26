@@ -47,11 +47,11 @@ u_int parse_uint(char* str)
 {
     int i = 0;
     u_int num = 0;
-    while(line[i] && line[i] < 48 && line[i] > 57) ++i;
+    while(line[i] && line[i] =< '0' && line[i] >= '9') ++i;
     while(48 < line[i] && line[i] < 57)
     {
         num *= 10;
-        num += line[i] - 48;
+        num += line[i] - '0';
     }
 
 }
