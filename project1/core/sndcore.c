@@ -14,29 +14,51 @@ snd_t* open_sound(char* path)
     u_int len;
     u_char bitdepth;
     u_char num_channels;
-    
     sndtype type;
     char* name;
-
-    FILE* in = fopen(path, "rb");
-
-    type = determine_type(in);
-    name = get_filename(path);
-
+    FILE* in;
     snd_t* ret;
-    ret = {rate, num_samples, len, bitdepth, num_channelse, type, name, in};
+
+    ret = {rate, num_samples, len, bitdepth, num_channels, type, name, in};
+    ret->name = get_filename(path);
+    ret->file = fopen(path, "rb");
+
+    read_header(ret);
+
+
     return ret;
+}
+
+void read_header(snd_t* snd) /*FILE* snd, u_int* rate, u_int* samples, u_char* bitdepth, u_char* channels, sndtype* type)*/
+{
+    determine_type(snd->file, &(snd->type));
+    
+    if(CS229 == snd->type)
+        read_header_cs229(snd);
+    else if (WAVE == snd->type)
+        read_header_wav(snd);
+}
+
+void read_header_cs229(snd_t* snd)
+{
+
 }
 
 /*
 Determines the type of the sound based
-on the next 4 bytes in in.
+on the first few bytes in in.
 */
-sndtype determine_type(FILE* in)
+void determine_type(FILE* in, sndtype* type)
 {
-    char type_info[5] = {0, 0, 0, 0, 0};
-    fgets(type_info, 5, in);
+    char type_info[6] = {0, 0, 0, 0, 0, 0};
+    int i;
 
-    if(0 == strncmp(to_upper(type_info), "CS22")) return CS229;
-    else if(0 == strncmp(to_upper(type_info), "RIFF")) return WAVE;
+    for(i = 0; i < 4; ++i)
+        type_info[i] = fgetc(in);
+
+    to_upper(type_info);
+    if(type_info[0] == 'C') type_info[4] = fgetc(in);
+
+    if(0 == strncmp(type_info, "CS229")) *type =  CS229;
+    else if(0 == strncmp(type_info, "RIFF")) *type = WAVE;
 }

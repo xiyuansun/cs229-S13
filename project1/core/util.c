@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*
+Parses the file name from a path string
+*/
 char* get_filename(char* path)
 {
     int pathlen = strlen(path);
@@ -20,6 +23,9 @@ char* get_filename(char* path)
     return strncpy(ret, begin_name, size-1);
 }
 
+/*
+Converts a string to all upper-case characters
+*/
 char* to_upper(char* str)
 {
     char* cptr = str;
