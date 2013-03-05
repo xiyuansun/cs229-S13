@@ -1,3 +1,5 @@
+#ifndef TYPES_H
+#define TYPES_H
 #include <stdio.h>
 
 typedef enum SoundType {CS229, WAVE} sndtype;
@@ -18,3 +20,4 @@ struct Sound
 };
 
 typedef struct Sound snd_t;
+#endif

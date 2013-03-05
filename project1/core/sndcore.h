@@ -1,3 +1,5 @@
+#ifndef SNDCORE_H
+#define SNDCORE_H
 /*
 Any generic operation having to do with sound can be found here
 */
@@ -14,4 +16,5 @@ void read_header(snd_t* snd);
 void read_header_cs229(snd_t* snd);
 void read_header_wav(snd_t* snd);
 
-sndtype determine_type(FILE* in);
+void determine_type(FILE* in, sndtype* type);
+#endif

@@ -29,7 +29,7 @@ Converts a string to all upper-case characters
 char* to_upper(char* str)
 {
     char* cptr = str;
-    while(cptr)
+    while(*cptr)
     {
         if('a' <= (*cptr) && (*cptr) <= 'z')
             (*cptr) -= 32;
@@ -45,13 +45,21 @@ Parses a positive integer from a string.
 */
 u_int parse_uint(char* str)
 {
+    printf("%s:", str);
     int i = 0;
     u_int num = 0;
-    while(line[i] && line[i] =< '0' && line[i] >= '9') ++i;
-    while(48 < line[i] && line[i] < 57)
+    while(str[i] && (str[i] < '0' || str[i] > '9')) ++i;
+    while('0' <= str[i] && str[i] <= '9')
     {
+        printf(" %c", str[i]);
         num *= 10;
-        num += line[i] - '0';
+        num += str[i] - '0';
     }
+    printf("\n");
+    return num;
+}
 
+char is_alpha(char c)
+{
+    return (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z'));
 }
