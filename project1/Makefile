@@ -9,5 +9,5 @@ sndinfo: ./core/sndcore.o ./core/util.o sndinfo.o
 ./core/util.o: core/util.h
 	gcc -Wall -c ./core/util.c -o ./core/util.o
 
-sndinfo.o: core/sndcore.c core/sndcore.h core/types.h
+sndinfo.o: sndinfo.c core/sndcore.c core/sndcore.h core/types.h
 	gcc -Wall -c sndinfo.c

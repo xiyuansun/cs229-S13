@@ -41,9 +41,15 @@ void read_header(snd_t* snd)
     determine_type(snd->file, &(snd->type));
     
     if(CS229 == snd->type)
+    {
+        printf("determine_type failed\n");
         read_header_cs229(snd);
+    }
     else if (WAVE == snd->type)
+    {
+        printf("determine_type passed\n");
         read_header_wav(snd);
+    }
 }
 
 /*
@@ -118,6 +124,7 @@ void read_header_cs229(snd_t* snd)
 
 void read_header_wav(snd_t* snd)
 {
+    printf("WAVE");
     return;
 }
 
@@ -135,7 +142,7 @@ void determine_type(FILE* in, sndtype* type)
 
     to_upper(type_info);
     if(type_info[0] == 'C') type_info[4] = fgetc(in);
-
+    printf("%s\n", type_info);
     if(0 == strcmp(type_info, "CS229")) *type = CS229;
     else if(0 == strcmp(type_info, "RIFF")) *type = WAVE;
 }

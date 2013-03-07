@@ -3,7 +3,7 @@
 
 int main(int argc, char* argv[])
 {
-    snd_t* info = open_sound("./test.cs229");
+    snd_t* info = open_sound("./test.mp3");
     printf("RATE:\t\t%d\n", info->rate);
     printf("SAMPLES:\t%d\n", info->num_samples);
     printf("LENGTH:\t\t%d\n", info->len);
