@@ -63,11 +63,16 @@ void read_header_cs229(snd_t* snd)
     {
         word[0] = fgetc(snd->file);
 
-        if(word[0] == '#' || word[0] == '\n')
+        if(word[0] == '#')
         {
             while(word[0] != '\n') word[0] = fgetc(snd->file);
             continue;
         }
+        else if(!is_alpha(word[0]))
+        {
+            while(!is_alpha(word[0]) && word[0] != '\n') word[0] = fgetc(snd->file); 
+        }
+
         if(word[0] == '\n') continue;
 
         int i = 1;
