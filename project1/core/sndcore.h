@@ -9,12 +9,16 @@ Any generic operation having to do with sound can be found here
 TODO Determine arguments
 */
 snd_t* open_sound(char* path);
+snd_t* read_sound(FILE* in, char* name); 
 void close_sound(snd_t* snd);
 void write_sound(snd_t* snd);
 
-void read_header(snd_t* snd);
+void read(snd_t* snd);
 void read_header_cs229(snd_t* snd);
 void read_header_wav(snd_t* snd);
+void read_info_cs229(snd_t* snd);
 
 void determine_type(FILE* in, sndtype* type);
+void add(snd_dat_t** list, snd_dat_t** node);
+u_int length(snd_dat_t* list);
 #endif

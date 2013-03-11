@@ -7,8 +7,15 @@ typedef enum SoundType {CS229, WAVE} sndtype;
 typedef unsigned int u_int;
 typedef unsigned char u_char;
 
-struct Sound
+typedef struct sound_data
 {
+    struct sound_data* next;
+    int* channel_data;
+} snd_dat_t;
+
+typedef struct sound
+{
+    snd_dat_t* data;
     u_int rate;
     u_int num_samples;
     u_int len;
@@ -17,7 +24,6 @@ struct Sound
     sndtype type;
     char* name;
     FILE* file;
-};
+} snd_t;
 
-typedef struct Sound snd_t;
 #endif

@@ -4,6 +4,7 @@
 #include "./core/sndcore.h"
 
 void print_usage(int status);
+void print_info(snd_t* info);
 
 int main(int argc, char* argv[])
 {
@@ -26,17 +27,17 @@ int main(int argc, char* argv[])
         }
     }
     
-    if(optind == argc);
+    //Get from stdin
+    if(optind == argc)
+    {
+        snd_t* info = read_sound(stdin, "stdin");
+        print_info(info);
+    }
 
     for(i = optind; i < argc; ++i)
     {
         snd_t* info = open_sound(argv[i]);
-        printf("RATE:\t\t%d\n", info->rate);
-        printf("SAMPLES:\t%d\n", info->num_samples);
-        printf("LENGTH:\t\t%d\n", info->len);
-        printf("BITRES:\t\t%d\n", info->bitdepth);
-        printf("CHANNELS:\t%d\n", info->num_channels);
-        printf("NAME:\t\t%s\n", info->name);
+        print_info(info);
     }
     
     return 0;
@@ -45,7 +46,8 @@ int main(int argc, char* argv[])
 void print_usage(int status)
 {
     puts("Usage: sndinfo [OPTION]... [FILE]...\n");
-    puts("Reads all sound files passed as arguments and, for each one, displays the\nfollowing:");
+    puts("Reads all sound files passed as arguments and, for each one, displays the");
+    puts("following:");
     puts("\t-The file name");
     puts("\t-The file type (.cs229 or .wav)");
     puts("\t-The sample rate");
@@ -57,4 +59,14 @@ void print_usage(int status)
     puts("OPTIONS:");
     puts("\t-h\tDisplays this help message.\n");
     exit(status);
+}
+
+void print_info(snd_t* info)
+{
+        printf("RATE:\t\t%d\n", info->rate);
+        printf("SAMPLES:\t%d\n", info->num_samples);
+        printf("LENGTH:\t\t%d\n", info->len);
+        printf("BITRES:\t\t%d\n", info->bitdepth);
+        printf("CHANNELS:\t%d\n", info->num_channels);
+        printf("NAME:\t\t%s\n", info->name);
 }

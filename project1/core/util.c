@@ -1,4 +1,5 @@
 #include "util.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -19,6 +20,8 @@ char* get_filename(char* path)
     
     int size = end_name - begin_name + 1;
     char* ret = malloc(size * sizeof(char));
+    
+    check_malloc(ret);
 
     return strncpy(ret, begin_name, size-1);
 }
@@ -62,4 +65,13 @@ u_int parse_uint(char* str)
 char is_alpha(char c)
 {
     return (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z'));
+}
+
+void check_malloc(void* ptr)
+{
+    if(!ptr)
+    {
+        fprintf(stderr, "Malloc failed. Exiting.\n");
+        exit(1);
+    }
 }
