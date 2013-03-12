@@ -1,22 +1,28 @@
 all: sndinfo
 
 clean:
-	rm -f sndinfo *.o core/*.o
+	rm bin/* build/*; rmdir bin build
 
-sndinfo: core/sndcore.o core/util.o sndinfo.o core/sndcs.o core/sndwav.o
-	gcc -Wall -o sndinfo ./core/sndcore.o ./core/util.o ./core/sndwav.o ./core/sndcs.o sndinfo.o
+build:
+	mkdir build
 
-core/sndcore.o: core/sndcore.c core/sndcore.h core/util.h core/types.h core/sndcs.h core/sndwav.h
-	gcc -Wall -c ./core/sndcore.c -o ./core/sndcore.o
+bin:
+	mkdir bin
 
-core/util.o: core/util.c core/util.h core/types.h 
-	gcc -Wall -c ./core/util.c -o ./core/util.o
+sndinfo: build bin build/sndinfo.o build/sndcore.o build/util.o build/sndcs.o build/sndwav.o
+	gcc -Wall ./build/sndcore.o ./build/util.o ./build/sndwav.o ./build/sndcs.o ./build/sndinfo.o -o ./bin/sndinfo
 
-core/sndcs.o: core/sndcs.c core/sndcs.h core/sndcore.h core/types.h core/util.h
-	gcc -Wall -c ./core/sndcs.c -o ./core/sndcs.o
+build/sndcore.o: core/sndcore.c core/sndcore.h core/util.h core/types.h core/sndcs.h core/sndwav.h
+	gcc -Wall -c ./core/sndcore.c -o ./build/sndcore.o
 
-core/sndwav.o: core/sndwav.c core/sndwav.h core/types.h
-	gcc -Wall -c ./core/sndwav.c -o ./core/sndwav.o
+build/util.o: core/util.c core/util.h core/types.h 
+	gcc -Wall -c ./core/util.c -o ./build/util.o
 
-sndinfo.o: sndinfo.c core/sndcore.c core/sndcore.h core/types.h
-	gcc -Wall -c sndinfo.c
+build/sndcs.o: core/sndcs.c core/sndcs.h core/sndcore.h core/types.h core/util.h
+	gcc -Wall -c ./core/sndcs.c -o ./build/sndcs.o
+
+build/sndwav.o: core/sndwav.c core/sndwav.h core/types.h
+	gcc -Wall -c ./core/sndwav.c -o ./build/sndwav.o
+
+build/sndinfo.o: sndinfo.c core/sndcore.c core/sndcore.h core/types.h
+	gcc -Wall -c sndinfo.c -o ./build/sndinfo.o

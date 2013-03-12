@@ -54,7 +54,7 @@ void print_usage(int status)
     puts("\t-The bit depth");
     puts("\t-The number of channels");
     puts("\t-The number of samples");
-    puts("\t-The length of the sound (in seconds)");
+    puts("\t-The length of the sound (in seconds, rounded down)");
     puts("If no files are passed as arguments, sndinfo reads from standard input.\n");
     puts("OPTIONS:");
     puts("\t-h\tDisplays this help message.\n");

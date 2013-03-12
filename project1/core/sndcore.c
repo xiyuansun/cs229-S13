@@ -20,7 +20,11 @@ snd_t* open_sound(char* path)
         exit(1);
     }
 
-    return read_sound(fopen(path, "rb"), get_filename(path));
+    snd_t* ret = read_sound(in, get_filename(path));
+
+    fclose(in);
+
+    return ret;
 }
 
 snd_t* read_sound(FILE* in, char* name)
@@ -46,22 +50,31 @@ snd_t* read_sound(FILE* in, char* name)
     ret->file = in;
     
     read(ret);
-    
-    if(ret->num_samples <= 0)
+
+    if( ((int) ret->num_samples) <= 0 )
     {
         ret->num_samples = length(ret->data);
     }
 
-    /*
     ret->len = (int) (ret->num_samples) * 1.0 / (ret->rate);
-    */
-    ret->len = length(ret->data);
 
     return ret;
 }
 
 void close_sound(snd_t* snd)
 {
+    snd_dat_t* cur_node = snd->data;
+    snd_dat_t* next_node = cur_node->next;
+
+    while(cur_node)
+    {
+        free(cur_node->channel_data);
+        free(cur_node);
+        cur_node = next_node;
+        next_node = cur_node->next;
+    }
+
+    free(snd);
 }
 
 /*
