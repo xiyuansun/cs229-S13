@@ -72,18 +72,18 @@ snd_t* read_sound(FILE* in, char* name)
 * 2) Frees the snd_t struct
 */
 void close_sound(snd_t* snd)
-{
+{   
     snd_dat_t* cur_node = snd->data;
-    snd_dat_t* next_node = cur_node->next;
+    snd_dat_t* next_node;
 
     while(cur_node)
     {
+        next_node = cur_node->next;
         free(cur_node->channel_data);
         free(cur_node);
         cur_node = next_node;
-        next_node = cur_node->next;
     }
-
+    
     free(snd);
 }
 
