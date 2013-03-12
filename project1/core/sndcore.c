@@ -127,3 +127,17 @@ u_int length(snd_dat_t* list)
     }
     return i;
 }
+
+void print_list(snd_dat_t* list, int num_channels)
+{
+    int i;
+    while(list)
+    {
+        for(i = 0; i < num_channels; ++i)
+        {
+            printf("%d ", list->channel_data[i]);
+        }
+        printf("\n");
+        list = list->next;
+    }
+}

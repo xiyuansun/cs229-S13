@@ -46,6 +46,12 @@ void read_header_cs229(snd_t* snd)
         word[i] = 0;
         to_upper(word);
 
+        if(strncmp(word, "STARTDATA", 9) == 0)
+        {
+            while(c != '\n') c = fgetc(snd->file);
+            break;
+        }
+
         uint val = 0;
         while((c = fgetc(snd->file)) && ('0' > c || '9' < c));
         while('0' <= c && c <= '9')
@@ -72,10 +78,6 @@ void read_header_cs229(snd_t* snd)
         else if(strncmp(word, "BITRES", 6) == 0)
         {
             snd->bitdepth = val;
-        }
-        else if(strncmp(word, "STARTDATA", 9) == 0)
-        {
-            break;
         }
     } 
 }

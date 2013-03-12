@@ -18,4 +18,5 @@ void read(snd_t* snd);
 void determine_type(FILE* in, sndtype* type);
 void add(snd_dat_t** list, snd_dat_t** node);
 u_int length(snd_dat_t* list);
+void print_list(snd_dat_t* list, int num_channels);
 #endif
