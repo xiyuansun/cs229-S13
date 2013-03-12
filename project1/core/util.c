@@ -44,29 +44,17 @@ char* to_upper(char* str)
 }
 
 /*
-Parses a positive integer from a string.
+* Returns true if c is a letter
 */
-u_int parse_uint(char* str)
-{
-    printf("%s:", str);
-    int i = 0;
-    u_int num = 0;
-    while(str[i] && (str[i] < '0' || str[i] > '9')) ++i;
-    while('0' <= str[i] && str[i] <= '9')
-    {
-        printf(" %c", str[i]);
-        num *= 10;
-        num += str[i] - '0';
-    }
-    printf("\n");
-    return num;
-}
-
 char is_alpha(char c)
 {
     return (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z'));
 }
 
+/*
+* Checks if a pointer is null. If it is,
+* prints an error message and terminates.
+*/
 void check_malloc(void* ptr)
 {
     if(!ptr)

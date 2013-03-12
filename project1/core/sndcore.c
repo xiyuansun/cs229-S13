@@ -7,8 +7,8 @@
 #include "util.h"
 
 /*
-* Opens a sound at path, reads in the headers,
-* and stores it in a snd_t structure.
+* Opens a sound at path and reads it in with read_sound()
+* Returns NULL if file could not be opened.
 */
 snd_t* open_sound(char* path)
 {
@@ -27,6 +27,12 @@ snd_t* open_sound(char* path)
     return ret;
 }
 
+/*
+* 1) Allocates memory for a snd_t struct
+* 2) Fills with default values
+* 3) Reads and parses the file
+* 4) Returns the snd_t struct
+*/
 snd_t* read_sound(FILE* in, char* name)
 {
     u_int rate = -1;
@@ -61,6 +67,10 @@ snd_t* read_sound(FILE* in, char* name)
     return ret;
 }
 
+/*
+* 1) Frees the actual sound data
+* 2) Frees the snd_t struct
+*/
 void close_sound(snd_t* snd)
 {
     snd_dat_t* cur_node = snd->data;
@@ -78,7 +88,7 @@ void close_sound(snd_t* snd)
 }
 
 /*
-* Reads the header of the file based on file type
+* Calls the correct parser based on the file type
 */
 void read(snd_t* snd) 
 {
@@ -96,8 +106,8 @@ void read(snd_t* snd)
 }
 
 /*
-Determines the type of the sound based
-on the first few bytes in in.
+* Determines the type of the sound based
+* on the first few bytes in in.
 */
 void determine_type(FILE* in, sndtype* type)
 {
@@ -113,6 +123,10 @@ void determine_type(FILE* in, sndtype* type)
     else if(0 == strcmp(type_info, "RIFF")) *type = WAVE;
 }
 
+/*
+* Adds a new node to the end of the
+* sound data linked-list
+*/
 void add(snd_dat_t** list, snd_dat_t** node)
 {
     if(!(*list))
@@ -130,6 +144,9 @@ void add(snd_dat_t** list, snd_dat_t** node)
     cur_node->next = *node;
 }
 
+/*
+* Finds the length of a sound data linked-list
+*/
 u_int length(snd_dat_t* list)
 {
     int i = 0;
@@ -141,6 +158,10 @@ u_int length(snd_dat_t* list)
     return i;
 }
 
+/*
+* Prints each item in a sound data linked-list
+* such that each node is on its own line.
+*/
 void print_list(snd_dat_t* list, int num_channels)
 {
     int i;
