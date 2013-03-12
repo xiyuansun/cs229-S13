@@ -17,7 +17,7 @@ snd_t* open_sound(char* path)
     if(!in)
     {
         fprintf(stderr, "sndinfo: %s: File could not be opened.\n", path);
-        exit(1);
+        return NULL;
     }
 
     snd_t* ret = read_sound(in, get_filename(path));
