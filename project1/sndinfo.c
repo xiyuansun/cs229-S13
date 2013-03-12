@@ -49,6 +49,9 @@ int main(int argc, char* argv[])
         if(!info) continue;
 
         print_info(info);
+        printf("Here");
+        fflush(stdin);
+        close_sound(info);
         
         if(i != argc - 1)
         {
