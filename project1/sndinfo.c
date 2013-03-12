@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
         if(!info) continue;
 
         print_info(info);
-        /*close_sound(info);*/
+        close_sound(info);
         
         if(i != argc - 1)
         {

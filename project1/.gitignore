@@ -5,6 +5,6 @@
 *.swp
 *.txt
 sounds/*
-bin/*
-build/*
+dist/*
+debug/*
 template.c

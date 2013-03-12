@@ -73,17 +73,37 @@ snd_t* read_sound(FILE* in, char* name)
 */
 void close_sound(snd_t* snd)
 {   
-    snd_dat_t* cur_node = snd->data;
-    snd_dat_t* next_node;
-
+    while(snd->data)
+    {
+        snd_dat_t* cur_node = snd->data;
+        snd_dat_t* prev_node;
+        while(cur_node->next)
+        {
+            prev_node = cur_node;
+            cur_node = cur_node->next;
+        }
+        
+        free(cur_node->channel_data);
+        free(cur_node);
+        prev_node->next = NULL;
+        if(cur_node == snd->data)
+        {
+            snd->data = NULL;
+        }
+    }
+    /*
     while(cur_node)
     {
         next_node = cur_node->next;
+        printf("%x\n", cur_node);
+        fflush(stdout);
         free(cur_node->channel_data);
         free(cur_node);
         cur_node = next_node;
     }
-    
+    */
+
+    free(snd->name);   
     free(snd);
 }
 
