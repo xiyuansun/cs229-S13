@@ -116,3 +116,14 @@ void read_info_cs229(snd_t* snd)
         }
     }
 }
+
+void write_cs229(FILE* out, snd_t* snd)
+{
+    fputs("cs229\n", out);
+    fprintf(out, "samples %u\n", snd->num_samples);
+    fprintf(out, "channels %u\n", snd->num_channels);
+    fprintf(out, "bitres %u\n", snd->bitdepth);
+    fprintf(out, "samplerate %u\n", snd->rate);
+    fputs("startdata\n", out);
+    print_list(out, snd->data, snd->num_channels);
+}

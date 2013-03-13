@@ -53,8 +53,8 @@ void print_usage(int status)
     puts("Reads all sound files passed as arguments, concatenates the files, and writes it out");
     puts("If no files are passed as arguments, sndcat reads from standard input.\n");
     puts("OPTIONS:");
-    puts("\t-h\tDisplays this help message.");
+    puts("\t-h\t\tDisplays this help message.");
     puts("\t-o [FILE]\tSpecifies the output file name. If omitted, the file is written to standard output.");
-    puts("\t-w\t Output in .wav format instead of .cs229 format");
+    puts("\t-w\t\tOutput in .wav format instead of .cs229 format");
     exit(status);
 }

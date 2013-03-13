@@ -182,16 +182,16 @@ u_int length(snd_dat_t* list)
 * Prints each item in a sound data linked-list
 * such that each node is on its own line.
 */
-void print_list(snd_dat_t* list, int num_channels)
+void print_list(FILE* out, snd_dat_t* list, int num_channels)
 {
     int i;
     while(list)
     {
-        for(i = 0; i < num_channels; ++i)
+        for(i = 0; i < num_channels-1; ++i)
         {
-            printf("%d ", list->channel_data[i]);
+            fprintf(out, "%d ", list->channel_data[i]);
         }
-        printf("\n");
+        fprintf(out, "%d\n", list->channel_data[i]);
         list = list->next;
     }
 }
