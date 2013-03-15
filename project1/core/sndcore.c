@@ -107,6 +107,14 @@ void close_sound(snd_t* snd)
     free(snd);
 }
 
+void write_sound(FILE* out, snd_t* sound)
+{
+    if(sound->type == CS229)
+    {
+        write_cs229(out, sound);
+    }
+}
+
 /*
 * Calls the correct parser based on the file type
 */
@@ -118,10 +126,6 @@ void read(snd_t* snd)
     {
         read_header_cs229(snd);
         read_info_cs229(snd);
-    }
-    else if (WAVE == snd->type)
-    {
-        read_header_wav(snd);
     }
 }
 

@@ -1,28 +1,45 @@
-all: sndinfo sndcat
+OBJS = ./objects/sndcore.o ./objects/sndcs.o ./objects/sndwav.o ./objects/util.o
+DEBUG = -g
+CFLAGS = -Wall -c
+LFLAGS = -Wall
+CC = gcc
+
+all: ./build/sndinfo ./build/sndcat
 
 clean:
-	rm -rf sndinfo sndcat *.o core/*.o
+	rm -rf build debug objects
 
-sndinfo: core/sndinfo.o core/sndcore.o core/util.o core/sndcs.o core/sndwav.o
-	gcc -Wall core/sndcore.o core/util.o core/sndwav.o core/sndcs.o sndinfo.o -o sndinfo
+tar:
 
-sndcat: core/sndcat.o core/sndcore.o core/util.o core/sndcs.o core/sndwav.o
-	gcc -Wall core/sndcore.o core/util.o core/sndwav.o core/sndcs.o sndcat.o -o sndcat
+build:
+	mkdir build
 
-core/sndcore.o: core/sndcore.c core/sndcore.h core/util.h core/types.h core/sndcs.h core/sndwav.h
-	gcc -Wall -c core/sndcore.c -o core/sndcore.o
+debug:
+	mkdir debug
 
-core/util.o: core/util.c core/util.h core/types.h 
-	gcc -Wall -c core/util.c -o core/util.o
+objects:
+	mkdir objects
 
-core/sndcs.o: core/sndcs.c core/sndcs.h core/sndcore.h core/types.h core/util.h
-	gcc -Wall -c core/sndcs.c -o core/sndcs.o
+./build/sndinfo: $(OBJS) ./objects/sndinfo.o | build 
+	$(CC) $(LFLAGS) $(OBJS) ./objects/sndinfo.o -o ./build/sndinfo
 
-core/sndwav.o: core/sndwav.c core/sndwav.h core/types.h
-	gcc -Wall -c core/sndwav.c -o core/sndwav.o
+./build/sndcat: $(OBJS) ./objects/sndcat.o | build 
+	$(CC) $(LFLAGS) $(OBJS) ./objects/sndcat.o -o ./build/sndcat
 
-core/sndinfo.o: sndinfo.c core/sndcore.c core/sndcore.h core/types.h
-	gcc -Wall -c sndinfo.c -o sndinfo.o
+./objects/sndinfo.o: sndinfo.c ./core/sndcore.h | objects 
+	$(CC) $(CFLAGS) sndinfo.c -o ./objects/sndinfo.o
 
-core/sndcat.o: sndcat.c core/sndcore.c core/sndcore.h core/types.h
-	gcc -Wall -c sndcat.c -o sndcat.o
+./objects/sndcat.o: sndcat.c ./core/sndcore.h | objects 
+	$(CC) $(CFLAGS) sndcat.c -o ./objects/sndcat.o
+
+./objects/sndcore.o: ./core/sndcore.c ./core/sndcore.h ./core/types.h ./core/sndcs.h ./core/sndwav.h ./core/util.h | objects
+	$(CC) $(CFLAGS) core/sndcore.c -o ./objects/sndcore.o
+
+./objects/sndcs.o: ./core/sndcs.c ./core/sndcs.h ./core/sndcore.h ./core/util.h ./core/types.h | objects
+	$(CC) $(CFLAGS) core/sndcs.c -o ./objects/sndcs.o
+
+./objects/sndwav.o: ./core/sndwav.c ./core/sndwav.h ./core/types.h | objects 
+	$(CC) $(CFLAGS) core/sndwav.c -o ./objects/sndwav.o
+
+./objects/util.o: ./core/util.c ./core/util.h ./core/types.h | objects 
+	$(CC) $(CFLAGS) core/util.c -o ./objects/util.o
