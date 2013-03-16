@@ -136,6 +136,51 @@ void determine_type(FILE* in, sndtype* type)
 }
 
 /*
+* Adds samples to snd2 until it
+* is the same length as snd1
+*/
+void normalize_num_samples(snd_t* snd1, snd_t* snd2)
+{
+    int i, diff;
+    i = 1;
+    diff = snd1->num_samples- snd2->num_samples;
+
+    if(diff <= 0) return;
+
+    snd_dat_t* node;
+    snd_dat_t* postfix = new_node(snd2->num_channels); 
+
+    while(i < diff)
+    {
+        node = new_node(snd2->num_channels);
+        add(&node, &postfix);
+        ++i;
+    }
+    snd2->num_samples += append(&(snd2->data), &postfix);
+}
+
+/********************************************/
+/*            LINKED LIST STUFF             */
+/********************************************/
+
+snd_dat_t* new_node(int num_channels)
+{
+    snd_dat_t* node = malloc(sizeof(snd_dat_t));
+    check_malloc(node);
+
+    node->channel_data = malloc(num_channels * sizeof(int));
+    check_malloc(node->channel_data);
+    
+    int i = 0;
+    for(; i < num_channels; ++i)
+    {
+        node->channel_data[i] = 0;
+    }
+
+    return node;
+}
+
+/*
 * Adds a new node to the end of the
 * sound data linked-list
 */
@@ -175,9 +220,8 @@ u_int length(snd_dat_t* list)
 */
 u_int append(snd_dat_t** list, snd_dat_t** postfix)
 {
-    u_int ret = length(*postfix);
     add(list, postfix);
-    return ret;
+    return length(*postfix);
 }
 
 /*

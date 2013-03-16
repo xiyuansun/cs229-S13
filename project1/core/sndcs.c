@@ -99,11 +99,7 @@ void read_info_cs229(snd_t* snd)
     {
         if(i == 0)
         {
-            node = malloc(sizeof(snd_dat_t));
-            check_malloc(node);
-
-            node->channel_data = malloc((snd->num_channels) * sizeof(int));
-            check_malloc(node->channel_data);
+            node = new_node(snd->num_channels);
         }
         
         node->channel_data[i] = dat;
