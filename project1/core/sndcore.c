@@ -171,6 +171,16 @@ u_int length(snd_dat_t* list)
 }
 
 /*
+* Appends postfix on to list, returning the size of postfix
+*/
+u_int append(snd_dat_t** list, snd_dat_t** postfix)
+{
+    u_int ret = length(*postfix);
+    add(list, postfix);
+    return ret;
+}
+
+/*
 * Prints each item in a sound data linked-list
 * such that each node is on its own line.
 */
