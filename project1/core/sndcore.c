@@ -91,19 +91,7 @@ void close_sound(snd_t* snd)
             snd->data = NULL;
         }
     }
-    /*
-    while(cur_node)
-    {
-        next_node = cur_node->next;
-        printf("%x\n", cur_node);
-        fflush(stdout);
-        free(cur_node->channel_data);
-        free(cur_node);
-        cur_node = next_node;
-    }
-    */
-
-    free(snd->name);   
+    
     free(snd);
 }
 
