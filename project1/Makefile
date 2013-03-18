@@ -1,4 +1,4 @@
-all: dist/bin/sndinfo dist/bin/sndcat
+all: ./dist/bin/sndinfo ./dist/bin/sndcat
 
 clean:
 	rm -rf dist debug
@@ -12,11 +12,11 @@ dist/build:
 dist/bin:
 	mkdir dist/bin
 
-dist/bin/sndinfo: dist dist/build dist/bin dist/build/sndinfo.o dist/build/sndcore.o dist/build/util.o dist/build/sndcs.o dist/build/sndwav.o
-	gcc -Wall dist/build/sndcore.o dist/build/util.o dist/build/sndwav.o dist/build/sndcs.o dist/build/sndinfo.o -o dist/bin/sndinfo
+./dist/bin/sndinfo: dist dist/build dist/bin dist/build/sndinfo.o dist/build/sndcore.o dist/build/util.o dist/build/sndcs.o dist/build/sndwav.o
+	gcc -Wall dist/build/sndcore.o dist/build/util.o dist/build/sndwav.o dist/build/sndcs.o dist/build/sndinfo.o -o ./dist/bin/sndinfo
 
-dist/bin/sndcat: dist dist/build dist/bin dist/build/sndcat.o dist/build/sndcore.o dist/build/util.o dist/build/sndcs.o dist/build/sndwav.o
-	gcc -Wall dist/build/sndcore.o dist/build/util.o dist/build/sndwav.o dist/build/sndcs.o dist/build/sndcat.o -o dist/bin/sndcat
+./dist/bin/sndcat: dist dist/build dist/bin dist/build/sndcat.o dist/build/sndcore.o dist/build/util.o dist/build/sndcs.o dist/build/sndwav.o
+	gcc -Wall dist/build/sndcore.o dist/build/util.o dist/build/sndwav.o dist/build/sndcs.o dist/build/sndcat.o -o ./dist/bin/sndcat
 
 dist/build/sndcore.o: core/sndcore.c core/sndcore.h core/util.h core/types.h core/sndcs.h core/sndwav.h
 	gcc -Wall -c core/sndcore.c -o dist/build/sndcore.o
