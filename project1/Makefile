@@ -34,19 +34,19 @@ debug/objects: | debug
 
 #Links sndinfo
 build/sndinfo: $(BOBJS) build/objects/sndinfo.o | build 
-	$(CC) $(LFLAGS) $(BOBJS) build/objects/sndinfo.o -o build/sndinfo
+	$(CC) $(LFLAGS) $(BOBJS) build/objects/sndinfo.o -o build/sndinfo -lm
 
 #Links debug version of sndinfo
 debug/sndinfo: $(DOBJS) debug/objects/sndinfo.o | debug
-	$(CC) $(LFLAGS) $(DEBUG) $(DOBJS) debug/objects/sndinfo.o -o debug/sndinfo
+	$(CC) $(LFLAGS) $(DEBUG) $(DOBJS) debug/objects/sndinfo.o -o debug/sndinfo -lm
 
 #Links sndcat
 build/sndcat: $(BOBJS) build/objects/sndcat.o | build
-	$(CC) $(LFLAGS) $(BOBJS) build/objects/sndcat.o -o build/sndcat
+	$(CC) $(LFLAGS) $(BOBJS) build/objects/sndcat.o -o build/sndcat -lm
 
 #Links debug version of sndcat
 debug/sndcat: $(DOBJS) debug/objects/sndcat.o | debug
-	$(CC) $(LFLAGS) $(DEBUG) $(DOBJS) debug/objects/sndcat.o -o debug/sndcat
+	$(CC) $(LFLAGS) $(DEBUG) $(DOBJS) debug/objects/sndcat.o -o debug/sndcat -lm
 
 #Compiles sndinfo.o
 build/objects/sndinfo.o: sndinfo.c core/sndcore.h | build/objects 

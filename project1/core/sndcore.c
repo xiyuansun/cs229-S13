@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "sndcore.h"
 #include "sndcs.h"
 #include "sndwav.h"
@@ -157,6 +158,61 @@ void normalize_num_samples(snd_t* snd1, snd_t* snd2)
         ++i;
     }
     snd2->num_samples += append(&(snd2->data), &postfix);
+}
+
+/*
+* Scales the sample data from snd2
+* to match the bitres of snd1
+*/
+void normalize_bitres(snd_t* snd1, snd_t* snd2)
+{
+    double scale_factor = pow(2, snd1->bitdepth - snd2->bitdepth);
+
+    snd_dat_t* samples = snd2->data;
+
+    int i;
+
+    while(samples)
+    {
+        for(i = 0; i < snd2->num_channels; ++i)
+        {
+            samples->channel_data[i] *= scale_factor;
+        }
+        
+        samples = samples->next;
+    }
+
+    snd2->bitdepth = snd1->bitdepth;
+}
+
+/*
+* Adds channels to snd2 until it has
+* the same number of channels as snd1
+*/
+void normalize_num_channels(snd_t* snd1, snd_t* snd2)
+{
+    int diff = snd1->num_channels - snd2->num_channels;
+    if(diff <= 0) return;
+
+    snd_dat_t* samples = snd2->data;
+
+    while(samples)
+    {
+        int* new_block = (int*) realloc(samples->channel_data, snd1->num_channels);
+        check_malloc(new_block);
+
+        samples->channel_data = new_block;
+        
+        int i;
+        for(i = snd2->num_channels; i < snd1->num_channels; ++i)
+        {
+            samples->channel_data[i] = 0;
+        }
+
+        samples = samples->next;
+    }
+
+    snd2->num_channels = snd1->num_channels;
 }
 
 /********************************************/
