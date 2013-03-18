@@ -9,6 +9,7 @@ int main(int argc, char* argv[])
 {
     int i;
     char c;
+    snd_t* info;
 
     while((c = getopt(argc, argv, "h")) != -1)
     {
@@ -31,14 +32,16 @@ int main(int argc, char* argv[])
     */
     if(optind == argc)
     {
-        snd_t* info = read_sound(stdin, "Standard Input");
+        info = read_sound(stdin, "Standard Input");
     }
 
     for(i = optind; i < argc; ++i)
     {
-        snd_t* info = open_sound(argv[i]);
-
-        if(!info); 
+        info = open_sound(argv[i]);
+        FILE* out = fopen("written.cs229", "wb");
+        if(!info || !out) continue;
+        write_sound(out, info);
+        fclose(out);
     }
     
     return 0;

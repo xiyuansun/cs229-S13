@@ -91,20 +91,16 @@ void close_sound(snd_t* snd)
             snd->data = NULL;
         }
     }
-    /*
-    while(cur_node)
-    {
-        next_node = cur_node->next;
-        printf("%x\n", cur_node);
-        fflush(stdout);
-        free(cur_node->channel_data);
-        free(cur_node);
-        cur_node = next_node;
-    }
-    */
-
-    free(snd->name);   
+    
     free(snd);
+}
+
+void write_sound(FILE* out, snd_t* sound)
+{
+    if(sound->type == CS229)
+    {
+        write_cs229(out, sound);
+    }
 }
 
 /*
@@ -118,10 +114,6 @@ void read(snd_t* snd)
     {
         read_header_cs229(snd);
         read_info_cs229(snd);
-    }
-    else if (WAVE == snd->type)
-    {
-        read_header_wav(snd);
     }
 }
 
@@ -141,6 +133,51 @@ void determine_type(FILE* in, sndtype* type)
     if(type_info[0] == 'C') type_info[4] = fgetc(in);
     if(0 == strcmp(type_info, "CS229")) *type = CS229;
     else if(0 == strcmp(type_info, "RIFF")) *type = WAVE;
+}
+
+/*
+* Adds samples to snd2 until it
+* is the same length as snd1
+*/
+void normalize_num_samples(snd_t* snd1, snd_t* snd2)
+{
+    int i, diff;
+    i = 1;
+    diff = snd1->num_samples- snd2->num_samples;
+
+    if(diff <= 0) return;
+
+    snd_dat_t* node;
+    snd_dat_t* postfix = new_node(snd2->num_channels); 
+
+    while(i < diff)
+    {
+        node = new_node(snd2->num_channels);
+        add(&node, &postfix);
+        ++i;
+    }
+    snd2->num_samples += append(&(snd2->data), &postfix);
+}
+
+/********************************************/
+/*            LINKED LIST STUFF             */
+/********************************************/
+
+snd_dat_t* new_node(int num_channels)
+{
+    snd_dat_t* node = malloc(sizeof(snd_dat_t));
+    check_malloc(node);
+
+    node->channel_data = malloc(num_channels * sizeof(int));
+    check_malloc(node->channel_data);
+    
+    int i = 0;
+    for(; i < num_channels; ++i)
+    {
+        node->channel_data[i] = 0;
+    }
+
+    return node;
 }
 
 /*
@@ -176,6 +213,15 @@ u_int length(snd_dat_t* list)
         ++i;
     }
     return i;
+}
+
+/*
+* Appends postfix on to list, returning the size of postfix
+*/
+u_int append(snd_dat_t** list, snd_dat_t** postfix)
+{
+    add(list, postfix);
+    return length(*postfix);
 }
 
 /*
