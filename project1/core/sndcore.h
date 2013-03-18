@@ -15,7 +15,7 @@ void write_sound(FILE* out, snd_t* snd);
 void read(snd_t* snd);
 void determine_type(FILE* in, sndtype* type);
 
-void normalize_length(snd_t* snd1, snd_t* snd2);
+void normalize_num_samples(snd_t* snd1, snd_t* snd2);
 void normalize_bitres(snd_t* snd1, snd_t* snd2);
 void normalize_num_channels(snd_t* snd1, snd_t* snd2);
 
