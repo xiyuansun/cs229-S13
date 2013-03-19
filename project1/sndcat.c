@@ -73,6 +73,10 @@ int main(int argc, char* argv[])
     {
         info->type = WAVE;
     }
+    else
+    {
+        info->type = CS229;
+    }
     
     if(!outfile)
     {
