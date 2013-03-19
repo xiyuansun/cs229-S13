@@ -116,6 +116,11 @@ void read(snd_t* snd)
         read_header_cs229(snd);
         read_info_cs229(snd);
     }
+    else
+    {
+        read_header_wav(snd);
+        read_info_wav(snd);
+    }
 }
 
 /*

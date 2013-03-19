@@ -6,4 +6,5 @@ char* to_upper(char* str);
 u_int parse_uint(char* str);
 char is_alpha(char c);
 void check_malloc(void* ptr);
+u_int read_little_dat(FILE* file, int bytes);
 #endif

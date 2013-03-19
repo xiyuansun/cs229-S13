@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void read_header_wav(snd_t* snd);
-void read_info_wav(snd_t* snd);
+int read_header_wav(snd_t* snd);
+int read_info_wav(snd_t* snd);
 #endif

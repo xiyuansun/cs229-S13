@@ -90,9 +90,9 @@ void print_info(snd_t* info)
     char* type = (info->type == WAVE) ? "wav" : "cs229";
     printf("Information for %s:\n", info->name);
     printf("\tType:\t\t%s\n", type);
-    printf("\tRate:\t\t%d\n", info->rate);
-    printf("\tBit Depth:\t%d\n", info->bitdepth);
-    printf("\tChannels:\t%d\n", info->num_channels);
-    printf("\tSamples:\t%d\n", info->num_samples);
-    printf("\tLength:\t\t%d\n", info->len);
+    printf("\tSample Rate:\t%u\n", info->rate);
+    printf("\tBit Depth:\t%u\n", info->bitdepth);
+    printf("\tChannels:\t%u\n", info->num_channels);
+    printf("\tSamples:\t%u\n", info->num_samples);
+    printf("\tLength:\t\t%u\n", info->len);
 }
