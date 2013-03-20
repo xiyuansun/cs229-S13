@@ -67,6 +67,7 @@ int main(int argc, char* argv[])
             exit(1);
         }
         concatenate(info, current);
+        free(current);
     }
     
     if(wav)
@@ -88,7 +89,8 @@ int main(int argc, char* argv[])
     }
 
     write_sound(out, info);
-    
+    close_sound(info);
+
     if(out != stdout)
     {
         fclose(out);
@@ -123,15 +125,7 @@ void concatenate(snd_t* snd1, snd_t* snd2)
         exit(1);
     }
 
-    if(!snd1 && !snd2)
-    {
-        return;
-    }
-    else if(!snd1 && snd2)
-    {
-        return;
-    }
-    else if(snd1 && !snd2)
+    if(!snd1 || !snd2)
     {
         return;
     }
