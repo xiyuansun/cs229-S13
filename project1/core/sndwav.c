@@ -127,3 +127,42 @@ int read_info_wav(snd_t* snd)
     if(length(snd->data) <= 0) return 1;
     return 0;
 }
+
+void write_wav(FILE* out, snd_t* snd)
+{
+    int bytedepth = snd->bitdepth / 8;
+    int block_align = snd->num_channels * bytedepth;
+    int byte_rate = block_align * snd->rate;
+    int data_size = block_align * snd->num_samples;
+    int fmt_size = 16;
+    int size = data_size + fmt_size + 20;
+    int offset = (snd->bitdepth == 8) ? 128 : 0;
+    snd_dat_t* node = snd->data;
+    int i;
+
+    write_bytes(out, "RIFF", 4, 0);
+    write_bytes(out, to_little_char_arr(size, 4), 4, 1);
+    write_bytes(out, "WAVE", 4, 0);
+
+    write_bytes(out, "fmt ", 4, 0);
+    write_bytes(out, to_little_char_arr(fmt_size, 4), 4, 1);
+    write_bytes(out, to_little_char_arr(1, 2), 2, 1);
+    write_bytes(out, to_little_char_arr(snd->num_channels, 2), 2, 1);
+    write_bytes(out, to_little_char_arr(snd->rate, 4), 4, 1);
+    write_bytes(out, to_little_char_arr(byte_rate, 4), 4, 1);
+    write_bytes(out, to_little_char_arr(block_align, 2), 2, 1);
+    write_bytes(out, to_little_char_arr(snd->bitdepth, 2), 2, 1);
+
+    write_bytes(out, "data", 4, 0);
+    write_bytes(out, to_little_char_arr(data_size, 4), 4, 1);
+    
+    while(node)
+    {
+        for(i = 0; i < snd->num_channels; ++i)
+        {
+            write_bytes(out, to_little_char_arr(node->channel_data[i] + offset, bytedepth), bytedepth, 1);
+        }
+        
+        node = node->next;
+    }
+}

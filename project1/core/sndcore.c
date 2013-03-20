@@ -17,12 +17,17 @@ snd_t* open_sound(char* path)
 
     if(!in)
     {
-        fprintf(stderr, "sndinfo: %s: File could not be opened.\n", path);
+        fprintf(stderr, "Error: %s: File could not be opened.\n", path);
         return NULL;
     }
 
     snd_t* ret = read_sound(in, get_filename(path));
-
+    
+    if(!ret)
+    {
+        fprintf(stderr, "Error: %s: Malformed sound file.\n", path);
+        return NULL;
+    }
     fclose(in);
 
     return ret;
@@ -44,7 +49,6 @@ snd_t* read_sound(FILE* in, char* name)
     sndtype type = CS229;
     
     snd_t* ret = (snd_t*) malloc(sizeof(snd_t));
-    
     check_malloc(ret);
 
     ret->rate = rate;
@@ -55,17 +59,26 @@ snd_t* read_sound(FILE* in, char* name)
     ret->type = type;     
     ret->name = name;
     ret->file = in;
+    ret->data = NULL;
     
-    read(ret);
+    read(&ret);
 
-    if( ((int) ret->num_samples) <= 0 )
+    if(ret)
     {
-        ret->num_samples = length(ret->data);
+
+        if( ((int) ret->num_samples) <= 0 )
+        {
+            ret->num_samples = length(ret->data);
+        }
+
+        ret->len = (int) (ret->num_samples) * 1.0 / (ret->rate);
+
+        return ret;
     }
-
-    ret->len = (int) (ret->num_samples) * 1.0 / (ret->rate);
-
-    return ret;
+    else
+    {
+        return NULL;
+    }
 }
 
 /*
@@ -96,30 +109,42 @@ void close_sound(snd_t* snd)
     free(snd);
 }
 
+/*
+* Calls the correct writer based on type
+*/
 void write_sound(FILE* out, snd_t* sound)
 {
     if(sound->type == CS229)
     {
         write_cs229(out, sound);
     }
+    else
+    {
+        write_wav(out, sound);
+    }
 }
 
 /*
 * Calls the correct parser based on the file type
 */
-void read(snd_t* snd) 
+void read(snd_t** snd) 
 {
-    determine_type(snd->file, &(snd->type));
+    determine_type((*snd)->file, &((*snd)->type));
     
-    if(CS229 == snd->type)
+    if(CS229 == (*snd)->type)
     {
-        read_header_cs229(snd);
-        read_info_cs229(snd);
+        read_header_cs229(*snd);
+        read_info_cs229(*snd);
     }
     else
     {
-        read_header_wav(snd);
-        read_info_wav(snd);
+        int res = read_header_wav(*snd);
+        res |= read_info_wav(*snd);
+        if(res)
+        {
+            close_sound(*snd);
+            *snd = NULL;
+        }
     }
 }
 
@@ -237,6 +262,8 @@ snd_dat_t* new_node(int num_channels)
     {
         node->channel_data[i] = 0;
     }
+    
+    node->next = NULL;
 
     return node;
 }

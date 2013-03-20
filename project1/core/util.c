@@ -55,6 +55,10 @@ void check_malloc(void* ptr)
     }
 }
 
+/*
+* Reads bytes bytes from file and
+* returns them in little-endian order
+*/
 u_int read_little_dat(FILE* file, int bytes)
 {   
     u_char c;
@@ -70,5 +74,36 @@ u_int read_little_dat(FILE* file, int bytes)
         ret |= ((u_int) c) << (i * 8);
         ++i;
     }
+    return ret;
+}
+
+/*
+* Writes bytes bytes from dat to out
+*/
+void write_bytes(FILE* out, char* dat, int bytes, char should_free)
+{
+    int i;
+    for(i = 0; i < bytes; ++i)
+    {
+        fputc(dat[i], out);
+    }
+    
+    if(should_free)
+    {
+        free(dat);
+    }
+}
+
+char* to_little_char_arr(int dat, int bytes)
+{
+    char* ret = malloc(sizeof(char) * bytes);
+    check_malloc(ret);
+    int i;
+    for(i = 0; i < bytes; ++i)
+    {
+        ret[i] = (char) dat;
+        dat = dat >> 8;
+    }
+
     return ret;
 }

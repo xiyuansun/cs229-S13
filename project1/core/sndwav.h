@@ -5,4 +5,5 @@
 
 int read_header_wav(snd_t* snd);
 int read_info_wav(snd_t* snd);
+void write_wav(FILE* out, snd_t* snd);
 #endif
