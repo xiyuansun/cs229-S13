@@ -1,6 +1,12 @@
 #ifndef UTIL_H
 #define UTIL_H
+
 #include "types.h"
+
+#define MAX(a, b) (a > b) ? a : b
+#define MIN(a, b) (a > b) ? b : a
+#define LIMIT(a, b, c) MAX(MIN(a, b), c)
+
 char* get_filename(char* path);
 char* to_upper(char* str);
 u_int parse_uint(char* str);

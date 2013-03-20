@@ -9,8 +9,9 @@ void normalize(snd_t* snd1, snd_t* snd2);
 
 int main(int argc, char* argv[])
 {
+    sndtype out_type = CS229;
     int i;
-    char c, wav = 0;
+    char c;
     char* outfile;
     snd_t* info = 0;
     snd_t* current;
@@ -27,7 +28,7 @@ int main(int argc, char* argv[])
                 outfile = optarg;
                 break;
             case 'w':
-                wav = 1;
+                out_type = WAVE;
                 break;
             case '?':
                 fprintf(stderr, "sndcat: Error: Try 'sndinfo -h' for more information.\n");
@@ -70,13 +71,9 @@ int main(int argc, char* argv[])
         free(current);
     }
     
-    if(wav)
+    if(out_type != info->type)
     {
-        info->type = WAVE;
-    }
-    else
-    {
-        info->type = CS229;
+        convert(info);
     }
     
     if(!outfile)
@@ -157,5 +154,10 @@ void normalize(snd_t* snd1, snd_t* snd2)
     else if(snd1->num_channels < snd2->num_channels)
     {
         normalize_num_channels(snd2, snd1);
+    }
+
+    if(snd2->type == WAVE && snd1->type != WAVE)
+    {
+        convert(snd1);
     }
 }

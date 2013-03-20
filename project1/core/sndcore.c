@@ -238,6 +238,34 @@ void normalize_num_channels(snd_t* snd1, snd_t* snd2)
     snd2->num_channels = snd1->num_channels;
 }
 
+/*
+* Converts snd from one file type to the
+* other, limiting values where needed.
+*/
+void convert(snd_t* snd)
+{
+    if(snd->type == CS229)
+    {
+        snd->type = WAVE;
+        return;
+    }
+    
+    int i;
+    snd->type = CS229;
+    snd_dat_t* node = snd->data;
+    long max = (long) pow(2, snd->bitdepth - 1) - 1;
+    long min = -1 * max;
+
+    while(node)
+    {
+        for(i = 0; i < snd->num_channels; ++i)
+        {
+            node->channel_data[i] = (int) LIMIT(((long) node->channel_data[i]), max, min);
+        }
+        node = node->next;
+    }
+}
+
 /********************************************/
 /*            LINKED LIST STUFF             */
 /********************************************/
