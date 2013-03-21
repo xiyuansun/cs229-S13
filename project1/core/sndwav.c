@@ -139,6 +139,8 @@ void write_wav(FILE* out, snd_t* snd)
     int offset = (snd->bitdepth == 8) ? 128 : 0;
     snd_dat_t* node = snd->data;
     int i;
+    
+    printf("%d\n%d\n%d\n", size, fmt_size, data_size);
 
     write_bytes(out, "RIFF", 4, 0);
     write_bytes(out, to_little_char_arr(size, 4), 4, 1);

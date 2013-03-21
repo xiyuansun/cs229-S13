@@ -5,7 +5,7 @@ CFLAGS = -Wall -c
 LFLAGS = -Wall
 CC = gcc
 
-all: sndinfo sndcat
+all: sndinfo sndcat sndchan
 
 sndinfo: build/sndinfo
 	@
@@ -13,7 +13,10 @@ sndinfo: build/sndinfo
 sndcat: build/sndcat
 	@
 
-bug: debug/sndinfo debug/sndcat
+sndchan: build/sndchan
+	@
+
+bug: debug/sndinfo debug/sndcat debug/sndchan
 
 clean:
 	rm -rf build debug
@@ -48,6 +51,14 @@ build/sndcat: $(BOBJS) build/objects/sndcat.o | build
 debug/sndcat: $(DOBJS) debug/objects/sndcat.o | debug
 	$(CC) $(LFLAGS) $(DEBUG) $(DOBJS) debug/objects/sndcat.o -o debug/sndcat -lm
 
+#Links sndchan
+build/sndchan: $(BOBJS) build/objects/sndchan.o | build
+	$(CC) $(LFLAGS) $(BOBJS) build/objects/sndchan.o -o build/sndchan -lm
+
+#Links debug version of sndcat
+debug/sndchan: $(DOBJS) debug/objects/sndchan.o | debug
+	$(CC) $(LFLAGS) $(DEBUG) $(DOBJS) debug/objects/sndchan.o -o debug/sndchan -lm
+
 #Compiles sndinfo.o
 build/objects/sndinfo.o: sndinfo.c core/sndcore.h | build/objects 
 	$(CC) $(CFLAGS) sndinfo.c -o build/objects/sndinfo.o
@@ -63,6 +74,14 @@ build/objects/sndcat.o: sndcat.c core/sndcore.h | build/objects
 #Compiles debug version of sndcat.o
 debug/objects/sndcat.o: sndcat.c core/sndcore.h | debug/objects 
 	$(CC) $(CFLAGS) $(DEBUG) sndcat.c -o debug/objects/sndcat.o
+
+#Compiles sndchan.o
+build/objects/sndchan.o: sndchan.c core/sndcore.h core/util.h | build/objects 
+	$(CC) $(CFLAGS) sndchan.c -o build/objects/sndchan.o
+
+#Compiles debug version of sndchan.o
+debug/objects/sndchan.o: sndchan.c core/sndcore.h core/util.h | debug/objects 
+	$(CC) $(CFLAGS) $(DEBUG) sndchan.c -o debug/objects/sndchan.o
 
 #Compiles sndcore.o
 build/objects/sndcore.o: core/sndcore.c core/sndcore.h core/types.h core/sndcs.h core/sndwav.h core/util.h | build/objects

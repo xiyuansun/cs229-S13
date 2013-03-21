@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
                 out_type = WAVE;
                 break;
             case '?':
-                fprintf(stderr, "sndcat: Error: Try 'sndinfo -h' for more information.\n");
+                fprintf(stderr, "sndcat: Error: Try 'sndcat -h' for more information.\n");
                 exit(1);
                 break;
             default:

@@ -177,7 +177,7 @@ void normalize_num_samples(snd_t* snd1, snd_t* snd2)
     while(i < diff)
     {
         node = new_node(snd2->num_channels);
-        add(&node, &postfix);
+        add(&postfix, &node);
         ++i;
     }
     snd2->num_samples += append(&(snd2->data), &postfix);
@@ -189,7 +189,7 @@ void normalize_num_samples(snd_t* snd1, snd_t* snd2)
 */
 void normalize_bitres(snd_t* snd1, snd_t* snd2)
 {
-    double scale_factor = pow(2, snd1->bitdepth - snd2->bitdepth);
+    int scale_factor = (int) pow(2, snd1->bitdepth - snd2->bitdepth);
 
     snd_dat_t* samples = snd2->data;
 
