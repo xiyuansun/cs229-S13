@@ -5,7 +5,7 @@ CFLAGS = -Wall -c
 LFLAGS = -Wall
 CC = gcc
 
-all: sndinfo sndcat sndchan
+all: sndinfo sndcat sndchan sndmix
 
 sndinfo: build/sndinfo
 	@
@@ -16,7 +16,10 @@ sndcat: build/sndcat
 sndchan: build/sndchan
 	@
 
-bug: debug/sndinfo debug/sndcat debug/sndchan
+sndmix: build/sndmix
+	@
+
+bug: debug/sndinfo debug/sndcat debug/sndchan debug/sndmix
 
 clean:
 	rm -rf build debug
@@ -55,9 +58,17 @@ debug/sndcat: $(DOBJS) debug/objects/sndcat.o | debug
 build/sndchan: $(BOBJS) build/objects/sndchan.o | build
 	$(CC) $(LFLAGS) $(BOBJS) build/objects/sndchan.o -o build/sndchan -lm
 
-#Links debug version of sndcat
+#Links debug version of sndchan
 debug/sndchan: $(DOBJS) debug/objects/sndchan.o | debug
 	$(CC) $(LFLAGS) $(DEBUG) $(DOBJS) debug/objects/sndchan.o -o debug/sndchan -lm
+
+#Links sndmix
+build/sndmix: $(BOBJS) build/objects/sndmix.o | build
+	$(CC) $(LFLAGS) $(BOBJS) build/objects/sndmix.o -o build/sndmix -lm
+
+#Links debug version of sndmix
+debug/sndmix: $(DOBJS) debug/objects/sndmix.o | debug
+	$(CC) $(LFLAGS) $(DEBUG) $(DOBJS) debug/objects/sndmix.o -o debug/sndmix -lm
 
 #Compiles sndinfo.o
 build/objects/sndinfo.o: sndinfo.c core/sndcore.h | build/objects 
@@ -82,6 +93,14 @@ build/objects/sndchan.o: sndchan.c core/sndcore.h core/util.h | build/objects
 #Compiles debug version of sndchan.o
 debug/objects/sndchan.o: sndchan.c core/sndcore.h core/util.h | debug/objects 
 	$(CC) $(CFLAGS) $(DEBUG) sndchan.c -o debug/objects/sndchan.o
+
+#Compiles sndmix.o
+build/objects/sndmix.o: sndmix.c core/sndcore.h | build/objects 
+	$(CC) $(CFLAGS) sndmix.c -o build/objects/sndmix.o
+
+#Compiles debug version of sndmix.o
+debug/objects/sndmix.o: sndmix.c core/sndcore.h | debug/objects 
+	$(CC) $(CFLAGS) $(DEBUG) sndmix.c -o debug/objects/sndmix.o
 
 #Compiles sndcore.o
 build/objects/sndcore.o: core/sndcore.c core/sndcore.h core/types.h core/sndcs.h core/sndwav.h core/util.h | build/objects
