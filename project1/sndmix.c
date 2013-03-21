@@ -2,104 +2,95 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <math.h>
+#include <string.h>
 #include "./core/sndcore.h"
 #include "./core/util.h"
 
 void print_usage(int status);
 void mix(snd_t* snd1, snd_t* snd2);
-void amp(snd_t* snd, int mult);
-int get_mult(char* arg);
+void amp(snd_t* snd, double mult);
+double get_mult(char* arg);
 void normalize(snd_t* snd1, snd_t* snd2);
 
 int main(int argc, char* argv[])
 {
+    const char* err_prefix = "sndmix: Error:";
     sndtype out_type = CS229;
-    int i;
-    char c;
-    char* outfile;
+    int i = 1;
+    char* cur_arg;
     snd_t* info = 0;
     snd_t* current;
-    FILE* out;
-    int cur_mult;
-
-    while((c = getopt(argc, argv, "ho:w")) != -1)
+    FILE* out = stdout;
+    double cur_mult;
+    
+    while(i < argc)
     {
-        switch(c)
+        cur_arg = argv[i];
+        
+        if(strcmp(cur_arg, "-h") == 0)
         {
-            case 'h':
-                print_usage(0);
-                break;
-            case 'o':
-                outfile = optarg;
-                break;
-            case 'w':
-                out_type = WAVE;
-                break;
-            case '?':
-                fprintf(stderr, "sndmix: Error: Try 'sndmix -h' for more information.\n");
-                exit(1);
-                break;
-            default:
-                print_usage(1);
+            print_usage(0);
         }
-    }
-    
-    /*
-    Get from stdin
-    */
-    if(optind == argc)
-    {
-        fprintf(stderr, "sndmix: Error: No files to mix. Try 'sndmix -h' for more information.\n");
-        exit(1);
-    }
-    
-    if((argc - optind)%2)
-    {
-        fprintf(stderr, "sndmix: Error: Incorrect number of arguments. Exiting.\n");
-        exit(1);
-    }
-
-    for(i = optind; i < argc; i += 2)
-    {
-        if(!info)
+        else if(strcmp(cur_arg, "-w") == 0)
         {
-            info = open_sound(argv[i + 1]);
-            if(!info)
+            out_type = WAVE;
+            ++i;
+            continue;
+        }
+        else if(strcmp(cur_arg, "-o") == 0)
+        {
+            if(i + 1 >= argc)
             {
-                fprintf(stderr, "sndmix: Error: %s could not be opened. Exiting.\n", argv[i]);
+                fprintf(stderr, "%s -o was specified without an argument. Exiting.\n", err_prefix);
+                exit(1);
+            }
+
+            out = fopen(argv[i + 1], "wb");
+
+            if(!out)
+            {
+                fprintf(stderr, "%s Could not open %s. Exiting.\n", err_prefix, argv[i + 1]);
+                exit(1);
+            }
+
+            i += 2;
+        }
+        else
+        {
+            /*number time*/
+            if(i + 1 >= argc)
+            {
+                fprintf(stderr, "%s Missing argument from [MULT FILE] pair. Exiting\n", err_prefix);
                 exit(1);
             }
             
             cur_mult = get_mult(argv[i]);
-            amp(info, cur_mult);
-            continue;
-        }
+            current = open_sound(argv[i + 1]);
 
-        current = open_sound(argv[i + 1]);
-        if(!current)
-        {
-            fprintf(stderr, "sndcat: Error: %s could not be opened. Exiting.\n", argv[i]);
-            exit(1);
+            if(!current)
+            {
+                fprintf(stderr, "%s Could not open %s. Exiting.\n", err_prefix, argv[i + 1]);
+                exit(1);
+            }
+
+            amp(current, cur_mult);
+
+            if(!info)
+            {
+                info = current;
+            }
+            else
+            {
+                mix(info, current);
+            }
+
+            i += 2;
         }
-        
-        cur_mult = get_mult(argv[i]);
-        amp(current, cur_mult);
-        mix(info, current);
-        close_sound(current);
     }
     
     if(out_type != info->type)
     {
         convert(info);
-    }
-    
-    if(!outfile)
-    {
-        out = stdout;
-    }
-    else
-    {
-        out = fopen(outfile, "wb");
     }
 
     write_sound(out, info);
@@ -214,7 +205,7 @@ void normalize(snd_t* snd1, snd_t* snd2)
     }
 }
 
-void amp(snd_t* snd, int mult)
+void amp(snd_t* snd, double mult)
 {
     int i, max, min;
     max = (int) pow(2, snd->bitdepth-1) - 1;
@@ -238,13 +229,13 @@ void amp(snd_t* snd, int mult)
     }
 }
 
-int get_mult(char* arg)
+double get_mult(char* arg)
 {
     char* endptr;
-    int cur_mult = strtol(arg, &endptr, 0);
+    double cur_mult = strtod(arg, &endptr);
     if(*endptr != '\0')
     {
-        fprintf(stderr, "sndmix: Error: %s is not a n integer. Exiting.", arg);
+        fprintf(stderr, "sndmix: Error: %s is not an integer. Exiting.\n", arg);
         exit(1);
     }
     return cur_mult;
