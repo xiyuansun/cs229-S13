@@ -116,12 +116,12 @@ debug/objects/sndmix.o: sndmix.c core/sndcore.h | debug/objects
 	$(CC) $(CFLAGS) $(DEBUG) sndmix.c -o debug/objects/sndmix.o
 
 #Compiles sndgen.o
-build/objects/sndgen.o: sndgen.c core/sndcore.h | build/objects 
-	$(CC) $(CFLAGS) sndgen.c -o build/objects/sndgen.o
+build/objects/sndgen.o: sndgen.c core/sndcore.h core/util.h | build/objects 
+	$(CC) $(CFLAGS) sndgen.c -o build/objects/sndgen.o -lm
 
 #Compiles debug version of sndgen.o
-debug/objects/sndgen.o: sndgen.c core/sndcore.h | debug/objects 
-	$(CC) $(CFLAGS) $(DEBUG) sndgen.c -o debug/objects/sndgen.o
+debug/objects/sndgen.o: sndgen.c core/sndcore.h core/util.h | debug/objects 
+	$(CC) $(CFLAGS) $(DEBUG) sndgen.c -o debug/objects/sndgen.o -lm
 
 #Compiles sndcore.o
 build/objects/sndcore.o: core/sndcore.c core/sndcore.h core/types.h core/sndcs.h core/sndwav.h core/util.h | build/objects

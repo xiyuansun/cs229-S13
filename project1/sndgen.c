@@ -3,6 +3,7 @@
 #include <math.h>
 #include <string.h>
 #include "./core/sndcore.h"
+#include "./core/util.h"
 
 const char* err_prefix = "sndgen: Error:";
 
@@ -10,10 +11,11 @@ void print_usage(int status);
 u_int get_int(char* arg);
 double get_real(char* arg);
 void check_bounds(int argc, int i, char* opt);
-snd_t* gen_sin(int bits, int sr, double f, double t, double v);
-snd_t* gen_tri(int bits, int sr, double f, double t, double v);
-snd_t* gen_saw(int bits, int sr, double f, double t, double v);
-snd_t* gen_pwm(int bits, int sr, double f, double t, double v, double pf);
+snd_t* gen_sin(int bits, int sr, double f, double t);
+snd_t* gen_tri(int bits, int sr, double f, double t);
+snd_t* gen_saw(int bits, int sr, double f, double t);
+snd_t* gen_pwm(int bits, int sr, double f, double t, double pf);
+void apply_adsr(snd_t* snd, double a, double d, double s, double r, double v);
 
 int main(int argc, char* argv[])
 {
@@ -21,11 +23,10 @@ int main(int argc, char* argv[])
     int i = 1;
     char* cur_arg;
     snd_t* info = 0;
-    snd_t* current;
 
     FILE* out = stdout;
     int bits = 8;
-    int sr = 500;
+    int sr = 4000;
 
     double f = 2.0;
     double t = 5.0;
@@ -173,10 +174,29 @@ int main(int argc, char* argv[])
         }
         else
         {
-            fprintf(stderr, "%s Unrecongnized argument '%s'. Exiting.\n", err_prefix);
+            fprintf(stderr, "%s Unrecongnized argument '%s'. Exiting.\n", err_prefix, argv[i]);
         }
     }
     
+    if(sine)
+    {
+        info = gen_sin(bits, sr, f, t);
+    }
+    else if(triangle)
+    {
+        info = gen_tri(bits, sr, f, t);
+    }
+    else if(sawtooth)
+    {
+        info = gen_saw(bits, sr, f, t);
+    }
+    else
+    {
+        info = gen_pwm(bits, sr, f, t, pf);
+    }
+
+    apply_adsr(info, a, d, s, r, v);
+
     if(out_type != info->type)
     {
         convert(info);
@@ -208,7 +228,7 @@ void print_usage(int status)
     puts("OTHER OPTIONS:");
     puts("\tOPTION\t\tDEFAULT\t\tDESCRIPTION");
     puts("\t--bits [N]\t8\t\tUse a bit depth of N. Must be 8, 16, or 32.");
-    puts("\t--sr [N]\t500\t\tUse a sample rate of N. Must be an integer.");
+    puts("\t--sr [N]\t4000\t\tUse a sample rate of N. Must be an integer.");
     puts("\t-f [R]\t\t2.0\t\tUse a frequency of R Hz.");
     puts("\t-t [R]\t\t5.0\t\tSet the total duration of the sound, in seconds.");
     puts("\t-v [P]\t\t1.0\t\tSet the peak volume in the range of [0, 1].\n");
@@ -261,4 +281,55 @@ void check_bounds(int argc, int i, char* opt)
         fprintf(stderr, "%s %s was specified without an argument. Exiting.\n", err_prefix, opt);
         exit(1);
     }
+}
+
+snd_t* gen_sin(int bits, int sr, double f, double t)
+{
+    snd_t* ret = malloc(sizeof(snd_t));
+    ret->bitdepth = (u_char) bits;
+    ret->rate = sr;
+    ret->num_channels = 1;
+    ret->type = WAVE;
+    ret->len = (int) t;
+    ret->name = "Generated Sound";
+    ret->file = NULL;
+    ret->data = NULL;
+    ret->last = NULL;
+
+    int min = (int) -1 * pow(2, bits-1);
+    int max = -1 * (min + 1);
+    long mult = (long) pow(2, bits - 1);
+    double incr = 1.0/sr;
+    double cur_time = 0;
+    int total_samples = (int) sr * t;
+    
+    snd_dat_t* node;
+    int val;
+
+    while(cur_time <= t && ret->num_samples <= total_samples)
+    {
+        node = new_node(ret->num_channels);
+        val = LIMIT(((int) mult * sin(2 * M_PI * f * cur_time)), max, min);
+        node->channel_data[0] = val;
+        add(ret, node);
+        cur_time += incr;
+    }
+
+    return ret;
+}
+
+snd_t* gen_tri(int bits, int sr, double f, double t)
+{
+}
+
+snd_t* gen_saw(int bits, int sr, double f, double t)
+{
+}
+
+snd_t* gen_pwm(int bits, int sr, double f, double t, double pf)
+{
+}
+
+void apply_adsr(snd_t* snd, double a, double d, double s, double r, double v)
+{
 }
