@@ -9,3 +9,4 @@ objects/*
 build/*
 debug/*
 template.c
+*.tar.gz
