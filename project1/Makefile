@@ -1,3 +1,4 @@
+PROGS = sndinfo.c sndcat.c sndchan.c sndmix.c sndgen.c
 BOBJS = build/objects/sndcore.o build/objects/sndcs.o build/objects/sndwav.o build/objects/util.o
 DOBJS = debug/objects/sndcore.o debug/objects/sndcs.o debug/objects/sndwav.o debug/objects/util.o
 DEBUG = -g
@@ -5,7 +6,7 @@ CFLAGS = -Wall -c
 LFLAGS = -Wall
 CC = gcc
 
-all: sndinfo sndcat sndchan sndmix
+all: sndinfo sndcat sndchan sndmix sndgen
 
 sndinfo: build/sndinfo
 	@
@@ -19,13 +20,16 @@ sndchan: build/sndchan
 sndmix: build/sndmix
 	@
 
-bug: debug/sndinfo debug/sndcat debug/sndchan debug/sndmix
+sndgen: build/sndgen
+	@
+
+bug: debug/sndinfo debug/sndcat debug/sndchan debug/sndmix debug/sndgen
 
 clean:
 	rm -rf build debug
 
 tarball:
-	tar -czvf cfogerty-snd.tar.gz sndinfo.c sndcat.c sndchan.c sndmix.c core/* Makefile README
+	tar -czvf cfogerty-snd.tar.gz $(PROGS) core/* Makefile README
 
 build:
 	mkdir build
@@ -71,6 +75,14 @@ build/sndmix: $(BOBJS) build/objects/sndmix.o | build
 debug/sndmix: $(DOBJS) debug/objects/sndmix.o | debug
 	$(CC) $(LFLAGS) $(DEBUG) $(DOBJS) debug/objects/sndmix.o -o debug/sndmix -lm
 
+#Links sndgen
+build/sndgen: $(BOBJS) build/objects/sndgen.o | build
+	$(CC) $(LFLAGS) $(BOBJS) build/objects/sndgen.o -o build/sndgen -lm
+
+#Links debug version of sndgen
+debug/sndgen: $(DOBJS) debug/objects/sndgen.o | debug
+	$(CC) $(LFLAGS) $(DEBUG) $(DOBJS) debug/objects/sndgen.o -o debug/sndgen -lm
+
 #Compiles sndinfo.o
 build/objects/sndinfo.o: sndinfo.c core/sndcore.h | build/objects 
 	$(CC) $(CFLAGS) sndinfo.c -o build/objects/sndinfo.o
@@ -102,6 +114,14 @@ build/objects/sndmix.o: sndmix.c core/sndcore.h | build/objects
 #Compiles debug version of sndmix.o
 debug/objects/sndmix.o: sndmix.c core/sndcore.h | debug/objects 
 	$(CC) $(CFLAGS) $(DEBUG) sndmix.c -o debug/objects/sndmix.o
+
+#Compiles sndgen.o
+build/objects/sndgen.o: sndgen.c core/sndcore.h | build/objects 
+	$(CC) $(CFLAGS) sndgen.c -o build/objects/sndgen.o
+
+#Compiles debug version of sndgen.o
+debug/objects/sndgen.o: sndgen.c core/sndcore.h | debug/objects 
+	$(CC) $(CFLAGS) $(DEBUG) sndgen.c -o debug/objects/sndgen.o
 
 #Compiles sndcore.o
 build/objects/sndcore.o: core/sndcore.c core/sndcore.h core/types.h core/sndcs.h core/sndwav.h core/util.h | build/objects

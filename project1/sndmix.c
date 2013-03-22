@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <getopt.h>
 #include <math.h>
 #include <string.h>
 #include "./core/sndcore.h"
@@ -235,7 +234,7 @@ double get_mult(char* arg)
     double cur_mult = strtod(arg, &endptr);
     if(*endptr != '\0')
     {
-        fprintf(stderr, "sndmix: Error: %s is not an integer. Exiting.\n", arg);
+        fprintf(stderr, "sndmix: Error: %s is not a number. Exiting.\n", arg);
         exit(1);
     }
     return cur_mult;
