@@ -107,7 +107,7 @@ void read_info_cs229(snd_t* snd)
 
         if(i >= (snd->num_channels))
         {
-            add(&(snd->data), &node);
+            add(snd, node);
             i = 0;
         }
     }

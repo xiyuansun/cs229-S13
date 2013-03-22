@@ -115,7 +115,7 @@ int read_info_wav(snd_t* snd)
 
             if(i >= (snd->num_channels))
             {
-                add(&(snd->data), &node);
+                add(snd, node);
                 i = 0;
             }
         }

@@ -18,8 +18,8 @@ void normalize_num_channels(snd_t* snd1, snd_t* snd2);
 void convert(snd_t* snd);
 
 snd_dat_t* new_node(int num_channels);
-void add(snd_dat_t** list, snd_dat_t** node);
+void add(snd_t* snd, snd_dat_t* node);
 u_int length(snd_dat_t* list);
-u_int append(snd_dat_t** list, snd_dat_t** postfix);
+u_int append(snd_t* snd, snd_dat_t* postfix);
 void print_list(FILE* out, snd_dat_t* list, int num_channels);
 #endif

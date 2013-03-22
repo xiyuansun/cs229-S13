@@ -24,7 +24,8 @@ bug: debug/sndinfo debug/sndcat debug/sndchan debug/sndmix
 clean:
 	rm -rf build debug
 
-tar:
+tarball:
+	tar -czvf cfogerty-snd.tar.gz sndinfo.c sndcat.c sndchan.c sndmix.c core/* Makefile README
 
 build:
 	mkdir build

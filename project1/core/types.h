@@ -16,6 +16,7 @@ typedef struct sound_data
 typedef struct sound
 {
     snd_dat_t* data;
+    snd_dat_t* last;
     u_int rate;
     u_int num_samples;
     u_int len;

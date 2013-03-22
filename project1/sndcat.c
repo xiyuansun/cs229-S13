@@ -129,7 +129,7 @@ void concatenate(snd_t* snd1, snd_t* snd2)
 
     normalize(snd1, snd2);
 
-    snd1->num_samples += append(&(snd1->data), &(snd2->data));
+    snd1->num_samples += append(snd1, snd2->data);
 }
 
 /*

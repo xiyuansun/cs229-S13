@@ -60,6 +60,7 @@ snd_t* read_sound(FILE* in, char* name)
     ret->name = name;
     ret->file = in;
     ret->data = NULL;
+    ret->last = NULL;
     
     read(&ret);
 
@@ -166,21 +167,20 @@ void determine_type(FILE* in, sndtype* type)
 void normalize_num_samples(snd_t* snd1, snd_t* snd2)
 {
     int i, diff;
-    i = 1;
-    diff = snd1->num_samples- snd2->num_samples;
+    i = 0;
+    diff = snd1->num_samples - snd2->num_samples;
 
     if(diff <= 0) return;
 
     snd_dat_t* node;
-    snd_dat_t* postfix = new_node(snd2->num_channels); 
 
     while(i < diff)
     {
         node = new_node(snd2->num_channels);
-        add(&postfix, &node);
+        add(snd2, node);
         ++i;
     }
-    snd2->num_samples += append(&(snd2->data), &postfix);
+    snd2->num_samples += diff;
 }
 
 /*
@@ -293,21 +293,24 @@ snd_dat_t* new_node(int num_channels)
 * Adds a new node to the end of the
 * sound data linked-list
 */
-void add(snd_dat_t** list, snd_dat_t** node)
+void add(snd_t* snd, snd_dat_t* node)
 {
-    if(!(*list))
+    snd->last;
+    if(!(snd->last))
     {
-        *list = *node;
+        snd->data = node;
+        snd->last = node;
         return;
     }
     
-    snd_dat_t* cur_node = *list;
+    snd_dat_t* cur_node = snd->last;
 
     while(cur_node->next)
     {
         cur_node = cur_node->next;
     }
-    cur_node->next = *node;
+    cur_node->next = node;
+    snd->last = node;
 }
 
 /*
@@ -327,10 +330,19 @@ u_int length(snd_dat_t* list)
 /*
 * Appends postfix on to list, returning the size of postfix
 */
-u_int append(snd_dat_t** list, snd_dat_t** postfix)
+u_int append(snd_t* snd, snd_dat_t* postfix)
 {
-    add(list, postfix);
-    return length(*postfix);
+    add(snd, postfix);
+    u_int ret = length(postfix);
+
+    while(postfix->next)
+    {
+        postfix = postfix->next;
+    }
+
+    snd->last = postfix;
+
+    return ret;
 }
 
 /*
