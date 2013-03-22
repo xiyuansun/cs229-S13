@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
 void print_usage(int status)
 {
     puts("Usage: sndmix [OPTION]... MULT1 FILE1 [MULT2 FILE2]... [MULTn FILEn]\n");
-    puts("Reads in all sound files passed as arguments and mixes them. All sample data from FILEi is multiplied by MULTi. This data is then summed and written out. -10 <= MULTn <= 10\n");
+    puts("Reads in all sound files passed as arguments and mixes them. All sample data from FILEi is multiplied by MULTi. This data is then summed and written out. -10 <= MULTi <= 10\n");
     puts("OPTIONS:");
     puts("\t-h\t\tDisplays this help message.\n");
     puts("\t-o [FILE]\tSpecifies the output file name. If omitted, the file is written to standard output.");
