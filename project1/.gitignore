@@ -10,3 +10,4 @@ build/*
 debug/*
 template.c
 *.tar.gz
+*.png

@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <string.h>
+#include "./core/gencore.h"
 #include "./core/sndcore.h"
-#include "./core/util.h"
 
 const char* err_prefix = "sndgen: Error:";
 
@@ -11,11 +10,6 @@ void print_usage(int status);
 u_int get_int(char* arg);
 double get_real(char* arg);
 void check_bounds(int argc, int i, char* opt);
-snd_t* gen_sin(int bits, int sr, double f, double t);
-snd_t* gen_tri(int bits, int sr, double f, double t);
-snd_t* gen_saw(int bits, int sr, double f, double t);
-snd_t* gen_pwm(int bits, int sr, double f, double t, double pf);
-void apply_adsr(snd_t* snd, double a, double d, double s, double r, double v);
 
 int main(int argc, char* argv[])
 {
@@ -59,6 +53,7 @@ int main(int argc, char* argv[])
         }
         else if(strcmp(cur_arg, "-o") == 0)
         {
+            printf("Output\n");
             check_bounds(argc, i, "-o");
             out = fopen(argv[i + 1], "wb");
 
@@ -111,8 +106,10 @@ int main(int argc, char* argv[])
                 fprintf(stderr, "%s The the v parameter is not in range of [0, 1]. Exiting\n", err_prefix);
                 exit(1);
             }
+            
+            i += 2;
         }
-        else if(strcmp(cur_arg, "-a"))
+        else if(strcmp(cur_arg, "-a") == 0)
         {
             check_bounds(argc, i, "-a");
             a = get_real(argv[i + 1]);
@@ -134,6 +131,8 @@ int main(int argc, char* argv[])
                 fprintf(stderr, "%s The the s parameter is not in range of [0, 1]. Exiting\n", err_prefix);
                 exit(1);
             }
+
+            i += 2;
         }
         else if(strcmp(cur_arg, "-r") == 0)
         {
@@ -145,21 +144,26 @@ int main(int argc, char* argv[])
         {
             sine = 1;
             triangle = sawtooth = pulse = 0;
+            ++i;
         }
         else if(strcmp(cur_arg, "--triangle") == 0)
         {
+            printf("Triangle\n");
             triangle = 1;
             sine = sawtooth = pulse = 0;
+            ++i;
         }
         else if(strcmp(cur_arg, "--sawtooth") == 0)
         {
             sawtooth = 1;
             sine = triangle = pulse = 0;
+            ++i;
         }
         else if(strcmp(cur_arg, "--pulse") == 0)
         {
             pulse = 1;
             sine = triangle = sawtooth = 0;
+            ++i;
         }
         else if(strcmp(cur_arg, "--pf") == 0)
         {
@@ -171,6 +175,8 @@ int main(int argc, char* argv[])
                 fprintf(stderr, "%s The the pf parameter is not in range of [0, 1]. Exiting\n", err_prefix);
                 exit(1);
             }
+            
+            i += 2;
         }
         else
         {
@@ -184,6 +190,8 @@ int main(int argc, char* argv[])
     }
     else if(triangle)
     {
+        printf("gen_tri\n");
+        fflush(stdout);
         info = gen_tri(bits, sr, f, t);
     }
     else if(sawtooth)
@@ -281,55 +289,4 @@ void check_bounds(int argc, int i, char* opt)
         fprintf(stderr, "%s %s was specified without an argument. Exiting.\n", err_prefix, opt);
         exit(1);
     }
-}
-
-snd_t* gen_sin(int bits, int sr, double f, double t)
-{
-    snd_t* ret = malloc(sizeof(snd_t));
-    ret->bitdepth = (u_char) bits;
-    ret->rate = sr;
-    ret->num_channels = 1;
-    ret->type = WAVE;
-    ret->len = (int) t;
-    ret->name = "Generated Sound";
-    ret->file = NULL;
-    ret->data = NULL;
-    ret->last = NULL;
-
-    int min = (int) -1 * pow(2, bits-1);
-    int max = -1 * (min + 1);
-    long mult = (long) pow(2, bits - 1);
-    double incr = 1.0/sr;
-    double cur_time = 0;
-    int total_samples = (int) sr * t;
-    
-    snd_dat_t* node;
-    int val;
-
-    while(cur_time <= t && ret->num_samples <= total_samples)
-    {
-        node = new_node(ret->num_channels);
-        val = LIMIT(((int) mult * sin(2 * M_PI * f * cur_time)), max, min);
-        node->channel_data[0] = val;
-        add(ret, node);
-        cur_time += incr;
-    }
-
-    return ret;
-}
-
-snd_t* gen_tri(int bits, int sr, double f, double t)
-{
-}
-
-snd_t* gen_saw(int bits, int sr, double f, double t)
-{
-}
-
-snd_t* gen_pwm(int bits, int sr, double f, double t, double pf)
-{
-}
-
-void apply_adsr(snd_t* snd, double a, double d, double s, double r, double v)
-{
 }

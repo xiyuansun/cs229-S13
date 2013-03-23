@@ -1,6 +1,6 @@
 PROGS = sndinfo.c sndcat.c sndchan.c sndmix.c sndgen.c
-BOBJS = build/objects/sndcore.o build/objects/sndcs.o build/objects/sndwav.o build/objects/util.o
-DOBJS = debug/objects/sndcore.o debug/objects/sndcs.o debug/objects/sndwav.o debug/objects/util.o
+BOBJS = build/objects/sndcore.o build/objects/sndcs.o build/objects/sndwav.o build/objects/util.o build/objects/gencore.o
+DOBJS = debug/objects/sndcore.o debug/objects/sndcs.o debug/objects/sndwav.o debug/objects/util.o debug/objects/gencore.o
 DEBUG = -g
 CFLAGS = -Wall -c
 LFLAGS = -Wall
@@ -117,11 +117,11 @@ debug/objects/sndmix.o: sndmix.c core/sndcore.h | debug/objects
 
 #Compiles sndgen.o
 build/objects/sndgen.o: sndgen.c core/sndcore.h core/util.h | build/objects 
-	$(CC) $(CFLAGS) sndgen.c -o build/objects/sndgen.o -lm
+	$(CC) $(CFLAGS) sndgen.c -o build/objects/sndgen.o
 
 #Compiles debug version of sndgen.o
 debug/objects/sndgen.o: sndgen.c core/sndcore.h core/util.h | debug/objects 
-	$(CC) $(CFLAGS) $(DEBUG) sndgen.c -o debug/objects/sndgen.o -lm
+	$(CC) $(CFLAGS) $(DEBUG) sndgen.c -o debug/objects/sndgen.o
 
 #Compiles sndcore.o
 build/objects/sndcore.o: core/sndcore.c core/sndcore.h core/types.h core/sndcs.h core/sndwav.h core/util.h | build/objects
@@ -130,6 +130,14 @@ build/objects/sndcore.o: core/sndcore.c core/sndcore.h core/types.h core/sndcs.h
 #Compiles debug version of sndcore.o
 debug/objects/sndcore.o: core/sndcore.c core/sndcore.h core/types.h core/sndcs.h core/sndwav.h core/util.h | debug/objects
 	$(CC) $(CFLAGS) $(DEBUG) core/sndcore.c -o debug/objects/sndcore.o
+
+#Compiles gencore.o
+build/objects/gencore.o: core/gencore.c core/gencore.h core/sndcore.h core/types.h core/util.h | build/objects
+	$(CC) $(CFLAGS) core/gencore.c -o build/objects/gencore.o
+
+#Compiles debug version of gemcore.o
+debug/objects/gencore.o: core/gencore.c core/gencore.h core/sndcore.h core/types.h core/util.h | debug/objects
+	$(CC) $(CFLAGS) $(DEBUG) core/gencore.c -o debug/objects/gencore.o
 
 #Compiles sndcs.o
 build/objects/sndcs.o: core/sndcs.c core/sndcs.h core/sndcore.h core/util.h core/types.h | build/objects
