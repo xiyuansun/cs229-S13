@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include "sndcs.h"
@@ -93,17 +94,42 @@ void read_info_cs229(snd_t* snd)
 {
     snd_dat_t* node;
     int i = 0;
-    int dat;
-
-    while(fscanf(snd->file, "%d", &dat) && !feof(snd->file))
+    char read_sample = 0;
+    int dat = 0;
+    int mult = 1;
+    char c;
+    
+    while((c = fgetc(snd->file)) && !feof(snd->file))
     {
         if(i == 0)
         {
             node = new_node(snd->num_channels);
         }
-        
-        node->channel_data[i] = dat;
-        ++i;
+
+        if(read_sample && isspace(c))
+        {
+            node->channel_data[i] = mult * dat;
+            mult = 1;
+            dat = 0;
+            read_sample = 0;
+            ++i;
+        }
+        else if('0' <= c && c <= '9')
+        {
+            read_sample = 1;
+            dat *= 10;
+            dat += (c - '0');
+        }
+        else if(!read_sample && c == '-')
+        {
+            read_sample = 1;
+            mult = -1;
+        }
+        else if(!isspace(c))
+        {
+            fprintf(stderr, "Error parsing %s. Exiting.\n", snd->name);
+            exit(1);
+        }
 
         if(i >= (snd->num_channels))
         {
