@@ -4,17 +4,22 @@
 #include <math.h>
 #include "sndabc.h"
 #include "util.h"
+#include "gencore.h"
+#include "sndcore.h"
 
 void read_header_abc229(snd_t* snd)
 {
     char word[11];
-    snd_dat_t* inst[16];
+    snd_t* inst[16];
     int bpm = 240;
     char c;
     char read_num = 0;
     int param = 0;
     int i = 0;
     int ninst = 0;
+    snd->type = WAVE;
+    snd->num_channels = 1;
+    snd->num_samples = 0;
 
     while((c = fgetc(snd->file)) && !feof(snd->file))
     {
@@ -87,10 +92,74 @@ void read_header_abc229(snd_t* snd)
             exit(1);
         }
     }
+    
+    if(ninst <= 0)
+    {
+        fprintf(stderr, "Error parsing %s. No instruments found. Exiting.\n", snd->name);
+        exit(1);
+    }
+    
+    i = 0;
+    int max_ind = 0;
+    int max_len = 0;
+    int cur_len = 0;
+    
+    while(i < ninst)
+    {
+        cur_len = length(inst[i]->data);
 
+        if(cur_len > max_len)
+        {
+            max_len = cur_len;
+            max_ind = i;
+        }
+        ++i;
+    }
+    
+    long val;
+    int min = (int) -1 * pow(2, snd->bitdepth - 1);
+    int max = -1 * (min + 1);
+
+    snd_dat_t* nodes[16];
+    i = 0;
+    while(i < ninst)
+    {
+        if(i != max_ind)
+        {
+            normalize_num_samples(inst[max_ind], inst[i]);
+        }
+
+        nodes[i] = inst[i]->data;
+        ++i;
+    }
+    
+    while(nodes[0])
+    {
+        i = 1;
+        while(i < ninst)
+        {
+            val = nodes[0]->channel_data[0] + nodes[i]->channel_data[0];
+            nodes[0]->channel_data[0] = LIMIT(val, max, min);
+            nodes[i] = nodes[i]->next;
+            ++i;
+        }
+        nodes[0] = nodes[0]->next;
+    }
+
+    i = 1;
+    while(i < ninst)
+    {
+        close_sound(inst[i]);
+        ++i;
+    }
+    
+    snd->num_samples = inst[0]->num_samples;
+    snd->name = inst[0]->name;
+    snd->data = inst[0]->data;
+    snd->last = inst[0]->last;
 }
 
-snd_dat_t* parse_instrument(FILE* in, int inst, int bpm, int sr, int bits)
+snd_t* parse_instrument(FILE* in, int inst, int bpm, int sr, int bits)
 {
     snd_t* final_inst = malloc(sizeof(snd_t));
     final_inst->num_channels = 1;
@@ -100,13 +169,15 @@ snd_dat_t* parse_instrument(FILE* in, int inst, int bpm, int sr, int bits)
     final_inst->rate = sr;
     final_inst->bitdepth = bits;
     final_inst->num_samples = 0;
+    final_inst->file = in;
 
     char word[10];
     char wave_type[10];
     char c;
     int read_num = 0;
     int i = 0;
-    double v, a, d, s, r, pf;
+    double pf = 0;
+    adsr_t en = {0, 0, 0, 0, 0};
 
     while((c = fgetc(in)) && !feof(in))
     {
@@ -128,23 +199,23 @@ snd_dat_t* parse_instrument(FILE* in, int inst, int bpm, int sr, int bits)
 
             if(strncmp(word, "VOLUME", 6) == 0)
             {
-                fscanf(in, "%lf", &v);
+                fscanf(in, "%lf", &(en.v));
             }
             else if(strncmp(word, "ATTACK", 6) == 0)
             {
-                fscanf(in, "%lf", &a);
+                fscanf(in, "%lf", &(en.a));
             }
             else if(strncmp(word, "DECAY", 5) == 0)
             {
-                fscanf(in, "%lf", &d);
+                fscanf(in, "%lf", &(en.d));
             }
             else if(strncmp(word, "SUSTAIN", 7) == 0)
             {
-                fscanf(in, "%lf", &s);
+                fscanf(in, "%lf", &(en.s));
             }
             else if(strncmp(word, "RELEASE", 7) == 0)
             {
-                fscanf(in, "%lf", &r);
+                fscanf(in, "%lf", &(en.r));
             }
             else if(strncmp(word, "PULSEFRAC", 9) == 0)
             {
@@ -153,11 +224,12 @@ snd_dat_t* parse_instrument(FILE* in, int inst, int bpm, int sr, int bits)
             else if(strncmp(word, "WAVEFORM", 8) == 0)
             {
                 fscanf(in, "%s", wave_type);
+                to_upper(wave_type);
             }
             else if(strncmp(word, "SCORE", 5) == 0)
             {
                 while(c != '[') c = fgetc(in);
-                parse_notes(in, final_inst, bpm, wave_type);
+                parse_notes(in, final_inst, bpm, wave_type, pf, en);
                 break;
             }
             else
@@ -174,9 +246,11 @@ snd_dat_t* parse_instrument(FILE* in, int inst, int bpm, int sr, int bits)
             exit(1);
         }
     }
+
+    return final_inst;
 }
 
-void parse_notes(FILE* in, snd_t* final_inst, int bpm, char* wave_type)
+void parse_notes(FILE* in, snd_t* final_inst, int bpm, char* wave_type, double pf, adsr_t en)
 {
     const char notes[] = {'c', 'c', 'd', 'd', 'e', 'f', 'f', 'g', 'g', 'a', 'a', 'b'};
     const int base_note_ind = 9;
@@ -191,7 +265,7 @@ void parse_notes(FILE* in, snd_t* final_inst, int bpm, char* wave_type)
     double count = 1.0;
     int n = 0;
     int d = 1;
-    snd_t* cur_note;
+    snd_t* cur_note = NULL;
     
 
     while((c = fgetc(in)) && c != ']')
@@ -263,7 +337,7 @@ void parse_notes(FILE* in, snd_t* final_inst, int bpm, char* wave_type)
         {
             continue;
         }
-        else if(isspace(c) && reading_note)
+        else if((isspace(c) || c == '|') && reading_note)
         {
             if(note != 'z')
             {
@@ -272,24 +346,29 @@ void parse_notes(FILE* in, snd_t* final_inst, int bpm, char* wave_type)
                 {
                     ++i;
                 }
+                
+                if(n == 0) n = 1;
 
                 i += sharp;
             
                 int note_offset = i - base_note_ind;
                 freq = base_freq * pow(2, octive_change) * pow(2, note_offset/12.0);
-                cur_note = gen(final_inst->bitdepth, final_inst->rate, freq, n / (bps * d), wave_type);
+                cur_note = gen(final_inst->bitdepth, final_inst->rate, freq, n / (bps * d), pf, wave_type);
             }
             else
             {
                 freq = 0;
-                cur_note = gen_sil(final_inst->bitdepth, final_inst->rate, n / (bps * d)) 
+                cur_note = gen_sil(final_inst->bitdepth, final_inst->rate, n / (bps * d));
             }
             
+            final_inst->num_samples += append(final_inst, cur_note->data);
             reading_note = 0;
             d = 1;
             n = 0;
             sharp = 0;
             octive_change = 0;
+            free(cur_note);
+            cur_note = NULL;
         }
         else
         {

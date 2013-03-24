@@ -130,7 +130,7 @@ void read(snd_t** snd)
         read_header_cs229(*snd);
         read_info_cs229(*snd);
     }
-    else
+    else if(WAVE == (*snd)->type);
     {
         int res = read_header_wav(*snd);
         res |= read_info_wav(*snd);
@@ -158,6 +158,11 @@ void determine_type(FILE* in, sndtype* type)
     if(type_info[0] == 'C') type_info[4] = fgetc(in);
     if(0 == strcmp(type_info, "CS229")) *type = CS229;
     else if(0 == strcmp(type_info, "RIFF")) *type = WAVE;
+    else
+    {
+        fprintf(stderr, "Error reading file. Not a supported sound file. Exiting.\n");
+        exit(1);
+    }
 }
 
 /*

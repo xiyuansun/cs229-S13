@@ -27,4 +27,13 @@ typedef struct sound
     FILE* file;
 } snd_t;
 
+typedef struct adsr_envelope
+{
+    double a;
+    double d;
+    double s;
+    double r;
+    double v;
+} adsr_t;
+
 #endif
