@@ -4,6 +4,11 @@
 #include "util.h"
 #include "sndcore.h"
 
+snd_t* gen(int bits, int sr, double f, double t, double pf, char* wave_type)
+{
+    //YOU ARE HERE
+}
+
 snd_t* gen_sin(int bits, int sr, double f, double t)
 {
     snd_t* ret = malloc(sizeof(snd_t));

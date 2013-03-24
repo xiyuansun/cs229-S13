@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <math.h>
 #include "sndabc.h"
 #include "util.h"
 
@@ -82,14 +83,11 @@ void read_header_abc229(snd_t* snd)
         }
         else if(!isspace(c) || i != 0)
         {
-            printf("%d %c %s\n", i, c, word);
             fprintf(stderr, "Error parsing %s. Malformed file. Exiting.\n", snd->name);
             exit(1);
         }
     }
 
-    printf("bpm: %d\n", bpm);
-    printf("ninsts: %d\n", ninst);
 }
 
 snd_dat_t* parse_instrument(FILE* in, int inst, int bpm, int sr, int bits)
@@ -104,6 +102,7 @@ snd_dat_t* parse_instrument(FILE* in, int inst, int bpm, int sr, int bits)
     final_inst->num_samples = 0;
 
     char word[10];
+    char wave_type[10];
     char c;
     int read_num = 0;
     int i = 0;
@@ -130,43 +129,35 @@ snd_dat_t* parse_instrument(FILE* in, int inst, int bpm, int sr, int bits)
             if(strncmp(word, "VOLUME", 6) == 0)
             {
                 fscanf(in, "%lf", &v);
-                printf("V: %lf\n", v);
             }
             else if(strncmp(word, "ATTACK", 6) == 0)
             {
                 fscanf(in, "%lf", &a);
-                printf("A: %lf\n", a);
             }
             else if(strncmp(word, "DECAY", 5) == 0)
             {
                 fscanf(in, "%lf", &d);
-                printf("D: %lf\n", d);
             }
             else if(strncmp(word, "SUSTAIN", 7) == 0)
             {
                 fscanf(in, "%lf", &s);
-                printf("S: %lf\n", s);
             }
             else if(strncmp(word, "RELEASE", 7) == 0)
             {
                 fscanf(in, "%lf", &r);
-                printf("R: %lf\n", r);
             }
             else if(strncmp(word, "PULSEFRAC", 9) == 0)
             {
                 fscanf(in, "%lf", &pf);
-                printf("PF: %lf\n", pf);
             }
             else if(strncmp(word, "WAVEFORM", 8) == 0)
             {
-                fscanf(in, "%s", word);
-                printf("WAVEFORM: %s\n", word);
+                fscanf(in, "%s", wave_type);
             }
             else if(strncmp(word, "SCORE", 5) == 0)
             {
                 while(c != '[') c = fgetc(in);
-                parse_notes(in, final_inst, bpm);
-                printf("\n");
+                parse_notes(in, final_inst, bpm, wave_type);
                 break;
             }
             else
@@ -185,17 +176,22 @@ snd_dat_t* parse_instrument(FILE* in, int inst, int bpm, int sr, int bits)
     }
 }
 
-void parse_notes(FILE* in, snd_t* final_inst, int bpm)
+void parse_notes(FILE* in, snd_t* final_inst, int bpm, char* wave_type)
 {
+    const char notes[] = {'c', 'c', 'd', 'd', 'e', 'f', 'f', 'g', 'g', 'a', 'a', 'b'};
+    const int base_note_ind = 9;
+    const int base_freq = 440;
+    double freq;
     char c;
     char reading_note = 0;
     char note;
     char sharp = 0;
     int octive_change = 0;
-    double bps = bpm / 60. //YOU WERE HERE
+    double bps = bpm / 60.0;
     double count = 1.0;
     int n = 0;
     int d = 1;
+    snd_t* cur_note;
     
 
     while((c = fgetc(in)) && c != ']')
@@ -269,12 +265,26 @@ void parse_notes(FILE* in, snd_t* final_inst, int bpm)
         }
         else if(isspace(c) && reading_note)
         {
-            printf("NOTE: %c\n", note);
-            printf("SHARP: %d\n", sharp);
-            printf("OCTIVE: %d\n", octive_change);
-            printf("N: %d\n", n);
-            printf("D: %d\n", d);
-            printf("\n");
+            if(note != 'z')
+            {
+                int i = 0;
+                while(notes[i] != note)
+                {
+                    ++i;
+                }
+
+                i += sharp;
+            
+                int note_offset = i - base_note_ind;
+                freq = base_freq * pow(2, octive_change) * pow(2, note_offset/12.0);
+                cur_note = gen(final_inst->bitdepth, final_inst->rate, freq, n / (bps * d), wave_type);
+            }
+            else
+            {
+                freq = 0;
+                cur_note = gen_sil(final_inst->bitdepth, final_inst->rate, n / (bps * d)) 
+            }
+            
             reading_note = 0;
             d = 1;
             n = 0;
@@ -283,7 +293,6 @@ void parse_notes(FILE* in, snd_t* final_inst, int bpm)
         }
         else
         {
-            printf("%c %c %d %d %d %d\n", c, note, sharp, octive_change, n, d);
             fprintf(stderr, "Error parsing notes. Malformed structure. Exiting.\n");
             exit(1);
         }

@@ -295,7 +295,6 @@ snd_dat_t* new_node(int num_channels)
 */
 void add(snd_t* snd, snd_dat_t* node)
 {
-    snd->last;
     if(!(snd->last))
     {
         snd->data = node;
