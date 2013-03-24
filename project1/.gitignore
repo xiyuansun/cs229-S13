@@ -12,3 +12,5 @@ template.c
 *.tar.gz
 *.png
 *.dat
+*.abc229
+sndplay
