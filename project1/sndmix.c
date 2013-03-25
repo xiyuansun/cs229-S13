@@ -11,6 +11,11 @@ void amp(snd_t* snd, double mult);
 double get_mult(char* arg);
 void normalize(snd_t* snd1, snd_t* snd2);
 
+/*
+* 1) Parses arguments
+* 2) Reads in, modifies, and stores sound files as it sees them
+* 3) Writes sound file out
+*/
 int main(int argc, char* argv[])
 {
     const char* err_prefix = "sndmix: Error:";
@@ -109,7 +114,7 @@ int main(int argc, char* argv[])
 void print_usage(int status)
 {
     puts("Usage: sndmix [OPTION]... MULT1 FILE1 [MULT2 FILE2]... [MULTn FILEn]\n");
-    puts("Reads in all sound files passed as arguments and mixes them. All sample data from FILEi is multiplied by MULTi. This data is then summed and written out. -10 <= MULTi <= 10\n");
+    puts("Reads in all sound files passed as arguments and mixes them. All sample data from FILEi is multiplied by MULTi. This data is then summed and written out. -10 <= MULTi <= 10\nThe number of channels in the output will be the max of the total channels. Empty channels will be filled with 0\n");
     puts("OPTIONS:");
     puts("\t-h\t\tDisplays this help message.\n");
     puts("\t-o [FILE]\tSpecifies the output file name. If omitted, the file is written to standard output.");
@@ -204,6 +209,9 @@ void normalize(snd_t* snd1, snd_t* snd2)
     }
 }
 
+/*
+* Amplifies the sound data in snd by mult
+*/
 void amp(snd_t* snd, double mult)
 {
     int i, max, min;
@@ -228,6 +236,9 @@ void amp(snd_t* snd, double mult)
     }
 }
 
+/*
+* Parses a real value from a string
+*/
 double get_mult(char* arg)
 {
     char* endptr;

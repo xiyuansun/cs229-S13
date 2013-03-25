@@ -35,7 +35,6 @@ int main(int argc, char* argv[])
         }
     }
     
-    //Get from stdin
     if(optind == argc)
     {
         snd_t* info = read_sound(stdin, "Standard Input");

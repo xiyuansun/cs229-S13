@@ -9,6 +9,12 @@ const char* err_prefix = "sndgen: Error:";
 
 void print_usage(int status);
 
+/*
+* 1) Parses arguments
+* 2) Generates sound with appropriate wave, length, bit depth, and sample rate
+* 3) Applies ADSR envelope
+* 4) Writes out sound
+*/
 int main(int argc, char* argv[])
 {
     sndtype out_type = CS229;

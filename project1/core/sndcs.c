@@ -153,6 +153,9 @@ void read_info_cs229(snd_t* snd)
     }
 }
 
+/*
+* Writes out a cs229 file.
+*/
 void write_cs229(FILE* out, snd_t* snd)
 {
     fputs("cs229\n", out);

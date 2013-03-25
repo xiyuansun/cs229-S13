@@ -76,11 +76,6 @@ u_int read_little_dat(FILE* file, int bytes)
         c = fgetc(file);
         
         read_u.c[i] = c;
-/*
-        not_ret = not_ret << 8;
-        not_ret |= c;
-        ret |= ((u_int) c) << (i * 8);
-*/
         ++i;
     }
 
@@ -113,6 +108,9 @@ void write_bytes(FILE* out, char* dat, int bytes, char should_free)
     }
 }
 
+/*
+* Fills a character array with bytes from dat
+*/
 char* to_little_char_arr(int dat, int bytes)
 {
     char* ret = malloc(sizeof(char) * bytes);
@@ -127,6 +125,9 @@ char* to_little_char_arr(int dat, int bytes)
     return ret;
 }
 
+/*
+* Parses an integer from a string, and checks for errors
+*/
 u_int get_int(char* arg, const char* err_prefix)
 {
     char* endptr;
@@ -141,6 +142,9 @@ u_int get_int(char* arg, const char* err_prefix)
     return ret;
 }
 
+/*
+* Parses a real value from a string, and checks for errors
+*/
 double get_real(char* arg, const char* err_prefix)
 {
     char* endptr;
@@ -155,6 +159,9 @@ double get_real(char* arg, const char* err_prefix)
     return ret;
 }
 
+/*
+* Prints a detailed error message if i + 1 >= argc
+*/
 void check_bounds(int argc, int i, char* opt, const char* err_prefix)
 {
     if(i + 1 >= argc)

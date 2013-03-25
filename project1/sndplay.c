@@ -9,6 +9,11 @@ const char* err_prefix = "sndplay: Error:";
 
 void print_usage(int status);
 
+/*
+* 1) Parse arguments
+* 2) Parse file to sound
+* 3) Write sound out.
+*/
 int main(int argc, char* argv[])
 {
     sndtype out_type = CS229;
@@ -24,6 +29,7 @@ int main(int argc, char* argv[])
     info->data = NULL;
     info->last = NULL;
     info->num_samples = 0;
+    info->name = "Standard Input";
 
     FILE* out = stdout;
     int mute[16];
@@ -97,6 +103,7 @@ int main(int argc, char* argv[])
         else if(info->file == stdin)
         {
             info->file = fopen(cur_arg, "rb");
+            info->name = get_filename(cur_arg);
             if(!(info->file))
             {
                 fprintf(stderr, "%s Could not open %s for writing. Exiting.\n", err_prefix, cur_arg);
@@ -138,12 +145,12 @@ int main(int argc, char* argv[])
 }
 
 /*
-* Prints out usage details for sndgen
+* Prints out usage details for sndplay
 */
 void print_usage(int status)
 {
-    puts("Usage: sndgen [OPTIONS]\n");
-    puts("Produces a sound of a specified frequency and waveform using a simple ADSR envelope.\n");
+    puts("Usage: sndplay [OPTIONS] [ABC229FILE]\n");
+    puts("Parses an abc229 file and writes out a sound based on that file. If ABC229FILE is not given, read from standard input. Only one ABC229FILE is allowed.\n");
     puts("STANDARD OPTIONS:");
     puts("\t-h\t\t\tDisplays this help message.");
     puts("\t-o [FILE]\t\tSpecifies the output file name. If omitted, the file is written to standard output.");

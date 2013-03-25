@@ -5,6 +5,10 @@
 #include "util.h"
 #include "sndcore.h"
 
+/*
+* 1) Loops through chunks until a fmt  chunk is found
+* 2) Reads fmt data and stores in snd
+*/
 int read_header_wav(snd_t* snd)
 {
     u_int remaining_bytes = read_little_dat(snd->file, 4);
@@ -79,6 +83,10 @@ int read_header_wav(snd_t* snd)
     return 0;
 }
 
+/*
+* 1) Loops through chunks until data chunk is found.
+* 2) Reads data from data chunk and stores in snd.
+*/
 int read_info_wav(snd_t* snd)
 {
     u_int remaining_bytes;
@@ -145,6 +153,9 @@ int read_info_wav(snd_t* snd)
     return 0;
 }
 
+/*
+* Writes out wave file.
+*/
 void write_wav(FILE* out, snd_t* snd)
 {
     int bytedepth = snd->bitdepth / 8;

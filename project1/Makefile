@@ -29,7 +29,7 @@ sndplay: build/sndplay
 bug: debug/sndinfo debug/sndcat debug/sndchan debug/sndmix debug/sndgen debug/sndplay
 
 clean:
-	rm -rf build debug
+	rm -rf build debug cfogerty-snd.tar.gz
 
 tarball:
 	tar -czvf cfogerty-snd.tar.gz $(PROGS) core/* Makefile README

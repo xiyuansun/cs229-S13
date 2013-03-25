@@ -7,6 +7,12 @@ void print_usage(int status);
 void concatenate(snd_t* snd1, snd_t* snd2);
 void normalize(snd_t* snd1, snd_t* snd2);
 
+/*
+* 1) Parses arguments
+* 2) Opens each sound file given (or reads from stdin)
+* 3) Concatenates sounds in order
+* 4) Writes out sound
+*/
 int main(int argc, char* argv[])
 {
     sndtype out_type = CS229;

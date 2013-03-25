@@ -9,6 +9,12 @@ void layer(snd_t* snd1, snd_t* snd2);
 void unlayer(snd_t* snd, int channel);
 void normalize(snd_t* snd1, snd_t* snd2);
 
+/*
+* 1) Parses arguments
+* 2) Adds channels as sounds are read in
+* 3) Picks channel to write out if necessary
+* 4) Writes out sound
+*/
 int main(int argc, char* argv[])
 {
     sndtype out_type = CS229;
@@ -91,7 +97,7 @@ int main(int argc, char* argv[])
     {
         if(1 <= channel && channel <= info->num_channels)
         {
-        unlayer(info, channel-1);
+            unlayer(info, channel-1);
         }
         else
         {
@@ -187,6 +193,9 @@ void layer(snd_t* snd1, snd_t* snd2)
     snd1->num_channels = total_channels;
 }
 
+/*
+* Removes all but channel channel from the sound
+*/
 void unlayer(snd_t* snd, int channel)
 {
     snd_dat_t* node = snd->data;

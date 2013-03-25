@@ -1,2 +1,16 @@
-I'LL ADD A DESCRIPTION HERE LATER. JUST DOING THIS TO ADD SOMETHING.
-Okay, changing something to test push.
+/*****************************************************/
+/*           CS229 PROJECT 1 - SOUND FILES           */
+/*****************************************************/
+
+The goal of this project was to make a set of utilities
+that manipulated sound files in a variety of ways. These
+utilities are listed with a short description below:
+
+    sndinfo: Display basic information about a sound.
+    sndcat : Concatenate sounds by length.
+    sndchan: Concatenate sounds by channel.
+    sndmix : Additively mix multiple sounds.
+    sndgen : Generate a sound based on given input.
+    sndplay: Create a sound from an ABC229 file.
+
+
