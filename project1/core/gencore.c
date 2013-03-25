@@ -251,8 +251,9 @@ snd_t* gen_pwm(int bits, int sr, double f, double t, double pf)
 }
 
 /*
-* Applies the ADSR envelope en
-* to the sound data in node.
+* 1) Calculate actual duration of a, d, s, and r
+* 2) Find the number of samples each section will apply to
+* 3) Apply the appropriate scalar to each sample
 */
 void apply_adsr(snd_t* snd, adsr_t en)
 {

@@ -8,11 +8,15 @@
 #include "gencore.h"
 #include "sndcore.h"
 
+/*
+* 1) Parses the abc229 file.
+* 2) Mixes the instruments together into the snd file.
+*/
 void read_header_abc229(snd_t* snd, int* mute)
 {
     char word[11];
     snd_t* inst[16];
-    int bpm = 240;
+    int bpm = 0;
     char c;
     char read_num = 0;
     int param = 0;
@@ -22,11 +26,20 @@ void read_header_abc229(snd_t* snd, int* mute)
     snd->num_channels = 1;
     snd->num_samples = 0;
 
+    /*
+    * 1) If the current character of the line is a '%', read to
+    *    the end of the line, go to 1
+    * 2) Else if the current character is in the alphabet, add it to word
+    * 3) Else if the current character is a space and a word was read
+    *    a) Read past the whitespace, get the integer parameter for the keyword
+    *    b) If the keyword is TEMPO, set bpm
+    *    c) Else if the keyword is INSTRUMENT, call parse_instrument()
+    */
     while((c = fgetc(snd->file)) && !feof(snd->file))
     {
         if(c == '%')
         {
-            while(c != '\n') c = fgetc(snd->file);
+            while(c != '\n' && !feof(snd->file)) c = fgetc(snd->file);
             continue;
         }
 
@@ -62,6 +75,12 @@ void read_header_abc229(snd_t* snd, int* mute)
             }
             else if(strncmp(word, "INSTRUMENT", 10) == 0)
             {
+                if(!bpm)
+                {
+                    fprintf(stderr, "Error parsing %s. Tempo keyword not found, or defined as 0. Exiting.\n", snd->name);
+                    exit(1);
+                }
+
                 if(param != ninst)
                 {
                     fprintf(stderr, "Error parsing %s. Expected instrument %d, got %d. Exiting.\n", snd->name, ninst, param);
@@ -100,6 +119,13 @@ void read_header_abc229(snd_t* snd, int* mute)
         exit(1);
     }
     
+    /*
+    * 1) Find the instrument with the longest sound.
+    * 2) Normalize number of samples amongst instruments.
+    * 3) Mix the instruments together, taking into account mutes.
+    * 4) Store the final sound in snd.
+    */
+
     i = 0;
     int max_ind = 0;
     int max_len = 0;
@@ -162,6 +188,12 @@ void read_header_abc229(snd_t* snd, int* mute)
     snd->last = inst[0]->last;
 }
 
+/*
+* 1) Creates a new sound
+* 2) Parses the keywords from the instrument
+* 3) Calls parse_notes()
+* 4) Returns the new sound.
+*/
 snd_t* parse_instrument(FILE* in, int inst, int bpm, int sr, int bits)
 {
     snd_t* final_inst = malloc(sizeof(snd_t));
@@ -185,7 +217,7 @@ snd_t* parse_instrument(FILE* in, int inst, int bpm, int sr, int bits)
     {
         if(c == '%')
         {
-            while(c != '\n') c= fgetc(in);
+            while(c != '\n' && !feof(in)) c= fgetc(in);
             continue;
         }
         
@@ -252,6 +284,11 @@ snd_t* parse_instrument(FILE* in, int inst, int bpm, int sr, int bits)
     return final_inst;
 }
 
+/*
+* 1) Parse each note
+* 2) Calculate the frequency of the note
+* 3) Append then note to final_inst
+*/
 void parse_notes(FILE* in, snd_t* final_inst, int bpm, char* wave_type, double pf, adsr_t en)
 {
     const char notes[] = {'c', 'c', 'd', 'd', 'e', 'f', 'f', 'g', 'g', 'a', 'a', 'b'};
@@ -268,7 +305,20 @@ void parse_notes(FILE* in, snd_t* final_inst, int bpm, char* wave_type, double p
     int d = 1;
     snd_t* cur_note = NULL;
     
-
+    /*
+    * 1) If the current character is a space or |, and we are not reading a note
+    *    a) Go to 1
+    * 2) If the current character is alpha and we are not reading a note
+    *    a) store the character in note, modify octive/note to lowercase.
+    * 3) Else if current character is # and reading note
+    *    a) set sharp flag
+    * 4) Else if current character is ',', modify octive and reading note
+    * 5) Else if current character is ', modify octive and reading note
+    * 6) Else if current character is a number and reading note
+    *    a) read until not number and store in appropriate variable
+    * 7) Else if current character is whitespace or | and reading note
+    *    a) generate the waveform, reset variables
+    */
     while((c = fgetc(in)) && c != ']')
     {
         if((isspace(c) || c == '|') && !reading_note)
@@ -283,6 +333,12 @@ void parse_notes(FILE* in, snd_t* final_inst, int bpm, char* wave_type, double p
             {
                 --octive_change;
                 note += ('a'-'A');
+            }
+            
+            if('g' < note && note < 'z')
+            {
+                fprintf(stderr, "Unrecognized note %c. Exiting.\n", note);
+                exit(1);
             }
         }
         else if(c == '#' && reading_note)
