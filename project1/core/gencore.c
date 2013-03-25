@@ -1,8 +1,10 @@
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include "gencore.h"
 #include "util.h"
 #include "sndcore.h"
+
 
 snd_t* gen(int bits, int sr, double f, double t, double pf, char* wave_type)
 {
@@ -22,8 +24,16 @@ snd_t* gen(int bits, int sr, double f, double t, double pf, char* wave_type)
     {
         return gen_pwm(bits, sr, f, t, pf);
     }
+    else
+    {
+        return NULL;
+    }
 }
 
+/*
+* 1) Initializes a new sound
+* 2) Fills sound with correct ammount of 0s
+*/
 snd_t* gen_sil(int bits, int sr, double t)
 {
     snd_t* ret = malloc(sizeof(snd_t));
@@ -52,6 +62,11 @@ snd_t* gen_sil(int bits, int sr, double t)
     return ret;
 }
 
+/*
+* 1) Initializes a new sound
+* 2) Calculates the datapoint for the current time
+* 3) Fills the sound data with the calculated data
+*/
 snd_t* gen_sin(int bits, int sr, double f, double t)
 {
     snd_t* ret = malloc(sizeof(snd_t));
@@ -69,7 +84,6 @@ snd_t* gen_sin(int bits, int sr, double f, double t)
     int min = (int) -1 * pow(2, bits - 1);
     int max = -1 * (min + 1);
     long mult = (long) pow(2, bits - 1);
-    double incr = 1.0/sr;
     double cur_time = 0;
     int total_samples = (int) sr * t;
     
@@ -89,6 +103,11 @@ snd_t* gen_sin(int bits, int sr, double f, double t)
     return ret;
 }
 
+/*
+* 1) Initializes a new sound
+* 2) Calculates the datapoint for the current time
+* 3) Fills the sound data with the calculated data
+*/
 snd_t* gen_tri(int bits, int sr, double f, double t)
 {
     snd_t* ret = malloc(sizeof(snd_t));
@@ -131,6 +150,11 @@ snd_t* gen_tri(int bits, int sr, double f, double t)
     return ret;
 }
 
+/*
+* 1) Initializes a new sound
+* 2) Calculates the datapoint for the current time
+* 3) Fills the sound data with the calculated data
+*/
 snd_t* gen_saw(int bits, int sr, double f, double t)
 {
     snd_t* ret = malloc(sizeof(snd_t));
@@ -173,6 +197,11 @@ snd_t* gen_saw(int bits, int sr, double f, double t)
     return ret;
 }
 
+/*
+* 1) Initializes a new sound
+* 2) Calculates the datapoint for the current time
+* 3) Fills the sound data with the calculated data
+*/
 snd_t* gen_pwm(int bits, int sr, double f, double t, double pf)
 {
     snd_t* ret = malloc(sizeof(snd_t));
@@ -221,6 +250,10 @@ snd_t* gen_pwm(int bits, int sr, double f, double t, double pf)
     return ret;
 }
 
-void apply_adsr(snd_t* snd, double a, double d, double s, double r, double v)
+/*
+* Applies the ADSR envelope en
+* to the sound data in node.
+*/
+void apply_adsr(snd_dat_t* node, adsr_t* en)
 {
 }

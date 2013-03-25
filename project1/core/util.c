@@ -61,20 +61,39 @@ void check_malloc(void* ptr)
 */
 u_int read_little_dat(FILE* file, int bytes)
 {   
-    u_char c;
+    union
+    {
+        int i;
+        u_char c[4];
+    } read_u;
+
+    read_u.i = 0;
+
     int i = 0;
-    u_int ret = 0;
-    u_int not_ret = 0;
+    u_char c;
     while(i < bytes)
     {
         c = fgetc(file);
-
+        
+        read_u.c[i] = c;
+/*
         not_ret = not_ret << 8;
         not_ret |= c;
         ret |= ((u_int) c) << (i * 8);
+*/
         ++i;
     }
-    return ret;
+
+    while(i < 4)
+    {
+        if(read_u.c[i-1] & 0b10000000)
+        {
+            read_u.c[i] = 0xFF;
+        }
+        ++i;
+    }
+
+    return read_u.i;
 }
 
 /*

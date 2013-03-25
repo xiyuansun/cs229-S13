@@ -112,9 +112,14 @@ void write_sound(FILE* out, snd_t* sound)
     {
         write_cs229(out, sound);
     }
-    else
+    else if(sound->type == WAVE)
     {
         write_wav(out, sound);
+    }
+    else
+    {
+        fprintf(stderr, "Unrecognized file type. Exiting.\n");
+        exit(1);
     }
 }
 
@@ -129,6 +134,7 @@ void read(snd_t** snd)
     {
         read_header_cs229(*snd);
         read_info_cs229(*snd);
+        return;
     }
     else if(WAVE == (*snd)->type);
     {
@@ -272,9 +278,14 @@ void convert(snd_t* snd)
 }
 
 /********************************************/
-/*            LINKED LIST STUFF             */
+/*           SAMPLES MANIPULATION           */
 /********************************************/
 
+/*
+* Mallocs a new node of num_channels channels,
+* checks the malloc, initializes channels to
+* zero, then returns the new node.
+*/
 snd_dat_t* new_node(int num_channels)
 {
     snd_dat_t* node = malloc(sizeof(snd_dat_t));
@@ -295,8 +306,8 @@ snd_dat_t* new_node(int num_channels)
 }
 
 /*
-* Adds a new node to the end of the
-* sound data linked-list
+* Adds a node to the end of
+* the sound data linked-list
 */
 void add(snd_t* snd, snd_dat_t* node)
 {
