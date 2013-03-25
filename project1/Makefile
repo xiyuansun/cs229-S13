@@ -1,12 +1,12 @@
-PROGS = sndinfo.c sndcat.c sndchan.c sndmix.c sndgen.c
-BOBJS = build/objects/sndcore.o build/objects/sndcs.o build/objects/sndwav.o build/objects/util.o build/objects/gencore.o
-DOBJS = debug/objects/sndcore.o debug/objects/sndcs.o debug/objects/sndwav.o debug/objects/util.o debug/objects/gencore.o
+PROGS = sndinfo.c sndcat.c sndchan.c sndmix.c sndgen.c sndplay.c
+BOBJS = build/objects/sndcore.o build/objects/sndcs.o build/objects/sndabc.o build/objects/sndwav.o build/objects/util.o build/objects/gencore.o
+DOBJS = debug/objects/sndcore.o debug/objects/sndcs.o debug/objects/sndwav.o debug/objects/sndabc.o debug/objects/util.o debug/objects/gencore.o
 DEBUG = -g
 CFLAGS = -Wall -c
 LFLAGS = -Wall
 CC = gcc
 
-all: sndinfo sndcat sndchan sndmix sndgen
+all: sndinfo sndcat sndchan sndmix sndgen sndplay
 
 sndinfo: build/sndinfo
 	@
@@ -23,7 +23,10 @@ sndmix: build/sndmix
 sndgen: build/sndgen
 	@
 
-bug: debug/sndinfo debug/sndcat debug/sndchan debug/sndmix debug/sndgen
+sndplay: build/sndplay
+	@
+
+bug: debug/sndinfo debug/sndcat debug/sndchan debug/sndmix debug/sndgen debug/sndplay
 
 clean:
 	rm -rf build debug
@@ -83,6 +86,14 @@ build/sndgen: $(BOBJS) build/objects/sndgen.o | build
 debug/sndgen: $(DOBJS) debug/objects/sndgen.o | debug
 	$(CC) $(LFLAGS) $(DEBUG) $(DOBJS) debug/objects/sndgen.o -o debug/sndgen -lm
 
+#Links sndplay
+build/sndplay: $(BOBJS) build/objects/sndplay.o | build
+	$(CC) $(LFLAGS) $(BOBJS) build/objects/sndplay.o -o build/sndplay -lm
+
+#Links debug version of sndplay
+debug/sndplay: $(DOBJS) debug/objects/sndplay.o | debug
+	$(CC) $(LFLAGS) $(DEBUG) $(DOBJS) debug/objects/sndplay.o -o debug/sndplay -lm
+
 #Compiles sndinfo.o
 build/objects/sndinfo.o: sndinfo.c core/sndcore.h | build/objects 
 	$(CC) $(CFLAGS) sndinfo.c -o build/objects/sndinfo.o
@@ -123,6 +134,14 @@ build/objects/sndgen.o: sndgen.c core/sndcore.h core/util.h | build/objects
 debug/objects/sndgen.o: sndgen.c core/sndcore.h core/util.h | debug/objects 
 	$(CC) $(CFLAGS) $(DEBUG) sndgen.c -o debug/objects/sndgen.o
 
+#Compiles sndplay.o
+build/objects/sndplay.o: sndplay.c core/sndcore.h core/util.h | build/objects 
+	$(CC) $(CFLAGS) sndplay.c -o build/objects/sndplay.o
+
+#Compiles debug version of sndplay.o
+debug/objects/sndplay.o: sndplay.c core/sndcore.h core/util.h | debug/objects 
+	$(CC) $(CFLAGS) $(DEBUG) sndplay.c -o debug/objects/sndplay.o
+
 #Compiles sndcore.o
 build/objects/sndcore.o: core/sndcore.c core/sndcore.h core/types.h core/sndcs.h core/sndwav.h core/util.h | build/objects
 	$(CC) $(CFLAGS) core/sndcore.c -o build/objects/sndcore.o
@@ -135,7 +154,7 @@ debug/objects/sndcore.o: core/sndcore.c core/sndcore.h core/types.h core/sndcs.h
 build/objects/gencore.o: core/gencore.c core/gencore.h core/sndcore.h core/types.h core/util.h | build/objects
 	$(CC) $(CFLAGS) core/gencore.c -o build/objects/gencore.o
 
-#Compiles debug version of gemcore.o
+#Compiles debug version of gencore.o
 debug/objects/gencore.o: core/gencore.c core/gencore.h core/sndcore.h core/types.h core/util.h | debug/objects
 	$(CC) $(CFLAGS) $(DEBUG) core/gencore.c -o debug/objects/gencore.o
 
@@ -154,6 +173,14 @@ build/objects/sndwav.o: core/sndwav.c core/sndwav.h core/types.h | build/objects
 #Compiles debug version of sndwav.o
 debug/objects/sndwav.o: core/sndwav.c core/sndwav.h core/types.h | debug/objects 
 	$(CC) $(CFLAGS) $(DEBUG) core/sndwav.c -o debug/objects/sndwav.o
+
+#Compiles sndabc.o
+build/objects/sndabc.o: core/sndabc.c core/sndabc.h core/types.h | build/objects 
+	$(CC) $(CFLAGS) core/sndabc.c -o build/objects/sndabc.o
+
+#Compiles debug version of sndwav.o
+debug/objects/sndabc.o: core/sndabc.c core/sndabc.h core/types.h | debug/objects 
+	$(CC) $(CFLAGS) $(DEBUG) core/sndabc.c -o debug/objects/sndabc.o
 
 #Compiles util.o
 build/objects/util.o: core/util.c core/util.h core/types.h | build/objects 

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 #include <math.h>
 #include "sndabc.h"
@@ -7,7 +8,7 @@
 #include "gencore.h"
 #include "sndcore.h"
 
-void read_header_abc229(snd_t* snd)
+void read_header_abc229(snd_t* snd, int* mute)
 {
     char word[11];
     snd_t* inst[16];
@@ -103,23 +104,24 @@ void read_header_abc229(snd_t* snd)
     int max_ind = 0;
     int max_len = 0;
     int cur_len = 0;
-    
+
     while(i < ninst)
     {
         cur_len = length(inst[i]->data);
-
+        
         if(cur_len > max_len)
         {
             max_len = cur_len;
             max_ind = i;
         }
+
         ++i;
     }
     
     long val;
     int min = (int) -1 * pow(2, snd->bitdepth - 1);
     int max = -1 * (min + 1);
-
+    
     snd_dat_t* nodes[16];
     i = 0;
     while(i < ninst)
@@ -135,10 +137,11 @@ void read_header_abc229(snd_t* snd)
     
     while(nodes[0])
     {
+        nodes[0]->channel_data[0] *= !mute[0];
         i = 1;
         while(i < ninst)
         {
-            val = nodes[0]->channel_data[0] + nodes[i]->channel_data[0];
+            val = nodes[0]->channel_data[0] + nodes[i]->channel_data[0] * !mute[i];
             nodes[0]->channel_data[0] = LIMIT(val, max, min);
             nodes[i] = nodes[i]->next;
             ++i;
@@ -174,7 +177,6 @@ snd_t* parse_instrument(FILE* in, int inst, int bpm, int sr, int bits)
     char word[10];
     char wave_type[10];
     char c;
-    int read_num = 0;
     int i = 0;
     double pf = 0;
     adsr_t en = {0, 0, 0, 0, 0};
@@ -262,7 +264,6 @@ void parse_notes(FILE* in, snd_t* final_inst, int bpm, char* wave_type, double p
     char sharp = 0;
     int octive_change = 0;
     double bps = bpm / 60.0;
-    double count = 1.0;
     int n = 0;
     int d = 1;
     snd_t* cur_note = NULL;
@@ -354,6 +355,7 @@ void parse_notes(FILE* in, snd_t* final_inst, int bpm, char* wave_type, double p
                 int note_offset = i - base_note_ind;
                 freq = base_freq * pow(2, octive_change) * pow(2, note_offset/12.0);
                 cur_note = gen(final_inst->bitdepth, final_inst->rate, freq, n / (bps * d), pf, wave_type);
+                apply_adsr(cur_note, en);
             }
             else
             {

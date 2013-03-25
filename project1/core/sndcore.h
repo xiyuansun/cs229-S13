@@ -9,7 +9,7 @@ snd_t* open_sound(char* path);
 snd_t* read_sound(FILE* in, char* name);
 void close_sound(snd_t* snd);
 void write_sound(FILE* out, snd_t* snd);
-void read(snd_t** snd);
+void read(snd_t** snd, int* mute);
 void determine_type(FILE* in, sndtype* type);
 
 void normalize_num_samples(snd_t* snd1, snd_t* snd2);

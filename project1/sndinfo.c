@@ -75,7 +75,7 @@ void print_usage(int status)
     puts("\t-The bit depth");
     puts("\t-The number of channels");
     puts("\t-The number of samples");
-    puts("\t-The length of the sound (in seconds, rounded down)");
+    puts("\t-The length of the sound (in seconds, rounded to the nearest hundreth)");
     puts("If no files are passed as arguments, sndinfo reads from standard input.\n");
     puts("OPTIONS:");
     puts("\t-h\tDisplays this help message.\n");
@@ -94,5 +94,5 @@ void print_info(snd_t* info)
     printf("\tBit Depth:\t%u\n", info->bitdepth);
     printf("\tChannels:\t%u\n", info->num_channels);
     printf("\tSamples:\t%u\n", info->num_samples);
-    printf("\tLength:\t\t%u\n", info->len);
+    printf("\tLength:\t\t%.2lf\n", info->len);
 }

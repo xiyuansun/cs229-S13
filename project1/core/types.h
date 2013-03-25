@@ -2,7 +2,7 @@
 #define TYPES_H
 #include <stdio.h>
 
-typedef enum SoundType {CS229, WAVE} sndtype;
+typedef enum SoundType {CS229, WAVE, ABC229} sndtype;
 
 typedef unsigned int u_int;
 typedef unsigned char u_char;
@@ -19,7 +19,7 @@ typedef struct sound
     snd_dat_t* last;
     u_int rate;
     u_int num_samples;
-    u_int len;
+    double len;
     u_char bitdepth;
     u_char num_channels;
     sndtype type;

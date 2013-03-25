@@ -8,6 +8,10 @@
 int read_header_wav(snd_t* snd)
 {
     u_int remaining_bytes = read_little_dat(snd->file, 4);
+    if(remaining_bytes % 2)
+    {
+        ++remaining_bytes;
+    }
     char* format = malloc(sizeof(char) * 5);
     check_malloc(format);
 
@@ -30,7 +34,11 @@ int read_header_wav(snd_t* snd)
 
         if(strcmp(format, "fmt "))
         {
-            while(remaining_bytes)
+            if(remaining_bytes %2)
+            {
+                ++remaining_bytes;
+            }
+            while(remaining_bytes && !feof(snd->file))
             {
                 fgetc(snd->file);
                 --remaining_bytes;
@@ -56,7 +64,7 @@ int read_header_wav(snd_t* snd)
         snd->bitdepth = read_little_dat(snd->file, 2);
         remaining_bytes -= 16;
 
-        while(remaining_bytes)
+        while(remaining_bytes && !feof(snd->file))
         {
             fgetc(snd->file);
             --remaining_bytes;
@@ -87,7 +95,11 @@ int read_info_wav(snd_t* snd)
 
         if(strcmp(format, "data"))
         {
-            while(remaining_bytes)
+            if(remaining_bytes % 2)
+            {
+                ++remaining_bytes;
+            }
+            while(remaining_bytes && !feof(snd->file))
             {
                 fgetc(snd->file);
                 --remaining_bytes;
@@ -101,6 +113,7 @@ int read_info_wav(snd_t* snd)
         int read_bytes = snd->bitdepth / 8;
         int i = 0;
         snd_dat_t* node;
+        int pad = remaining_bytes % 2;
 
         while(remaining_bytes)
         {
@@ -119,6 +132,10 @@ int read_info_wav(snd_t* snd)
                 i = 0;
             }
         }
+        if(pad)
+        {
+            fgetc(snd->file);
+        }
         break;
     }
 
@@ -134,11 +151,13 @@ void write_wav(FILE* out, snd_t* snd)
     int block_align = snd->num_channels * bytedepth;
     int byte_rate = block_align * snd->rate;
     int data_size = block_align * snd->num_samples;
+    int data_pad = data_size % 2;
     int fmt_size = 16;
     int size = data_size + fmt_size + 20;
     int offset = (snd->bitdepth == 8) ? 128 : 0;
     snd_dat_t* node = snd->data;
     int i;
+    char pad[1] = {0};
     
     write_bytes(out, "RIFF", 4, 0);
     write_bytes(out, to_little_char_arr(size, 4), 4, 1);
@@ -164,5 +183,10 @@ void write_wav(FILE* out, snd_t* snd)
         }
         
         node = node->next;
+    }
+
+    if(data_pad)
+    {
+        write_bytes(out, pad, 1, 0);
     }
 }

@@ -126,3 +126,40 @@ char* to_little_char_arr(int dat, int bytes)
 
     return ret;
 }
+
+u_int get_int(char* arg, const char* err_prefix)
+{
+    char* endptr;
+    u_int ret = (int) strtol(arg, &endptr, 10);
+
+    if(*endptr != '\0')
+    {
+        fprintf(stderr, "%s %s is not an integer. Exiting.\n", err_prefix, arg);
+        exit(1);
+    }
+
+    return ret;
+}
+
+double get_real(char* arg, const char* err_prefix)
+{
+    char* endptr;
+    double ret = strtod(arg, &endptr);
+
+    if(*endptr != '\0')
+    {
+        fprintf(stderr, "%s %s is not an integer. Exiting.\n", err_prefix, arg);
+        exit(1);
+    }
+
+    return ret;
+}
+
+void check_bounds(int argc, int i, char* opt, const char* err_prefix)
+{
+    if(i + 1 >= argc)
+    {
+        fprintf(stderr, "%s %s was specified without an argument. Exiting.\n", err_prefix, opt);
+        exit(1);
+    }
+}

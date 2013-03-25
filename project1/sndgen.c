@@ -1,15 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "./core/gencore.h"
-#include "./core/sndcore.h"
+#include "core/gencore.h"
+#include "core/sndcore.h"
+#include "core/util.h"
 
 const char* err_prefix = "sndgen: Error:";
 
 void print_usage(int status);
-u_int get_int(char* arg);
-double get_real(char* arg);
-void check_bounds(int argc, int i, char* opt);
 
 int main(int argc, char* argv[])
 {
@@ -53,8 +51,7 @@ int main(int argc, char* argv[])
         }
         else if(strcmp(cur_arg, "-o") == 0)
         {
-            printf("Output\n");
-            check_bounds(argc, i, "-o");
+            check_bounds(argc, i, "-o", err_prefix);
             out = fopen(argv[i + 1], "wb");
 
             if(!out)
@@ -67,8 +64,8 @@ int main(int argc, char* argv[])
         }
         else if(strcmp(cur_arg, "--bits") == 0)
         {
-            check_bounds(argc, i, "--bits");
-            bits = get_int(argv[i + 1]);
+            check_bounds(argc, i, "--bits", err_prefix);
+            bits = get_int(argv[i + 1], err_prefix);
 
             if(bits != 8 || bits != 16 || bits != 32)
             {
@@ -80,26 +77,26 @@ int main(int argc, char* argv[])
         }
         else if(strcmp(cur_arg, "--sr") == 0)
         {
-            check_bounds(argc, i, "--sr");
-            sr = get_int(argv[i + 1]);
+            check_bounds(argc, i, "--sr", err_prefix);
+            sr = get_int(argv[i + 1], err_prefix);
             i += 2;
         }
         else if(strcmp(cur_arg, "-f") == 0)
         {
-            check_bounds(argc, i, "-f");
-            f = get_real(argv[i + 1]);
+            check_bounds(argc, i, "-f", err_prefix);
+            f = get_real(argv[i + 1], err_prefix);
             i += 2;
         }
         else if(strcmp(cur_arg, "-t") == 0)
         {
-            check_bounds(argc, i, "-t");
-            t = get_real(argv[i + 1]);
+            check_bounds(argc, i, "-t", err_prefix);
+            t = get_real(argv[i + 1], err_prefix);
             i += 2;
         }
         else if(strcmp(cur_arg, "-v") == 0)
         {
-            check_bounds(argc, i, "-v");
-            v = get_real(argv[i + 1]);
+            check_bounds(argc, i, "-v", err_prefix);
+            v = get_real(argv[i + 1], err_prefix);
             
             if(v < 0 || v > 1)
             {
@@ -111,20 +108,20 @@ int main(int argc, char* argv[])
         }
         else if(strcmp(cur_arg, "-a") == 0)
         {
-            check_bounds(argc, i, "-a");
-            a = get_real(argv[i + 1]);
+            check_bounds(argc, i, "-a", err_prefix);
+            a = get_real(argv[i + 1], err_prefix);
             i += 2;
         }
         else if(strcmp(cur_arg, "-d") == 0)
         {
-            check_bounds(argc, i, "-d");
-            d = get_real(argv[i + 1]);
+            check_bounds(argc, i, "-d", err_prefix);
+            d = get_real(argv[i + 1], err_prefix);
             i += 2;
         }
         else if(strcmp(cur_arg, "-s") == 0)
         {
-            check_bounds(argc, i, "-s");
-            s = get_real(argv[i + 1]);
+            check_bounds(argc, i, "-s", err_prefix);
+            s = get_real(argv[i + 1], err_prefix);
             
             if(s < 0 || s > 1)
             {
@@ -136,8 +133,8 @@ int main(int argc, char* argv[])
         }
         else if(strcmp(cur_arg, "-r") == 0)
         {
-            check_bounds(argc, i, "-r");
-            r = get_real(argv[i + 1]);
+            check_bounds(argc, i, "-r", err_prefix);
+            r = get_real(argv[i + 1], err_prefix);
             i += 2;
         }
         else if(strcmp(cur_arg, "--sine") == 0)
@@ -148,7 +145,6 @@ int main(int argc, char* argv[])
         }
         else if(strcmp(cur_arg, "--triangle") == 0)
         {
-            printf("Triangle\n");
             triangle = 1;
             sine = sawtooth = pulse = 0;
             ++i;
@@ -167,8 +163,8 @@ int main(int argc, char* argv[])
         }
         else if(strcmp(cur_arg, "--pf") == 0)
         {
-            check_bounds(argc, i, "--pf");
-            pf = get_real(argv[i + 1]);
+            check_bounds(argc, i, "--pf", err_prefix);
+            pf = get_real(argv[i + 1], err_prefix);
             
             if(s < 0 || s > 1)
             {
@@ -184,13 +180,13 @@ int main(int argc, char* argv[])
         }
     }
     
+    adsr_t en = {a, d, s, r, v};
     if(sine)
     {
         info = gen_sin(bits, sr, f, t);
     }
     else if(triangle)
     {
-        printf("gen_tri\n");
         fflush(stdout);
         info = gen_tri(bits, sr, f, t);
     }
@@ -203,7 +199,7 @@ int main(int argc, char* argv[])
         info = gen_pwm(bits, sr, f, t, pf);
     }
 
-    apply_adsr(info, a, d, s, r, v);
+    apply_adsr(info, en);
 
     if(out_type != info->type)
     {
@@ -252,41 +248,4 @@ void print_usage(int status)
     puts("\t--pulse\t\tNo\t\tGenerate a pulse wave.");
     puts("\t--pf [P]\t0.5\t\tFraction of the time the pulse is 'up' in range of [0, 1]");
     exit(status);
-}
-
-u_int get_int(char* arg)
-{
-    char* endptr;
-    u_int ret = (int) strtol(arg, &endptr, 10);
-
-    if(*endptr != '\0')
-    {
-        fprintf(stderr, "%s %s is not an integer. Exiting.\n", err_prefix, arg);
-        exit(1);
-    }
-
-    return ret;
-}
-
-double get_real(char* arg)
-{
-    char* endptr;
-    double ret = strtod(arg, &endptr);
-
-    if(*endptr != '\0')
-    {
-        fprintf(stderr, "%s %s is not an integer. Exiting.\n", err_prefix, arg);
-        exit(1);
-    }
-
-    return ret;
-}
-
-void check_bounds(int argc, int i, char* opt)
-{
-    if(i + 1 >= argc)
-    {
-        fprintf(stderr, "%s %s was specified without an argument. Exiting.\n", err_prefix, opt);
-        exit(1);
-    }
 }

@@ -5,6 +5,7 @@
 #include "sndcore.h"
 #include "sndcs.h"
 #include "sndwav.h"
+#include "sndabc.h"
 #include "util.h"
 
 /*
@@ -46,7 +47,7 @@ snd_t* read_sound(FILE* in, char* name)
     u_int len = -1;
     u_char bitdepth = -1;
     u_char num_channels = -1;
-    sndtype type = CS229;
+    sndtype type = -1;
     
     snd_t* ret = (snd_t*) malloc(sizeof(snd_t));
     check_malloc(ret);
@@ -62,7 +63,7 @@ snd_t* read_sound(FILE* in, char* name)
     ret->data = NULL;
     ret->last = NULL;
     
-    read(&ret);
+    read(&ret, NULL);
 
     if(ret)
     {
@@ -72,7 +73,7 @@ snd_t* read_sound(FILE* in, char* name)
             ret->num_samples = length(ret->data);
         }
 
-        ret->len = (int) (ret->num_samples) * 1.0 / (ret->rate);
+        ret->len = (ret->num_samples) * 1.0 / (ret->rate);
 
         return ret;
     }
@@ -126,25 +127,54 @@ void write_sound(FILE* out, snd_t* sound)
 /*
 * Calls the correct parser based on the file type
 */
-void read(snd_t** snd) 
+void read(snd_t** snd, int* mute) 
 {
-    determine_type((*snd)->file, &((*snd)->type));
-    
-    if(CS229 == (*snd)->type)
+    int res = 0;
+    sndtype type = -1;
+    if((*snd)->type)
     {
-        read_header_cs229(*snd);
-        read_info_cs229(*snd);
-        return;
+        type = (*snd)->type;
     }
-    else if(WAVE == (*snd)->type);
+
+    determine_type((*snd)->file, &((*snd)->type));
+    if((type == -1 || (*snd)->type == type) && (CS229 == (*snd)->type))
     {
-        int res = read_header_wav(*snd);
-        res |= read_info_wav(*snd);
-        if(res)
+        res = read_header_cs229(*snd);
+       
+        if((*snd)->bitdepth != 8 && (*snd)->bitdepth != 16 && (*snd)->bitdepth != 32)
         {
-            close_sound(*snd);
             *snd = NULL;
+            return;
         }
+
+        read_info_cs229(*snd);
+    }
+    else if((type == -1 || (*snd)->type == type) && (WAVE == (*snd)->type))
+    {
+        res = read_header_wav(*snd);
+
+        if((*snd)->bitdepth != 8 && (*snd)->bitdepth != 16 && (*snd)->bitdepth != 32)
+        {
+            *snd = NULL;
+            return;
+        }
+
+        res |= read_info_wav(*snd);
+    }
+    else if((*snd)->type == type && ABC229 == (*snd)->type)
+    {
+        read_header_abc229(*snd, mute);
+        (*snd)->type = WAVE;
+    }
+    else
+    {
+        *snd = NULL;
+    }
+
+    if(res)
+    {
+        close_sound(*snd);
+        *snd = NULL;
     }
 }
 
@@ -154,16 +184,25 @@ void read(snd_t** snd)
 */
 void determine_type(FILE* in, sndtype* type)
 {
-    char type_info[6] = {0, 0, 0, 0, 0, 0};
+    char type_info[7] = {0, 0, 0, 0, 0, 0, 0};
     int i;
 
     for(i = 0; i < 4; ++i)
         type_info[i] = fgetc(in);
 
     to_upper(type_info);
-    if(type_info[0] == 'C') type_info[4] = fgetc(in);
+    if(type_info[0] == 'C') 
+    {
+        type_info[4] = fgetc(in);
+    }
+    else if(type_info[0] == 'A') 
+    {
+        type_info[4] = fgetc(in);
+        type_info[5] = fgetc(in);
+    }
     if(0 == strcmp(type_info, "CS229")) *type = CS229;
     else if(0 == strcmp(type_info, "RIFF")) *type = WAVE;
+    else if(0 == strcmp(type_info, "ABC229")) *type = ABC229;
     else
     {
         fprintf(stderr, "Error reading file. Not a supported sound file. Exiting.\n");

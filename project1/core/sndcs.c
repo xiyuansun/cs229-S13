@@ -15,22 +15,22 @@
 *   3) reads in the value, if value is expected
 *   4) if the keyword wasn't "STARTDATA", go to (1)
 */
-void read_header_cs229(snd_t* snd)
+int read_header_cs229(snd_t* snd)
 {
     char word[11];
 
-    while(1)
+    while(!feof(snd->file))
     {
         word[0] = fgetc(snd->file);
 
         if(word[0] == '#')
         {
-            while(word[0] != '\n') word[0] = fgetc(snd->file);
+            while(word[0] != '\n' && !feof(snd->file)) word[0] = fgetc(snd->file);
             continue;
         }
         else if(!is_alpha(word[0]))
         {
-            while(!is_alpha(word[0]) && word[0] != '\n') word[0] = fgetc(snd->file); 
+            while(!is_alpha(word[0] && !feof(snd->file)) && word[0] != '\n') word[0] = fgetc(snd->file); 
         }
 
         if(word[0] == '\n') continue;
@@ -38,7 +38,7 @@ void read_header_cs229(snd_t* snd)
         int i = 1;
         char c;
         
-        while((c = fgetc(snd->file)) && is_alpha(c) && i < 10)
+        while((c = fgetc(snd->file)) && !feof(snd->file) && is_alpha(c) && i < 10)
         {
             word[i] = c;
             ++i;
@@ -49,20 +49,20 @@ void read_header_cs229(snd_t* snd)
 
         if(strncmp(word, "STARTDATA", 9) == 0)
         {
-            while(c != '\n') c = fgetc(snd->file);
+            while(c != '\n' && !feof(snd->file)) c = fgetc(snd->file);
             break;
         }
 
         uint val = 0;
-        while((c = fgetc(snd->file)) && ('0' > c || '9' < c));
-        while('0' <= c && c <= '9')
+        while((c = fgetc(snd->file) && !feof(snd->file)) && ('0' > c || '9' < c));
+        while('0' <= c && c <= '9' && !feof(snd->file))
         {
             val *= 10;
             val += c - '0';
             c = fgetc(snd->file);
         }
         
-        while(c != '\n') c = fgetc(snd->file);
+        while(c != '\n' && !feof(snd->file)) c = fgetc(snd->file);
 
         if(strncmp(word, "SAMPLERATE", 10) == 0)
         {
@@ -80,7 +80,21 @@ void read_header_cs229(snd_t* snd)
         {
             snd->bitdepth = val;
         }
-    } 
+        else
+        {
+            fprintf(stderr, "Error: Unrecognized keyword %s.\n", word);
+            return 1;
+        }
+    }
+
+    if(feof(snd->file))
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 /*

@@ -41,6 +41,6 @@ snd_t* gen_pwm(int bits, int sr, double f, double t, double pf);
 /*
 * Applies the ADSR envelope en to the sound data in node.
 */
-void apply_adsr(snd_dat_t* node, adsr_t* en);
+void apply_adsr(snd_t* snd, adsr_t en);
 
 #endif

@@ -15,4 +15,8 @@ void check_malloc(void* ptr);
 u_int read_little_dat(FILE* file, int bytes);
 void write_bytes(FILE* out, char* dat, int bytes, char should_free);
 char* to_little_char_arr(int dat, int bytes);
+u_int get_int(char* arg, const char* err_prefix);
+double get_real(char* arg, const char* err_prefix);
+void check_bounds(int argc, int i, char* opt, const char* err_prefix);
+
 #endif
