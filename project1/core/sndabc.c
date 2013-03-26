@@ -212,6 +212,7 @@ snd_t* parse_instrument(FILE* in, int inst, int bpm, int sr, int bits)
     int i = 0;
     double pf = 0;
     adsr_t en = {0, 0, 0, 0, 0};
+    int res;
 
     while((c = fgetc(in)) && !feof(in))
     {
@@ -233,32 +234,67 @@ snd_t* parse_instrument(FILE* in, int inst, int bpm, int sr, int bits)
 
             if(strncmp(word, "VOLUME", 6) == 0)
             {
-                fscanf(in, "%lf", &(en.v));
+                res = fscanf(in, "%lf", &(en.v));
+                if(res == 0 || res == EOF)
+                {
+                    fprintf(stderr, "Error reading %s parameter. Exiting.\n", word);
+                    exit(1);
+                }
             }
             else if(strncmp(word, "ATTACK", 6) == 0)
             {
-                fscanf(in, "%lf", &(en.a));
+                res = fscanf(in, "%lf", &(en.a));
+                if(res == 0 || res == EOF)
+                {
+                    fprintf(stderr, "Error reading %s parameter. Exiting.\n", word);
+                    exit(1);
+                }
             }
             else if(strncmp(word, "DECAY", 5) == 0)
             {
-                fscanf(in, "%lf", &(en.d));
+                res = fscanf(in, "%lf", &(en.d));
+                if(res == 0 || res == EOF)
+                {
+                    fprintf(stderr, "Error reading %s parameter. Exiting.\n", word);
+                    exit(1);
+                }
             }
             else if(strncmp(word, "SUSTAIN", 7) == 0)
             {
-                fscanf(in, "%lf", &(en.s));
+                res = fscanf(in, "%lf", &(en.s));
+                if(res == 0 || res == EOF)
+                {
+                    fprintf(stderr, "Error reading %s parameter. Exiting.\n", word);
+                    exit(1);
+                }
             }
             else if(strncmp(word, "RELEASE", 7) == 0)
             {
-                fscanf(in, "%lf", &(en.r));
+                res = fscanf(in, "%lf", &(en.r));
+                if(res == 0 || res == EOF)
+                {
+                    fprintf(stderr, "Error reading %s parameter. Exiting.\n", word);
+                    exit(1);
+                }
             }
             else if(strncmp(word, "PULSEFRAC", 9) == 0)
             {
-                fscanf(in, "%lf", &pf);
+                res = fscanf(in, "%lf", &pf);
+                if(res == 0 || res == EOF)
+                {
+                    fprintf(stderr, "Error reading %s parameter. Exiting.\n", word);
+                    exit(1);
+                }
             }
             else if(strncmp(word, "WAVEFORM", 8) == 0)
             {
-                fscanf(in, "%s", wave_type);
+                res = fscanf(in, "%s", wave_type);
                 to_upper(wave_type);
+                if(res == 0 || res == EOF)
+                {
+                    fprintf(stderr, "Error reading %s parameter. Exiting.\n", word);
+                    exit(1);
+                }
             }
             else if(strncmp(word, "SCORE", 5) == 0)
             {
@@ -297,7 +333,7 @@ void parse_notes(FILE* in, snd_t* final_inst, int bpm, char* wave_type, double p
     double freq;
     char c;
     char reading_note = 0;
-    char note;
+    char note = 'z';
     char sharp = 0;
     int octive_change = 0;
     double bps = bpm / 60.0;

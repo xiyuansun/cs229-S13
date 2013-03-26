@@ -54,14 +54,13 @@ int read_header_cs229(snd_t* snd)
         }
 
         uint val = 0;
-        while((c = fgetc(snd->file) && !feof(snd->file)) && ('0' > c || '9' < c));
+        while( !feof(snd->file) && ('0' > c || '9' < c)) c = fgetc(snd->file);
         while('0' <= c && c <= '9' && !feof(snd->file))
         {
             val *= 10;
-            val += c - '0';
+            val += (c - '0');
             c = fgetc(snd->file);
         }
-        
         while(c != '\n' && !feof(snd->file)) c = fgetc(snd->file);
 
         if(strncmp(word, "SAMPLERATE", 10) == 0)
@@ -106,7 +105,7 @@ int read_header_cs229(snd_t* snd)
 */
 void read_info_cs229(snd_t* snd)
 {
-    snd_dat_t* node;
+    snd_dat_t* node = NULL;
     int i = 0;
     char read_sample = 0;
     int dat = 0;

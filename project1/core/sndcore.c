@@ -140,7 +140,6 @@ void read(snd_t** snd, int* mute)
     if((type == -1 || (*snd)->type == type) && (CS229 == (*snd)->type))
     {
         res = read_header_cs229(*snd);
-       
         if((*snd)->bitdepth != 8 && (*snd)->bitdepth != 16 && (*snd)->bitdepth != 32)
         {
             *snd = NULL;

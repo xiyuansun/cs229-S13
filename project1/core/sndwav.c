@@ -18,8 +18,15 @@ int read_header_wav(snd_t* snd)
     }
     char* format = malloc(sizeof(char) * 5);
     check_malloc(format);
+    
+    int res;
 
-    fread(format, 4, 1, snd->file);
+    res = fread(format, 4, 1, snd->file);
+    if(feof(snd->file) || ferror(snd->file) || res == 0)
+    {
+        fprintf(stderr, "Error reading %s.\n", snd->name);
+        return 1;
+    }
     format[4] = 0;
 
     if(strcmp(to_upper(format), "WAVE"))
@@ -31,7 +38,12 @@ int read_header_wav(snd_t* snd)
     /*get the format chunk*/
     while(!feof(snd->file))
     {
-        fread(format, 4, 1, snd->file);
+        res = fread(format, 4, 1, snd->file);
+        if(feof(snd->file) || ferror(snd->file) || res == 0)
+        {
+            fprintf(stderr, "Error reading %s.\n", snd->name);
+            return 1;
+        }
         format[4] = 0;
         
         remaining_bytes = read_little_dat(snd->file, 4);
@@ -90,13 +102,18 @@ int read_header_wav(snd_t* snd)
 int read_info_wav(snd_t* snd)
 {
     u_int remaining_bytes;
-
+    int res;
     char* format = malloc(sizeof(char) * 5);
     check_malloc(format);
 
     while(!feof(snd->file))
     {
-        fread(format, 4, 1, snd->file);
+        res = fread(format, 4, 1, snd->file);
+        if(feof(snd->file) || ferror(snd->file) || res == 0)
+        {
+            fprintf(stderr, "Error reading %s.\n", snd->name);
+            return 1;
+        }
         format[4] = 0;
         
         remaining_bytes = read_little_dat(snd->file, 4);
@@ -120,7 +137,7 @@ int read_info_wav(snd_t* snd)
         int offset = (snd->bitdepth == 8) ? -128 : 0;
         int read_bytes = snd->bitdepth / 8;
         int i = 0;
-        snd_dat_t* node;
+        snd_dat_t* node = NULL;
         int pad = remaining_bytes % 2;
 
         while(remaining_bytes)

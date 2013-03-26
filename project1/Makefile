@@ -2,8 +2,8 @@ PROGS = sndinfo.c sndcat.c sndchan.c sndmix.c sndgen.c sndplay.c
 BOBJS = build/objects/sndcore.o build/objects/sndcs.o build/objects/sndabc.o build/objects/sndwav.o build/objects/util.o build/objects/gencore.o
 DOBJS = debug/objects/sndcore.o debug/objects/sndcs.o debug/objects/sndwav.o debug/objects/sndabc.o debug/objects/util.o debug/objects/gencore.o
 DEBUG = -g
-CFLAGS = -Wall -c
-LFLAGS = -Wall
+CFLAGS = -Wall -O3 -c
+LFLAGS = -Wall -O3
 CC = gcc
 
 all: sndinfo sndcat sndchan sndmix sndgen sndplay

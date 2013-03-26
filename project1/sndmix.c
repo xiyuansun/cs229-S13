@@ -92,6 +92,12 @@ int main(int argc, char* argv[])
         }
     }
     
+    if(!info)
+    {
+        fprintf(stderr, "%s No [MULT FILE] pair given. Exiting.\n", err_prefix);
+        exit(1);
+    }
+
     if(out_type != info->type)
     {
         convert(info);

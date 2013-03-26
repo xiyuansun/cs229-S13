@@ -13,4 +13,99 @@ utilities are listed with a short description below:
     sndgen : Generate a sound based on given input.
     sndplay: Create a sound from an ABC229 file.
 
+/*****************************************************/
+/*                BUILD INSTRUCTIONS                 */
+/*****************************************************/
+To build all utilities, run the command 'make' in the
+terminal. Each individual utility can be built using
+the command 'make' followed by the utility name. All
+binaries are stored in the build folder, and all .o
+files are stored in the build/objects folder.
 
+It is also possible to build debug version of the
+utilities with the command 'make bug'. The debug
+binaries are stored in the debug folder, and the
+.o files are stored in the debug/objects folder.
+
+Other commands included are as follows:
+    make clean           : Clears all files created by
+                           the build process.
+    make tarball         : Makes a .tar.gz file with
+                           all the source files.
+    make debug/[utility] : Makes the debug version of
+                           specific utility
+
+/*****************************************************/
+/*                    SOURCE FILES                   */
+/*****************************************************/
+Here lies a list of every source file included in the
+tarball, as well as a description of that file's
+contents.
+
+FIles in the root directory
++----------------------------------------------------+
+|   FILE    |              DESCRIPTION               |
++-----------+----------------------------------------+
+| sndinfo.c | Contains the functionality specific to |
+|           | the sndinfo utility.                   |
++-----------+----------------------------------------+
+| sndcat.c  | Contains the functionality specific to |
+|           | the sndcat utility.                    |
++-----------+----------------------------------------+
+| sndchan.c | Contains the functionality specific to |
+|           | the sndchan utility.                   |
++-----------+----------------------------------------+
+| sndmix.c  | Contains the functionality specific to |
+|           | the sndmix utility.                    |
++-----------+----------------------------------------+
+| sndgen.c  | Contains the functionality specific to |
+|           | the sndgen utility.                    |
++-----------+----------------------------------------+
+| sndplay.c | Contains the functionality specific to |
+|           | the sndplay utility.                   |
++-----------+----------------------------------------+
+
+Files in the core directory
++----------------------------------------------------+
+|   FILE    |              DESCRIPTION               |
++-----------+----------------------------------------+
+| gencore.c | Contains the code for generating sound |
+|           | waves, including ADSR scaling.         |
++-----------+----------------------------------------+
+| gencore.h | Contains method stubs for gencore.c    |
++-----------+----------------------------------------+
+| sndabc.c  | Contains file io functionality for     |
+|           | ABC229 files.                          |
++-----------+----------------------------------------+
+| sndabc.h  | Contains method stubs for sndabc.c     |
++-----------+----------------------------------------+
+| sndcore.c | Contains abstracted functions for file |
+|           | io, with logic to call the correct     |
+|           | reader/writer. Also contains generic   |
+|           | sound modification functions.          |
++-----------+----------------------------------------+
+| sndcore.h | Contains method stubs for sndcore.c    |
++-----------+----------------------------------------+
+| sndcs.c   | Contains file io functionality for     |
+|           | CS229 files.                           |
++-----------+----------------------------------------+
+| sndcs.h   | Contains method stubs for sndcs.c      |
++-----------+----------------------------------------+
+| sndwav.c  | Contains file io functionality for wav |
+|           | files.                                 |
++-----------+----------------------------------------+
+| sndwav.h  | Contains method stubs for sndwav.c     |
++-----------+----------------------------------------+
+| util.c    | Contains common functions that don't   |
+|           | directly relate to sound manipulation. |
++-----------+----------------------------------------+
+| util.h    | Contains method stubs for util.c       |
++-----------+----------------------------------------+
+| types.h   | Contains type definitions for all      |
+|           | utilities.                             |
++-----------+----------------------------------------+
+
+/*****************************************************/
+/*                CONTACT INFORMATION                */
+/*****************************************************/
+Chris Fogerty (cfogerty@iastate.edu)

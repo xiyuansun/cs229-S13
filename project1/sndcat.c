@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
     sndtype out_type = CS229;
     int i;
     char c;
-    char* outfile;
+    char* outfile = NULL;
     snd_t* info = 0;
     snd_t* current;
     FILE* out;
