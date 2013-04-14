@@ -1,4 +1,5 @@
 #include "scanner.h"
+#include <iostream>
 #include <cstdlib>
 
 Scanner::Scanner(std::string &s, std::string d=WHITESPACE, char c='#')
@@ -46,6 +47,7 @@ std::string Scanner::next()
     if(source->eof())
     {
         //TODO: Barf
+        std::cout << "Barfing.\n";
         exit(1);
     }
 

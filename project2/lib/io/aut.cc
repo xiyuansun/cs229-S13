@@ -6,17 +6,18 @@
 
 AutFile::AutFile(std::string &in)
 {
-    parse(in);
+    this->parse(in);
 }
 
-/*Board const AutFile::get()
+std::vector<std::string> const AutFile::get()
 {
+    return this->statements;
 }
-
+/*
 void AutFile::update(Board &b)
 {
-}*/
-
+}
+*/
 std::string const AutFile::to_string()
 {
     return "Not implemented.";
@@ -28,9 +29,9 @@ void AutFile::parse(std::string &s)
     std::ifstream in;
     in.open(s.c_str());
     Scanner* scanner = new Scanner(&in, ";", '#');
-    while(1)
+    while(!(in.eof()))
     {
-        std::cout << (scanner->next());
+        this->statements.push_back(scanner->next());
     }
 
 }

@@ -1,11 +1,22 @@
 #include <string>
+#include <iostream>
 #include "lib/io/aut.h"
+#include <vector>
 
 using namespace std;
 
 int main()
 {
+    cout << "Is this working?\n";
     string file("file.aut");
-    AutFile a(file);
+    AutFile* a = new AutFile(file);
+    
+    vector<string> vs = a->get();
+
+    for(unsigned int i = 0; i < vs.size(); ++i)
+    {
+        cout << vs[i] << endl;
+    }
+
     return 0;
 }

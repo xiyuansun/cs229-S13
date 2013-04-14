@@ -8,7 +8,7 @@ class AutFile
 {
     public:
         AutFile(std::string &in);
-        //Board const get();
+        std::vector<std::string> const get();
         //void update(Board &b);
         std::string const to_string();
     private:
