@@ -8,6 +8,7 @@ Scanner::Scanner(std::string &s, std::string d=WHITESPACE, char c='#')
     delimiter = d;
     comment = c;
     hasNext = true;
+    block = 0;
 }
 
 Scanner::Scanner(std::istream *is, std::string d=WHITESPACE, char c='#')
@@ -16,6 +17,7 @@ Scanner::Scanner(std::istream *is, std::string d=WHITESPACE, char c='#')
     delimiter = d;
     comment = c;
     hasNext = true;
+    block = 0;
 }
 
 void Scanner::set_delimiter(std::string d)
@@ -28,23 +30,45 @@ void Scanner::set_comment(char c)
     comment = c;
 }
 
+bool const Scanner::has_next()
+{
+    return hasNext;
+}
+
 std::string Scanner::next()
 {
     std::string ret = "";
     char c = source->get();
     if(this->hasNext)
     {
-        while(!is_delimiter(c) && !source->eof())
+
+        while((!is_delimiter(c) || in_brace()) && !source->eof())
         {
-            if(c == comment)
+            if(!in_str() && !in_brace() && (c == '"' || c == '{'))
+            {
+                block = c;
+            }
+            else if((in_str() && c == '"') || (in_brace() && c == '}'))
+            {
+                block = '\0';
+            }
+
+            if(c == comment && !in_str())
             {
                 next_line();
             }
             else
             {
                 ret.push_back(c);
-                c = source->get();
+                std::cout << c;
             }
+
+            c = source->get();
+        }
+        
+        if(is_delimiter(c))
+        {
+            ret.push_back(c);
         }
 
         if(source->eof())
@@ -112,4 +136,14 @@ bool Scanner::is_delimiter(char c)
     }
 
     return i != delimiter.size();
+}
+
+bool Scanner::in_str()
+{
+    return block == '"';
+}
+
+bool Scanner::in_brace()
+{
+    return block == '{';
 }

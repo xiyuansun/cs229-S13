@@ -27,11 +27,13 @@ void AutFile::parse(std::string &s)
 {
     //open file. iunno how.
     std::ifstream in;
+    std::string n;
     in.open(s.c_str());
     Scanner* scanner = new Scanner(&in, ";", '#');
-    while(!(in.eof()))
+    while(scanner->has_next())
     {
-        this->statements.push_back(scanner->next());
+        n = scanner->next();
+        this->statements.push_back(n);
     }
 
 }

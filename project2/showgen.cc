@@ -11,7 +11,7 @@ int main()
     AutFile* a = new AutFile(file);
     
     vector<string> vs = a->get();
-
+    
     for(unsigned int i = 0; i < vs.size(); ++i)
     {
         cout << vs[i] << endl;

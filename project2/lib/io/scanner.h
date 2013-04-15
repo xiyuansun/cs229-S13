@@ -24,8 +24,11 @@ class Scanner
         std::string delimiter;
         char comment;
         bool hasNext;
+        char block;
         std::istream *source;
         bool is_delimiter(char c);
+        bool in_str();
+        bool in_brace();
 };
 
 #endif
