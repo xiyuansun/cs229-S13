@@ -16,12 +16,14 @@ class Scanner
         void set_delimiter(std::string d);
         void set_comment(char c);
         std::string next();
+        bool const has_next();
         int next_int();
         char next_char();
         std::string next_line();
     private:
         std::string delimiter;
         char comment;
+        bool hasNext;
         std::istream *source;
         bool is_delimiter(char c);
 };
