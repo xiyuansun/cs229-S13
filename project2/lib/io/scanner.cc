@@ -43,7 +43,7 @@ std::string Scanner::next()
         }
     }
 
-    if(source->eof())
+    if(!is_delimiter(c))
     {
         //TODO: Barf
         exit(1);
@@ -54,6 +54,16 @@ std::string Scanner::next()
 
 int Scanner::next_int()
 {
+    int ret = 0;
+    (*source) >> ret;
+
+    if(source->fail())
+    {
+        //TODO: Barf
+        exit(1);
+    }
+
+    return ret;
 }
 
 char Scanner::next_char()
@@ -79,12 +89,6 @@ std::string Scanner::next_line()
         c = source->get();
     }
 
-    if(source->eof())
-    {
-        //TODO: Barf
-        exit(1);
-    }
-    
     ret.push_back(c);
     return ret;
 }
