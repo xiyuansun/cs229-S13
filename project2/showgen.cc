@@ -7,7 +7,6 @@ using namespace std;
 
 int main()
 {
-    cout << "Is this working?\n";
     string file("file.aut");
     AutFile* a = new AutFile(file);
     

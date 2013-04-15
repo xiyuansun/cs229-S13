@@ -7,6 +7,7 @@ Scanner::Scanner(std::string &s, std::string d=WHITESPACE, char c='#')
     source = new std::istringstream(s);
     delimiter = d;
     comment = c;
+    hasNext = true;
 }
 
 Scanner::Scanner(std::istream *is, std::string d=WHITESPACE, char c='#')
@@ -14,6 +15,7 @@ Scanner::Scanner(std::istream *is, std::string d=WHITESPACE, char c='#')
     source = is;
     delimiter = d;
     comment = c;
+    hasNext = true;
 }
 
 void Scanner::set_delimiter(std::string d)
@@ -30,27 +32,32 @@ std::string Scanner::next()
 {
     std::string ret = "";
     char c = source->get();
-
-    while(!is_delimiter(c) && !source->eof())
+    if(this->hasNext)
     {
-        if(c == comment)
+        while(!is_delimiter(c) && !source->eof())
         {
-            next_line();
+            if(c == comment)
+            {
+                next_line();
+            }
+            else
+            {
+                ret.push_back(c);
+                c = source->get();
+            }
         }
-        else
+
+        if(source->eof())
         {
-            ret.push_back(c);
-            c = source->get();
+            this->hasNext = false;
         }
     }
-
-    if(source->eof())
+    else
     {
         //TODO: Barf
-        std::cout << "Barfing.\n";
         exit(1);
     }
-
+    
     return ret;
 }
 
@@ -100,5 +107,5 @@ bool Scanner::is_delimiter(char c)
             break;
     }
 
-    return i == delimiter.size();
+    return i != delimiter.size();
 }
