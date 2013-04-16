@@ -11,8 +11,8 @@
 class Scanner
 {
     public:
-        Scanner(std::string &s, std::string d, char c);
-        Scanner(std::istream *is, std::string d, char c);
+        Scanner(std::string &s, std::string d=WHITESPACE, char c='#');
+        Scanner(std::istream *is, std::string d=WHITESPACE, char c='#');
         void set_delimiter(std::string d);
         void set_comment(char c);
         std::string next();

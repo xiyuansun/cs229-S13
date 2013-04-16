@@ -2,7 +2,7 @@
 #include <iostream>
 #include <cstdlib>
 
-Scanner::Scanner(std::string &s, std::string d=WHITESPACE, char c='#')
+Scanner::Scanner(std::string &s, std::string d, char c)
 {
     source = new std::istringstream(s);
     delimiter = d;
@@ -11,7 +11,7 @@ Scanner::Scanner(std::string &s, std::string d=WHITESPACE, char c='#')
     block = 0;
 }
 
-Scanner::Scanner(std::istream *is, std::string d=WHITESPACE, char c='#')
+Scanner::Scanner(std::istream *is, std::string d, char c)
 {
     source = is;
     delimiter = d;
@@ -41,6 +41,10 @@ std::string Scanner::next()
     char c = source->get();
     if(this->hasNext)
     {
+        while(is_delimiter(c) && !source->eof())
+        {
+            c = source->get();
+        }
 
         while((!is_delimiter(c) || in_brace()) && !source->eof())
         {
@@ -60,17 +64,11 @@ std::string Scanner::next()
             else
             {
                 ret.push_back(c);
-                std::cout << c;
             }
 
             c = source->get();
         }
         
-        if(is_delimiter(c))
-        {
-            ret.push_back(c);
-        }
-
         if(source->eof())
         {
             this->hasNext = false;
