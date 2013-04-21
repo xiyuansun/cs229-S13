@@ -6,18 +6,35 @@
 
 AutFile::AutFile(std::string &in)
 {
+    this->x_range = new int[2];
+    this->y_range = new int[2];
+    this->x_disp_range = new int[2];
+    this->y_disp_range = new int[2];
+    this->states("~123456789");
+    this->name("");
     this->parse(in);
 }
 
-std::vector<std::string> const AutFile::get()
+AutFile::~AutFile()
 {
-    return this->statements;
+    delete[] this->x_range;
+    delete[] this->y_range;
+    delete[] this->x_disp_range;
+    delete[] this->y_disp_range;
+
 }
+
+Board const AutFile::get()
+{
+    return this->b;
+}
+
 /*
 void AutFile::update(Board &b)
 {
 }
 */
+
 std::string const AutFile::to_string()
 {
     return "Not implemented.";
@@ -27,15 +44,6 @@ void AutFile::parse(std::string &s)
 {
     std::ifstream in;
     std::string n;
-    
-    //should probably be class variables =D
-    int x_low;
-    int x_high;
-    int y_low;
-    int y_high;
-    std::string name = "";
-    std::string chars = "";
-    //somehow store colors.
     
     std::string keyword = "";
 
@@ -50,20 +58,21 @@ void AutFile::parse(std::string &s)
 
         if(keyword == "Xrange")
         {
-            x_low = stmnt->next_int();
-            x_high = stmnt->next_int();
+            x_range[0] = stmnt->next_int();
+            x_range[1] = stmnt->next_int();
         }
         else if(keyword == "Yrange")
         {
-            y_low = stmnt->next_int();
-            y_high = stmnt->next_int();
+            y_range[0] = stmnt->next_int();
+            y_range[1] = stmnt->next_int();
         }
         else if(keyword == "Initial" || keyword == "Initial{")
         {
-            //Parse!
+            
         }
         else if(keyword == "Name")
         {
+            this->name(stmnt->next());
         }
         else if(keyword == "Chars")
         {
@@ -76,6 +85,8 @@ void AutFile::parse(std::string &s)
             //Unknown keyword. Display warning.
             std::cout << "Unrecognized keyword: " << keyword << '\n';
         }
+
+        delete stmnt;
     }
 
     std::cout << "Xrange: " << x_low << ", " << x_high << '\n';
