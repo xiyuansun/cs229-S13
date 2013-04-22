@@ -16,7 +16,7 @@ Board::Board(int x_range[], int y_range[], int x_disp_range[], int y_disp_range[
 
     this->board = malloc(sizeof(char*) * x_size);
 
-    for(unsigned int x = 0; x < x_size; ++i)
+    for(unsigned int x = 0; x < x_size; ++x)
     {
         board[x] = malloc(sizeof(char) * y_size);
 
@@ -25,6 +25,15 @@ Board::Board(int x_range[], int y_range[], int x_disp_range[], int y_disp_range[
             board[x][y] = this->states[0];
         }
     }
+}
+
+Board::~Board()
+{
+    for(unsigned int x = 0; x < x_size; ++x)
+    {
+        delete[] board[x];
+    }
+    delete[] board;
 }
 
 char Board::get_state_char(unsigned int state)

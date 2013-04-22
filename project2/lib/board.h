@@ -8,6 +8,7 @@ class Board
 {
     public:
         Board(int x_range[], int y_range[], int x_disp_range[], int y_disp_range[], char* states, unsigned int num_states);
+        ~Board();
         char get_state_char(unsigned int state);
         void next_generation();
         char get_state(int x, int y);

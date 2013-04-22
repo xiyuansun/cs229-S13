@@ -1,5 +1,6 @@
 #include "aut.h"
 #include "scanner.h"
+#include "../util.h"
 
 #include <fstream>
 #include <iostream>
@@ -68,7 +69,18 @@ void AutFile::parse(std::string &s)
         }
         else if(keyword == "Initial" || keyword == "Initial{")
         {
-            
+            std::string in_stmnt("");
+
+            while(stmnt->has_next())
+            {
+                in_stmnt += stmnt->next();
+            }
+
+            std::vector<std::string>* inner_stmnts = split(in_stmnt, ';');
+            for(int i = 0; i < inner_stmnts->size(); ++i)
+            {
+                std::cout << (*inner_stmnts)[i] << std::endl;
+            }
         }
         else if(keyword == "Name")
         {
@@ -88,7 +100,6 @@ void AutFile::parse(std::string &s)
 
         delete stmnt;
     }
-
-    std::cout << "Xrange: " << x_low << ", " << x_high << '\n';
-    std::cout << "Yrange: " << y_low << ", " << y_high << '\n';
+    
+    delete scanner;
 }

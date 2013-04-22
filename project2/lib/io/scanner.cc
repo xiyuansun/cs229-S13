@@ -9,6 +9,7 @@ Scanner::Scanner(std::string &s, std::string d, char c)
     comment = c;
     hasNext = true;
     block = 0;
+    del = true;
 }
 
 Scanner::Scanner(std::istream *is, std::string d, char c)
@@ -18,6 +19,12 @@ Scanner::Scanner(std::istream *is, std::string d, char c)
     comment = c;
     hasNext = true;
     block = 0;
+    del = false;
+}
+
+Scanner::~Scanner()
+{
+    if(del) delete source;
 }
 
 void Scanner::set_delimiter(std::string d)
