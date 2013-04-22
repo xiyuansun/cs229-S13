@@ -4,7 +4,7 @@
 
 #include <fstream>
 #include <iostream>
-#include <cstdio>
+#include <cstdlib>
 
 AutFile::AutFile(std::string &in)
 {
@@ -59,16 +59,19 @@ void AutFile::parse(std::string &s)
 
         if(keyword == "Xrange")
         {
+            std::cout << "Xrange\n";
             x_range[0] = stmnt->next_int();
             x_range[1] = stmnt->next_int();
         }
         else if(keyword == "Yrange")
         {
+            std::cout << "Yrange\n";
             y_range[0] = stmnt->next_int();
             y_range[1] = stmnt->next_int();
         }
         else if(keyword == "Initial" || keyword == "Initial{")
         {
+            std::cout << "Initial\n"; 
             //TODO: Check for keyword order
             std::string in_stmnt("");
 
@@ -78,21 +81,34 @@ void AutFile::parse(std::string &s)
             }
 
             std::vector<std::string>* inner_stmnts = split(in_stmnt, ';');
-            for(int i = 0; i < inner_stmnts->size(); ++i)
+            for(unsigned int i = 0; i < inner_stmnts->size(); ++i)
             {
                 std::vector<std::string>* sub_stmnts = split((*inner_stmnts)[i], ':');
                 
                 if(sub_stmnts->size() == 2)
                 {
+                    char* err_check;
+
                     int eq = (*sub_stmnts)[0].rfind('=');
-                    std::vector<std::string>* x_pos = split((*sub_stmnts)[1], ',')
+                    std::vector<std::string>* x_pos = split((*sub_stmnts)[1], ',');
 
-                    int y = std::stoi((*sub_stmnts)[0].substr(eq + 1));
+                    int y = (int) strtol((*sub_stmnts)[0].substr(eq + 1).c_str(), &err_check, 10);
 
-                    for(int j = 0; j < x_pos.size(); ++j)
+                    if(*err_check != '\0')
                     {
-                        int x = std::stoi((*x_pos)[j]);
+                        //TODO: Barf
+                    }
 
+                    for(unsigned int j = 0; j < x_pos->size(); ++j)
+                    {
+                        int x = (int) strtol((*x_pos)[j].c_str(), &err_check, 10);
+
+                        if(*err_check != '\0')
+                        {
+                            //TODO: Barf
+                        }
+
+                        std::cout << "(" << x << ", " << y << ")\n";
                     }
                 }
             }

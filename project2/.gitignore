@@ -1,3 +1,4 @@
 *.aut
 *.o
-showgen
+build
+build/*
