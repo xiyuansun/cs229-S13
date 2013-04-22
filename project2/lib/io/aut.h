@@ -10,14 +10,14 @@ class AutFile
     public:
         AutFile(std::string &in);
         ~AutFile();
-        Board const get();
+        Board* get() const;
         //void update(Board &b);
-        std::string const to_string();
+        std::string to_string() const;
     private:
-        int x_range[];
-        int y_range[];
-        int x_disp_range[];
-        int y_disp_range[];
+        int* x_range;
+        int* y_range;
+        int* x_disp_range;
+        int* y_disp_range;
         std::string states;
         std::string name;
         void parse(std::string &s);

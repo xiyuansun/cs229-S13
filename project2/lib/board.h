@@ -7,7 +7,7 @@
 class Board
 {
     public:
-        Board(int x_range[], int y_range[], int x_disp_range[], int y_disp_range[], char* states, unsigned int num_states);
+        Board(int x_range[], int y_range[], int x_disp_range[], int y_disp_range[], char* states);
         ~Board();
         char get_state_char(unsigned int state);
         void next_generation();
@@ -26,8 +26,8 @@ class Board
         unsigned int y_disp_size;
         int y_disp_offset;
 
-        string states;
-        char* board[];
+        std::string states;
+        char** board;
 
         void set_state_char(unsigned int state, char c);
 };

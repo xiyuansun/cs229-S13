@@ -1,4 +1,5 @@
 #include "board.h"
+#include <cstdlib>
 
 Board::Board(int x_range[], int y_range[], int x_disp_range[], int y_disp_range[], char* states)
 {
@@ -12,13 +13,13 @@ Board::Board(int x_range[], int y_range[], int x_disp_range[], int y_disp_range[
     this->y_disp_size = y_disp_range[1] - y_disp_range[0] + 1;
     this->y_disp_offset = y_disp_range[0];
 
-    this->states(states);
+    this->states = states;
 
-    this->board = malloc(sizeof(char*) * x_size);
+    this->board = (char**) malloc(sizeof(char*) * x_size);
 
     for(unsigned int x = 0; x < x_size; ++x)
     {
-        board[x] = malloc(sizeof(char) * y_size);
+        board[x] = (char*) malloc(sizeof(char) * y_size);
 
         for(unsigned int y = 0; y < y_size; ++y)
         {
@@ -68,7 +69,7 @@ unsigned int Board::get_num_states()
 
 std::string Board::to_string()
 {
-    std::string ret = new std::string("");
+    std::string* ret = new std::string("");
 
     unsigned int x_max = this->x_disp_size + this->x_disp_offset;
     unsigned int y_max = this->y_disp_size + this->y_disp_offset;
@@ -81,7 +82,7 @@ std::string Board::to_string()
         }
         
         if(x < x_max - 1)
-            ret->push_back("\n");
+            ret->push_back('\n');
     }
 }
 

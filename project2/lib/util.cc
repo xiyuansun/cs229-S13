@@ -1,4 +1,5 @@
 #include "util.h"
+#include <cstdio>
 
 std::vector<std::string>* split(std::string& s, char c, int n)
 {
@@ -46,6 +47,7 @@ std::string remove_whitespace(std::string& s, std::string ws)
         if(is_whitespace(s[i], ws))
         {
             s.erase(i, 1);
+            --i;
         }
     }
 
