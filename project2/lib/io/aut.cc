@@ -59,19 +59,16 @@ void AutFile::parse(std::string &s)
 
         if(keyword == "Xrange")
         {
-            std::cout << "Xrange\n";
             x_range[0] = stmnt->next_int();
             x_range[1] = stmnt->next_int();
         }
         else if(keyword == "Yrange")
         {
-            std::cout << "Yrange\n";
             y_range[0] = stmnt->next_int();
             y_range[1] = stmnt->next_int();
         }
         else if(keyword == "Initial" || keyword == "Initial{")
         {
-            std::cout << "Initial\n"; 
             //TODO: Check for keyword order
             std::string in_stmnt("");
 
@@ -79,6 +76,8 @@ void AutFile::parse(std::string &s)
             {
                 in_stmnt += stmnt->next();
             }
+
+            this->b = new Board(x_range, y_range, x_range, y_range, states);
 
             std::vector<std::string>* inner_stmnts = split(in_stmnt, ';');
             for(unsigned int i = 0; i < inner_stmnts->size(); ++i)
@@ -99,6 +98,7 @@ void AutFile::parse(std::string &s)
                         //TODO: Barf
                     }
 
+
                     for(unsigned int j = 0; j < x_pos->size(); ++j)
                     {
                         int x = (int) strtol((*x_pos)[j].c_str(), &err_check, 10);
@@ -107,8 +107,8 @@ void AutFile::parse(std::string &s)
                         {
                             //TODO: Barf
                         }
-
-                        std::cout << "(" << x << ", " << y << ")\n";
+                        
+                        this->b->set_state(x, y, 1);
                     }
                 }
             }
@@ -128,7 +128,8 @@ void AutFile::parse(std::string &s)
         else
         {
             //Unknown keyword. Display warning.
-            std::cout << "Unrecognized keyword: " << keyword << '\n';
+            std::string k = remove_whitespace(keyword);
+            if(k != "") std::cout << "Unrecognized keyword: " << k << '\n';
         }
 
         delete stmnt;

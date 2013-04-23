@@ -1,7 +1,8 @@
 #include "board.h"
 #include <cstdlib>
+#include <iostream>
 
-Board::Board(int x_range[], int y_range[], int x_disp_range[], int y_disp_range[], char* states)
+Board::Board(int x_range[], int y_range[], int x_disp_range[], int y_disp_range[], std::string states)
 {
     this->x_size = x_range[1] - x_range[0] + 1;
     this->x_offset = x_range[0];
@@ -52,13 +53,26 @@ char Board::get_state(int x, int y)
     unsigned int x_ind = x - x_offset;
     unsigned int y_ind = y - y_offset;
 
-    if(x_ind < 0 || x_ind >= x_size || y_ind < 0 || y_ind >= x_size)
+    if(x_ind < 0 || x_ind >= x_size || y_ind < 0 || y_ind >= y_size)
     {
         ret = this->states[0]; 
     }
     else
     {
         ret = board[x_ind][y_ind];
+    }
+
+    return ret;
+}
+
+void Board::set_state(int x, int y, unsigned int state)
+{
+    unsigned int x_ind = x - x_offset;
+    unsigned int y_ind = y - y_offset;
+
+    if(x_ind >= 0 && x_ind < x_size && y_ind >= 0 && y_ind < y_size && state < states.length())
+    {
+        board[x_ind][y_ind] = states[state];
     }
 }
 
@@ -67,23 +81,24 @@ unsigned int Board::get_num_states()
     return states.length();
 }
 
-std::string Board::to_string()
+std::string* Board::to_string()
 {
     std::string* ret = new std::string("");
 
-    unsigned int x_max = this->x_disp_size + this->x_disp_offset;
-    unsigned int y_max = this->y_disp_size + this->y_disp_offset;
-
-    for(unsigned int x = this->x_disp_offset; x < x_max; ++x)
+    int x_max = this->x_disp_size + this->x_disp_offset;
+    int y_max = this->y_disp_size + this->y_disp_offset;
+    
+    for(int y = y_max - 1; y >= this->y_disp_offset; --y)
     {
-        for(unsigned int y = this->y_disp_offset; y < y_max; ++y)
+        for(int x = this->x_disp_offset; x < x_max; ++x)
         {
             ret->push_back(this->get_state(x, y));
         }
         
-        if(x < x_max - 1)
+        if(y > this->y_disp_offset)
             ret->push_back('\n');
     }
+    return ret;
 }
 
 std::string Board::to_aut()
@@ -93,4 +108,5 @@ std::string Board::to_aut()
 
 void Board::set_state_char(unsigned int state, char c)
 {
+    this->states[state] = c;
 }
