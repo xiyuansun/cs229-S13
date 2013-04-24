@@ -6,12 +6,12 @@
 #include <iostream>
 #include <cstdlib>
 
-AutFile::AutFile(std::string &in)
+AutFile::AutFile(std::string &in, int* x_range, int* y_range, int* x_view, int* y_view)
 {
-    this->x_range = new int[2];
-    this->y_range = new int[2];
-    this->x_disp_range = new int[2];
-    this->y_disp_range = new int[2];
+    this->x_range = x_range;
+    this->y_range = y_range;
+    this->x_disp_range = x_view;
+    this->y_disp_range = y_view;
     this->states = "~123456789";
     this->name = "";
     this->parse(in);
@@ -59,13 +59,41 @@ void AutFile::parse(std::string &s)
 
         if(keyword == "Xrange")
         {
-            x_range[0] = stmnt->next_int();
-            x_range[1] = stmnt->next_int();
+            int first = stmnt->next_int();
+            int second = stmnt->next_int();
+            if(x_range == NULL)
+            {
+                x_range = new int[2];
+                x_range[0] = first;
+                x_range[1] = second;
+            }
+
+            if(x_disp_range == NULL)
+            {
+                x_disp_range = new int[2];
+                
+                x_disp_range[0] = first;
+                x_disp_range[1] = second;
+            }
         }
         else if(keyword == "Yrange")
         {
-            y_range[0] = stmnt->next_int();
-            y_range[1] = stmnt->next_int();
+            int first = stmnt->next_int();
+            int second = stmnt->next_int();
+            
+            if(y_range == NULL)
+            {
+                y_disp_range = new int[2];
+                y_range[0] = first;
+                y_range[1] = second;
+            }
+
+            if(y_disp_range == NULL)
+            {
+                y_disp_range = new int[2];
+                y_range[0] = first;
+                y_range[1] = second;
+            }
         }
         else if(keyword == "Initial" || keyword == "Initial{")
         {
@@ -77,7 +105,7 @@ void AutFile::parse(std::string &s)
                 in_stmnt += stmnt->next();
             }
 
-            this->b = new Board(x_range, y_range, x_range, y_range, states);
+            this->b = new Board(x_range, y_range, x_disp_range, y_disp_range, states);
 
             std::vector<std::string>* inner_stmnts = split(in_stmnt, ';');
             for(unsigned int i = 0; i < inner_stmnts->size(); ++i)
@@ -90,24 +118,12 @@ void AutFile::parse(std::string &s)
 
                     int eq = (*sub_stmnts)[0].rfind('=');
                     std::vector<std::string>* x_pos = split((*sub_stmnts)[1], ',');
-
-                    int y = (int) strtol((*sub_stmnts)[0].substr(eq + 1).c_str(), &err_check, 10);
-
-                    if(*err_check != '\0')
-                    {
-                        //TODO: Barf
-                    }
-
+                    
+                    int y = get_int((*sub_stmnts)[0].substr(eq + 1).c_str())
 
                     for(unsigned int j = 0; j < x_pos->size(); ++j)
                     {
-                        int x = (int) strtol((*x_pos)[j].c_str(), &err_check, 10);
-
-                        if(*err_check != '\0')
-                        {
-                            //TODO: Barf
-                        }
-                        
+                        int x = get_int((*x_pos)[j].c_str());
                         this->b->set_state(x, y, 1);
                     }
                 }

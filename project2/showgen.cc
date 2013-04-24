@@ -14,6 +14,10 @@ int main(int argc, const char* argv[])
     AutFile* a;
     int generations = 0;
     string out_type = "terrain";
+    int* x_range = NULL;
+    int* y_range = NULL;
+    int* x_disp_range = NULL;
+    int* y_disp_range = NULL;
 
     for(int i = 1; i < argc; ++i)
     {
@@ -35,42 +39,91 @@ int main(int argc, const char* argv[])
             }
             else
             {
+                //TODO: Barf
             }
         }
         else if(strcmp(cur_arg, "-tx") == 0)
         {
             if(i + 1 < argc)
             {
+                vector<string>* sp = split(argv[i + 1], ',');
+
+                if(sp.size() != 2)
+                {
+                    //TODO: Barf
+                }
+                
+                x_range = new int[2];
+
+                x_range[0] = get_int((*sp)[0]);
+                x_range[1] = get_int((*sp)[1]);
             }
             else
             {
+                //TODO: Barf
             }
         }
         else if(strcmp(cur_arg, "-ty") == 0)
         {
             if(i + 1 < argc)
             {
+                vector<string>* sp = split(argv[i + 1], ',')
+
+                if(sp.size() != 2)
+                {
+                    //TODO: Barf
+                }
+
+                y_range = new int[2];
+
+                y_range[0] = get_int((*sp)[0]);
+                y_range[1] = get_int((*sp)[1]);
             }
             else
             {
+                //TODO: Barf
             }
         }
         else if(strcmp(cur_arg, "-wx") == 0)
         {
             if(i + 1 < argc)
             {
+                vector<string>* sp = split(argv[i + 1], ',')
+
+                if(sp.size() != 2)
+                {
+                    //TODO: Barf
+                }
+                
+                x_disp_range = new int[2];
+
+                x_disp_range[0] = get_int((*sp)[0]);
+                x_disp_range[1] = get_int((*sp)[1]);
             }
             else
             {
+                //TODO: Barf
             }
         }
         else if(strcmp(cur_arg, "-wy") == 0)
         {
             if(i + 1 < argc)
             {
+                vector<string>* sp = split(argv[i + 1], ',')
+
+                if(sp.size() != 2)
+                {
+                    //TODO: Barf
+                }
+                
+                y_disp_range = new int[2];
+
+                y_disp_range[0] = get_int((*sp)[0]);
+                y_disp_range[1] = get_int((*sp)[1]);
             }
             else
             {
+                //TODO: Barf
             }
         }
         else if(file == "")
@@ -79,10 +132,11 @@ int main(int argc, const char* argv[])
         }
         else
         {
+            //TODO: Barf
         }
     }
 
-    file("file.aut");
+    
     AutFile* a = new AutFile(file);
     Board* b = a->get();
     cout << *(b->to_string()) << "\n";

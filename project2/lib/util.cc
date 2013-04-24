@@ -1,5 +1,5 @@
+#include <cstdlib>
 #include "util.h"
-#include <cstdio>
 
 std::vector<std::string>* split(std::string& s, char c, int n)
 {
@@ -52,4 +52,17 @@ std::string remove_whitespace(std::string& s, std::string ws)
     }
 
     return s;
+}
+
+int get_int(std::string s)
+{
+    char* endptr;
+    int ret = (s.c_str(), &endptr, 10);
+
+    if(endptr != '\0')
+    {
+        //TODO: Barf
+    }
+
+    return ret;
 }

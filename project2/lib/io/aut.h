@@ -8,7 +8,7 @@
 class AutFile
 {
     public:
-        AutFile(std::string &in);
+        AutFile(std::string &in, int* x_range, int* y_range, int* x_view, int* y_view);
         ~AutFile();
         Board* get() const;
         //void update(Board &b);
