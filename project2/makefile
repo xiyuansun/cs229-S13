@@ -40,7 +40,7 @@ debug/showgen: $(DOBJS) debug/objects/showgen.o | debug
 	$(CC) $(LFLAGS) $(DEBUG) $(DOBJS) debug/objects/showgen.o -o debug/showgen
 
 #Compiles showgen.o
-build/objects/showgen.o: showgen.cc lib/board.h lib/io/aut.h | build/objects
+build/objects/showgen.o: showgen.cc lib/util.h lib/board.h lib/io/aut.h | build/objects
 	$(CC) $(CFLAGS) showgen.cc -o build/objects/showgen.o
 
 #Compiles debug version of showgen.o

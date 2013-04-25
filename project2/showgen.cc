@@ -1,13 +1,17 @@
 #include <string>
 #include <iostream>
+#include <cstdlib>
 #include <cstring>
 #include <vector>
 #include "lib/io/aut.h"
 #include "lib/board.h"
+#include "lib/util.h"
 
 using namespace std;
 
-int main(int argc, const char* argv[])
+void print_usage(int status);
+
+int main(int argc, char* argv[])
 {
     char* cur_arg;
     string file("");
@@ -18,6 +22,7 @@ int main(int argc, const char* argv[])
     int* y_range = NULL;
     int* x_disp_range = NULL;
     int* y_disp_range = NULL;
+    ifstream* input = NULL;
 
     for(int i = 1; i < argc; ++i)
     {
@@ -46,9 +51,9 @@ int main(int argc, const char* argv[])
         {
             if(i + 1 < argc)
             {
-                vector<string>* sp = split(argv[i + 1], ',');
+                vector<string>* sp = split(string(argv[i + 1]), ',');
 
-                if(sp.size() != 2)
+                if(sp->size() != 2)
                 {
                     //TODO: Barf
                 }
@@ -67,9 +72,9 @@ int main(int argc, const char* argv[])
         {
             if(i + 1 < argc)
             {
-                vector<string>* sp = split(argv[i + 1], ',')
+                vector<string>* sp = split(string(argv[i + 1]), ',');
 
-                if(sp.size() != 2)
+                if(sp->size() != 2)
                 {
                     //TODO: Barf
                 }
@@ -88,9 +93,9 @@ int main(int argc, const char* argv[])
         {
             if(i + 1 < argc)
             {
-                vector<string>* sp = split(argv[i + 1], ',')
+                vector<string>* sp = split(string(argv[i + 1]), ',');
 
-                if(sp.size() != 2)
+                if(sp->size() != 2)
                 {
                     //TODO: Barf
                 }
@@ -109,9 +114,9 @@ int main(int argc, const char* argv[])
         {
             if(i + 1 < argc)
             {
-                vector<string>* sp = split(argv[i + 1], ',')
+                vector<string>* sp = split(string(argv[i + 1]), ',');
 
-                if(sp.size() != 2)
+                if(sp->size() != 2)
                 {
                     //TODO: Barf
                 }
@@ -136,16 +141,30 @@ int main(int argc, const char* argv[])
         }
     }
 
-    
-    AutFile* a = new AutFile(file);
-    Board* b = a->get();
-    cout << *(b->to_string()) << "\n";
-    /*vector<string> vs = a->get();
-    
-    for(unsigned int i = 0; i < vs.size(); ++i)
+    if(file == "")
     {
-        cout << vs[i] << endl;
-    }*/
+        input = (ifstream*) &cin;
+    }
+    else
+    {
+        input->open(file.c_str());
+    }
+
+    a = new AutFile(input, x_range, y_range, x_disp_range, y_disp_range);
+    Board* b = a->get();
+
+    while(generations-- > 0)
+    {
+        b->next_generation();
+    }
+
+    cout << *(b->to_string()) << "\n";
 
     return 0;
+}
+
+void print_usage(int status)
+{
+    cout << "This is where usage goes.\n";
+    exit(status);
 }

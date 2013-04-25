@@ -2,11 +2,10 @@
 #include "scanner.h"
 #include "../util.h"
 
-#include <fstream>
 #include <iostream>
 #include <cstdlib>
 
-AutFile::AutFile(std::string &in, int* x_range, int* y_range, int* x_view, int* y_view)
+AutFile::AutFile(std::ifstream* in, int* x_range, int* y_range, int* x_view, int* y_view)
 {
     this->x_range = x_range;
     this->y_range = y_range;
@@ -41,15 +40,12 @@ std::string AutFile::to_string() const
     return "Not implemented.";
 }
 
-void AutFile::parse(std::string &s)
+void AutFile::parse(std::ifstream* in)
 {
-    std::ifstream in;
-    std::string n;
-    
+    std::string n;    
     std::string keyword = "";
 
-    in.open(s.c_str());
-    Scanner* scanner = new Scanner(&in, ";");
+    Scanner* scanner = new Scanner(in, ";");
     while(scanner->has_next())
     {
         n = scanner->next();
@@ -114,12 +110,10 @@ void AutFile::parse(std::string &s)
                 
                 if(sub_stmnts->size() == 2)
                 {
-                    char* err_check;
-
                     int eq = (*sub_stmnts)[0].rfind('=');
                     std::vector<std::string>* x_pos = split((*sub_stmnts)[1], ',');
                     
-                    int y = get_int((*sub_stmnts)[0].substr(eq + 1).c_str())
+                    int y = get_int((*sub_stmnts)[0].substr(eq + 1).c_str());
 
                     for(unsigned int j = 0; j < x_pos->size(); ++j)
                     {

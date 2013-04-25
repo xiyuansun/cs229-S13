@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include "util.h"
 
-std::vector<std::string>* split(std::string& s, char c, int n)
+std::vector<std::string>* split(std::string s, char c, int n)
 {
     unsigned int i = 0;
     unsigned int start = 0;
@@ -57,7 +57,7 @@ std::string remove_whitespace(std::string& s, std::string ws)
 int get_int(std::string s)
 {
     char* endptr;
-    int ret = (s.c_str(), &endptr, 10);
+    int ret = strtol(s.c_str(), &endptr, 10);
 
     if(endptr != '\0')
     {

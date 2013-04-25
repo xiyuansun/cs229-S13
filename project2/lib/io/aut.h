@@ -4,11 +4,12 @@
 #include "../board.h"
 #include <string>
 #include <vector>
+#include <fstream>
 
 class AutFile
 {
     public:
-        AutFile(std::string &in, int* x_range, int* y_range, int* x_view, int* y_view);
+        AutFile(std::ifstream* in, int* x_range, int* y_range, int* x_view, int* y_view);
         ~AutFile();
         Board* get() const;
         //void update(Board &b);
@@ -20,7 +21,7 @@ class AutFile
         int* y_disp_range;
         std::string states;
         std::string name;
-        void parse(std::string &s);
+        void parse(std::ifstream* in);
         std::vector<std::string> statements;
         Board* b;
 };
