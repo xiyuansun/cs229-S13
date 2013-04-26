@@ -11,7 +11,7 @@ class Board
         ~Board();
         char get_state_char(unsigned int state);
         void next_generation();
-        char get_state(int x, int y);
+        unsigned int get_state(int x, int y);
         void set_state(int x, int y, unsigned int state);
         unsigned int get_num_states();
         std::string* to_string();
@@ -28,9 +28,10 @@ class Board
         int y_disp_offset;
 
         std::string states;
-        char** board;
+        int** board;
 
         void set_state_char(unsigned int state, char c);
+        unsigned int count_neighbors(int x, int y);
 };
 
 #endif
