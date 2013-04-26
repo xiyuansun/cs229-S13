@@ -67,7 +67,6 @@ void AutFile::parse(std::ifstream* in)
             if(x_disp_range == NULL)
             {
                 x_disp_range = new int[2];
-                
                 x_disp_range[0] = first;
                 x_disp_range[1] = second;
             }
@@ -77,16 +76,16 @@ void AutFile::parse(std::ifstream* in)
             int first = stmnt->next_int();
             int second = stmnt->next_int();
             
-            if(y_range == NULL)
-            {
-                y_disp_range = new int[2];
-                y_range[0] = first;
-                y_range[1] = second;
-            }
-
             if(y_disp_range == NULL)
             {
                 y_disp_range = new int[2];
+                y_disp_range[0] = first;
+                y_disp_range[1] = second;
+            }
+
+            if(y_range == NULL)
+            {
+                y_range = new int[2];
                 y_range[0] = first;
                 y_range[1] = second;
             }
@@ -139,7 +138,7 @@ void AutFile::parse(std::ifstream* in)
         {
             //Unknown keyword. Display warning.
             std::string k = remove_whitespace(keyword);
-            if(k != "") std::cout << "Unrecognized keyword: " << k << '\n';
+            if(k != "") std::cerr << "Unrecognized keyword: " << k << '\n';
         }
 
         delete stmnt;

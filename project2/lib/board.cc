@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 
-Board::Board(int x_range[], int y_range[], int x_disp_range[], int y_disp_range[], std::string states)
+Board::Board(int* x_range, int* y_range, int* x_disp_range, int* y_disp_range, std::string states)
 {
     this->x_size = x_range[1] - x_range[0] + 1;
     this->x_offset = x_range[0];
@@ -24,7 +24,7 @@ Board::Board(int x_range[], int y_range[], int x_disp_range[], int y_disp_range[
 
         for(unsigned int y = 0; y < this->y_size; ++y)
         {
-            this->board[x][y] = this->states[0];
+            this->board[x][y] = 0;
         }
     }
 }
@@ -50,12 +50,26 @@ void Board::next_generation()
 
     for(int x = this->x_offset; x < x_max; ++x)
     {
+        int x_ind = x - this->x_offset;
+        for(int y = this->y_offset; y < y_max; ++y)
+        {
+            int y_ind = y - this->y_offset;
+            unsigned int state_mod = get_neighbors(x, y);
+            unsigned int neighbors = count_neighbors(x, y);
+
+            this->board[x_ind][y_ind] -= state_mod;
+            this->board[x_ind][y_ind] += neighbors;
+        }
+    }
+
+    for(int x = this->x_offset; x < x_max; ++x)
+    {
         for(int y = this->y_offset; y < y_max; ++y)
         {
             unsigned int state = get_state(x, y);
-            unsigned int state_mod = state % 10;
+            unsigned int state_mod = get_neighbors(x, y);
 
-            if(state / 10 > 0)
+            if(state > 0)
             {
                 if(state_mod < 2 || state_mod > 3)
                 {
@@ -68,19 +82,6 @@ void Board::next_generation()
             }
         }
     }
-
-    for(int x = this->x_offset; x < x_max; ++x)
-    {
-        int x_ind = x - this->x_offset;
-        for(int y = this->y_offset; y < y_max; ++y)
-        {
-            int y_ind = y - this->y_offset;
-            unsigned int state_mod = get_state(x, y) % 10;
-
-            this->board[x_ind][y_ind] -= state_mod;
-            this->board[x_ind][y_ind] += count_neighbors(x, y);
-        }
-    }
 }
 
 unsigned int Board::get_state(int x, int y)
@@ -91,11 +92,29 @@ unsigned int Board::get_state(int x, int y)
 
     if(x_ind < 0 || x_ind >= x_size || y_ind < 0 || y_ind >= y_size)
     {
-        ret = this->states[0]; 
+        ret = 0; 
     }
     else
     {
         ret = (this->board[x_ind][y_ind]) / 10;
+    }
+
+    return ret;
+}
+
+unsigned int Board::get_neighbors(int x, int y)
+{
+    unsigned int ret;
+    unsigned int x_ind = x - x_offset;
+    unsigned int y_ind = y - y_offset;
+
+    if(x_ind < 0 || x_ind >= x_size || y_ind < 0 || y_ind >= y_size)
+    {
+        ret = 0; 
+    }
+    else
+    {
+        ret = (this->board[x_ind][y_ind]) % 10;
     }
 
     return ret;
@@ -123,7 +142,7 @@ std::string* Board::to_string()
     {
         for(int x = this->x_disp_offset; x < x_max; ++x)
         {
-            ret->push_back(this->get_state(x, y));
+            ret->push_back(get_state_char(get_state(x, y)));
         }
         
         if(y > this->y_disp_offset)
@@ -149,7 +168,10 @@ unsigned int Board::count_neighbors(int x, int y)
     {
         for(int j = y-1; j <= y+1; ++j)
         {
-            if(get_state(i, j)/10 > 0) ++count;
+            if(i != x || j != y)
+            {
+                if(get_state(i, j) > 0) ++count;
+            }
         }
     }
 

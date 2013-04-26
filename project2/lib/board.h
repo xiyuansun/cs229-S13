@@ -7,11 +7,12 @@
 class Board
 {
     public:
-        Board(int x_range[], int y_range[], int x_disp_range[], int y_disp_range[], std::string states);
+        Board(int* x_range, int* y_range, int* x_disp_range, int* y_disp_range, std::string states);
         ~Board();
         char get_state_char(unsigned int state);
         void next_generation();
         unsigned int get_state(int x, int y);
+        unsigned int get_neighbors(int x, int y);
         void set_state(int x, int y, unsigned int state);
         unsigned int get_num_states();
         std::string* to_string();

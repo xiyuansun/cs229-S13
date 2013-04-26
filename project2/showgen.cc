@@ -147,6 +147,7 @@ int main(int argc, char* argv[])
     }
     else
     {
+        input = new ifstream();
         input->open(file.c_str());
     }
 

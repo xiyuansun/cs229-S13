@@ -4,6 +4,8 @@ DOBJS = debug/objects/aut.o debug/objects/board.o debug/objects/scanner.o debug/
 DEBUG = -g
 CFLAGS = -Wall -O3 -c
 LFLAGS = -Wall -O3
+DCFLAGS = -Wall -c
+DLFLAGS = -Wall
 CC = g++
 
 all: showgen
@@ -37,7 +39,7 @@ build/showgen: $(BOBJS) build/objects/showgen.o | build
 
 #Links debug version of showgen
 debug/showgen: $(DOBJS) debug/objects/showgen.o | debug
-	$(CC) $(LFLAGS) $(DEBUG) $(DOBJS) debug/objects/showgen.o -o debug/showgen
+	$(CC) $(DLFLAGS) $(DEBUG) $(DOBJS) debug/objects/showgen.o -o debug/showgen
 
 #Compiles showgen.o
 build/objects/showgen.o: showgen.cc lib/util.h lib/board.h lib/io/aut.h | build/objects
@@ -45,7 +47,7 @@ build/objects/showgen.o: showgen.cc lib/util.h lib/board.h lib/io/aut.h | build/
 
 #Compiles debug version of showgen.o
 debug/objects/showgen.o: showgen.cc lib/board.h lib/io/aut.h | debug/objects
-	$(CC) $(CFLAGS) $(DEBUG) showgen.cc -o debug/objects/showgen.o
+	$(CC) $(DCFLAGS) $(DEBUG) showgen.cc -o debug/objects/showgen.o
 
 #Compiles aut.o
 build/objects/aut.o: lib/io/aut.cc lib/io/aut.h lib/io/scanner.h lib/board.h lib/util.h | build/objects
@@ -53,7 +55,7 @@ build/objects/aut.o: lib/io/aut.cc lib/io/aut.h lib/io/scanner.h lib/board.h lib
 
 #Compiles debug version aut.o
 debug/objects/aut.o: lib/io/aut.cc lib/io/aut.h lib/io/scanner.h lib/board.h lib/util.h | debug/objects
-	$(CC) $(CFLAGS) $(DEBUG) lib/io/aut.cc -o debug/objects/aut.o
+	$(CC) $(DCFLAGS) $(DEBUG) lib/io/aut.cc -o debug/objects/aut.o
 
 #Complies board.o
 build/objects/board.o: lib/board.cc lib/board.h | build/objects
@@ -61,7 +63,7 @@ build/objects/board.o: lib/board.cc lib/board.h | build/objects
 
 #Complies debug version of board.o
 debug/objects/board.o: lib/board.cc lib/board.h | debug/objects
-	$(CC) $(CFLAGS) $(DEBUG) lib/board.cc -o debug/objects/board.o
+	$(CC) $(DCFLAGS) $(DEBUG) lib/board.cc -o debug/objects/board.o
 
 #Compiles scanner.o
 build/objects/scanner.o: lib/io/scanner.cc lib/io/scanner.h lib/constants.h | build/objects
@@ -69,7 +71,7 @@ build/objects/scanner.o: lib/io/scanner.cc lib/io/scanner.h lib/constants.h | bu
 
 #Compiles debug version of scanner.o
 debug/objects/scanner.o: lib/io/scanner.cc lib/io/scanner.h lib/constants.h | debug/objects
-	$(CC) $(CFLAGS) $(DEBUG) lib/io/scanner.cc -o debug/objects/scanner.o
+	$(CC) $(DCFLAGS) $(DEBUG) lib/io/scanner.cc -o debug/objects/scanner.o
 
 #Compiles util.o
 build/objects/util.o: lib/util.cc lib/util.h lib/constants.h | build/objects
@@ -77,4 +79,4 @@ build/objects/util.o: lib/util.cc lib/util.h lib/constants.h | build/objects
 
 #Compiles debug version of util.o
 debug/objects/util.o: lib/util.cc lib/util.h lib/constants.h | debug/objects
-	$(CC) $(CFLAGS) $(DEBUG) lib/util.cc -o debug/objects/util.o
+	$(CC) $(DCFLAGS) $(DEBUG) lib/util.cc -o debug/objects/util.o
