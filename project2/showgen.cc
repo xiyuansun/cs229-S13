@@ -41,6 +41,7 @@ int main(int argc, char* argv[])
             if(i + 1 < argc)
             {
                 generations = get_int(argv[i + 1]);
+                ++i;
             }
             else
             {
@@ -55,6 +56,7 @@ int main(int argc, char* argv[])
 
                 if(sp->size() != 2)
                 {
+                    delete sp;
                     //TODO: Barf
                 }
                 
@@ -62,6 +64,9 @@ int main(int argc, char* argv[])
 
                 x_range[0] = get_int((*sp)[0]);
                 x_range[1] = get_int((*sp)[1]);
+                ++i;
+
+                delete sp;
             }
             else
             {
@@ -76,6 +81,7 @@ int main(int argc, char* argv[])
 
                 if(sp->size() != 2)
                 {
+                    delete sp;
                     //TODO: Barf
                 }
 
@@ -83,6 +89,9 @@ int main(int argc, char* argv[])
 
                 y_range[0] = get_int((*sp)[0]);
                 y_range[1] = get_int((*sp)[1]);
+                ++i;
+
+                delete sp;
             }
             else
             {
@@ -97,6 +106,7 @@ int main(int argc, char* argv[])
 
                 if(sp->size() != 2)
                 {
+                    delete sp;
                     //TODO: Barf
                 }
                 
@@ -104,6 +114,9 @@ int main(int argc, char* argv[])
 
                 x_disp_range[0] = get_int((*sp)[0]);
                 x_disp_range[1] = get_int((*sp)[1]);
+                ++i;
+
+                delete sp;
             }
             else
             {
@@ -118,6 +131,7 @@ int main(int argc, char* argv[])
 
                 if(sp->size() != 2)
                 {
+                    delete sp;
                     //TODO: Barf
                 }
                 
@@ -125,6 +139,9 @@ int main(int argc, char* argv[])
 
                 y_disp_range[0] = get_int((*sp)[0]);
                 y_disp_range[1] = get_int((*sp)[1]);
+                ++i;
+
+                delete sp;
             }
             else
             {
@@ -158,8 +175,18 @@ int main(int argc, char* argv[])
     {
         b->next_generation();
     }
+    
+    string* last_gen = b->to_string();
 
-    cout << *(b->to_string()) << "\n";
+    cout << *last_gen  << "\n";
+
+    delete last_gen;
+    delete a;
+    
+    if(*input != cin)
+    {
+        delete input;
+    }
 
     return 0;
 }

@@ -22,6 +22,7 @@ AutFile::~AutFile()
     delete[] this->y_range;
     delete[] this->x_disp_range;
     delete[] this->y_disp_range;
+    delete this->b;
 }
 
 Board* AutFile::get() const
@@ -119,7 +120,11 @@ void AutFile::parse(std::ifstream* in)
                         int x = get_int((*x_pos)[j].c_str());
                         this->b->set_state(x, y, 1);
                     }
+                    
+                    delete x_pos;
                 }
+
+                delete sub_stmnts;
             }
 
             delete inner_stmnts;
@@ -130,6 +135,23 @@ void AutFile::parse(std::ifstream* in)
         }
         else if(keyword == "Chars")
         {
+            std::string in_stmnt("");
+            while(stmnt->has_next())
+            {
+                in_stmnt += stmnt->next();
+            }
+
+            remove_whitespace(in_stmnt);
+            std::vector<std::string>* chars = split(in_stmnt, ',');
+            
+            //TODO: Check size of chars vs maxsize for rules.
+
+            for(unsigned int i = 0; i < chars->size(); ++i)
+            {
+                this->states[i] = (char) get_int((*chars)[i]);
+            }
+
+            delete chars;
         }
         else if(keyword == "Colors")
         {

@@ -33,9 +33,9 @@ Board::~Board()
 {
     for(unsigned int x = 0; x < x_size; ++x)
     {
-        delete[] board[x];
+        free(board[x]);
     }
-    delete[] board;
+    free(board);
 }
 
 char Board::get_state_char(unsigned int state)
