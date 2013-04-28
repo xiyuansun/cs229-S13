@@ -14,8 +14,8 @@ class Board
         unsigned int get_state(int x, int y);
         unsigned int get_neighbors(int x, int y);
         void set_state(int x, int y, unsigned int state);
-        unsigned int get_num_states();
-        std::string* to_string();
+        std::string to_string();
+        std::string to_string(int start_x, int start_y, int max_x, int max_y);
         std::string to_aut();
     private:
         unsigned int x_size;

@@ -176,11 +176,10 @@ int main(int argc, char* argv[])
         b->next_generation();
     }
     
-    string* last_gen = b->to_string();
+    const string &last_gen = b->to_string();
 
-    cout << *last_gen  << "\n";
+    cout << last_gen  << "\n";
 
-    delete last_gen;
     delete a;
     
     if(*input != cin)

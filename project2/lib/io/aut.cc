@@ -12,7 +12,7 @@ AutFile::AutFile(std::ifstream* in, int* x_range, int* y_range, int* x_view, int
     this->x_disp_range = x_view;
     this->y_disp_range = y_view;
     this->states = "~123456789";
-    this->name = "";
+    this->name = "Game of Life";
     this->parse(in);
 }
 
@@ -28,6 +28,11 @@ AutFile::~AutFile()
 Board* AutFile::get() const
 {
     return this->b;
+}
+
+std::string AutFile::get_name() const
+{
+    return this->name;
 }
 
 /*

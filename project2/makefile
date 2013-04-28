@@ -8,12 +8,15 @@ DCFLAGS = -Wall -c
 DLFLAGS = -Wall
 CC = g++
 
-all: showgen
+all: showgen sim-tui
 
 showgen: build/showgen
 	@
 
-bug: debug/showgen
+sim-tui: build/sim-tui
+	@
+
+bug: debug/showgen debug/sim-tui
 
 clean:
 	rm -rf build debug cfogerty-aut.tar.gz
@@ -41,6 +44,14 @@ build/showgen: $(BOBJS) build/objects/showgen.o | build
 debug/showgen: $(DOBJS) debug/objects/showgen.o | debug
 	$(CC) $(DLFLAGS) $(DEBUG) $(DOBJS) debug/objects/showgen.o -o debug/showgen
 
+#Links sim-tui
+build/sim-tui: $(BOBJS) build/objects/sim-tui.o | build
+	$(CC) $(LFLAGS) $(BOBJS) build/objects/sim-tui.o -o build/sim-tui -lncurses
+
+#Links debug version of sim-tui
+debug/sim-tui: $(DOBJS) debug/objects/sim-tui.o | debug
+	$(CC) $(DLFLAGS) $(DEBUG) $(DOBJS) debug/objects/sim-tui.o -o debug/sim-tui -lncurses
+
 #Compiles showgen.o
 build/objects/showgen.o: showgen.cc lib/util.h lib/board.h lib/io/aut.h | build/objects
 	$(CC) $(CFLAGS) showgen.cc -o build/objects/showgen.o
@@ -48,6 +59,14 @@ build/objects/showgen.o: showgen.cc lib/util.h lib/board.h lib/io/aut.h | build/
 #Compiles debug version of showgen.o
 debug/objects/showgen.o: showgen.cc lib/board.h lib/io/aut.h | debug/objects
 	$(CC) $(DCFLAGS) $(DEBUG) showgen.cc -o debug/objects/showgen.o
+
+#Compiles sim-tui.o
+build/objects/sim-tui.o: sim-tui.cc lib/util.h lib/board.h lib/io/aut.h | build/objects
+	$(CC) $(CFLAGS) sim-tui.cc -o build/objects/sim-tui.o -lncurses
+
+#Compiles debug version of sim-tui.o
+debug/objects/sim-tui.o: sim-tui.cc lib/util.h lib/board.h lib/io/aut.h | debug/objects
+	$(CC) $(DCFLAGS) $(DEBUG) sim-tui.cc -o debug/objects/sim-tui.o -lncurses
 
 #Compiles aut.o
 build/objects/aut.o: lib/io/aut.cc lib/io/aut.h lib/io/scanner.h lib/board.h lib/util.h | build/objects

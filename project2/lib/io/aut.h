@@ -12,6 +12,7 @@ class AutFile
         AutFile(std::ifstream* in, int* x_range, int* y_range, int* x_view, int* y_view);
         ~AutFile();
         Board* get() const;
+        std::string get_name() const;
         //void update(Board &b);
         std::string to_string() const;
     private:

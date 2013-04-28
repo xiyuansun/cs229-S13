@@ -131,22 +131,26 @@ void Board::set_state(int x, int y, unsigned int state)
     }
 }
 
-std::string* Board::to_string()
+std::string Board::to_string()
 {
-    std::string* ret = new std::string("");
-
     int x_max = this->x_disp_size + this->x_disp_offset;
     int y_max = this->y_disp_size + this->y_disp_offset;
-    
-    for(int y = y_max - 1; y >= this->y_disp_offset; --y)
+
+    return this->to_string(this->x_disp_offset, this->y_disp_offset, x_max, y_max);
+}
+
+std::string Board::to_string(int start_x, int start_y, int max_x, int max_y)
+{
+    std::string ret(""); // = new std::string("");
+
+    for(int y = max_y - 1; y >= start_y; --y)
     {
-        for(int x = this->x_disp_offset; x < x_max; ++x)
+        for(int x = start_x; x < max_x; ++x)
         {
-            ret->push_back(get_state_char(get_state(x, y)));
+            ret.push_back(get_state_char(get_state(x, y)));
         }
-        
-        if(y > this->y_disp_offset)
-            ret->push_back('\n');
+        if(y > start_y)
+            ret.push_back('\n');
     }
     return ret;
 }
