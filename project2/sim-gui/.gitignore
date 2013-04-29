@@ -1,0 +1,4 @@
+*.pro
+moc_*
+Makefile
+sim-gui
