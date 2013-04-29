@@ -13,6 +13,10 @@ class AutFile
         ~AutFile();
         Board* get() const;
         std::string get_name() const;
+        int get_x_low() const;
+        int get_x_high() const;
+        int get_y_low() const;
+        int get_y_high() const;
         //void update(Board &b);
         std::string to_string() const;
     private:

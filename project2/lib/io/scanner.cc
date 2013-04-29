@@ -63,8 +63,7 @@ std::string Scanner::next()
             {
                 block = '\0';
             }
-
-            if(c == comment && !in_str())
+            else if(c == comment && !in_str())
             {
                 next_line();
             }

@@ -10,4 +10,9 @@ bool is_whitespace(char c, std::string ws=WHITESPACE);
 std::string remove_whitespace(std::string& s, std::string ws=WHITESPACE);
 int get_int(std::string s);
 
+int inline max(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
 #endif

@@ -35,6 +35,26 @@ std::string AutFile::get_name() const
     return this->name;
 }
 
+int AutFile::get_x_low() const
+{
+    return this->x_disp_range[0];
+}
+
+int AutFile::get_x_high() const
+{
+    return this->x_disp_range[1];
+}
+
+int AutFile::get_y_low() const
+{
+    return this->y_disp_range[0];
+}
+
+int AutFile::get_y_high() const
+{
+    return this->y_disp_range[1];
+}
+
 /*
 void AutFile::update(Board &b)
 {
