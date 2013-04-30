@@ -6,35 +6,43 @@
 
 BoardDisp::BoardDisp(int x_size, int y_size, Board* b, QWidget* parent) : QWidget(parent)
 {
+    // Some QT size/resize rules
     setAttribute(Qt::WA_StaticContents);
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-
+    
+    //default zoom, generation
     zoom = 8;
     generation = 0;
-
+    
+    // Set up timer with default delay
     timer = new QTimer(this);
     timer->setInterval(100);
-
+    
+    // Connect timer to step()
     connect(timer, SIGNAL(timeout()), this, SLOT(step()));
-
+    
+    // Setup backing image
     image = QImage(x_size, y_size, QImage::Format_ARGB32);
     image.fill(qRgba(255, 255, 255, 255));
-
+    
+    // Store backing board
     this->b = b;
-
+    
+    // Display generation 0
     updateImage();
 }
 
 void BoardDisp::setZoomFactor(int newZoom)
 {
     if(newZoom < 1) newZoom = 1;
-
+    
+    // If zoom changed, we need to let
+    // the QT magic fairies know.
     if(newZoom != zoom)
     {
         zoom = newZoom;
         update();
         updateGeometry();
-        update();
     }
 }
 
@@ -53,7 +61,8 @@ void BoardDisp::step()
     this->b->next_generation();
    
     updateImage();
-
+    
+    // Cause label to update on control panel
     ++generation;
     QString text = QString::number(generation);
     emit updateGen(text);
@@ -61,11 +70,13 @@ void BoardDisp::step()
 
 void BoardDisp::zoomChanged(int newZoom)
 {
+    // Set new zoom
     setZoomFactor(newZoom);
 }
 
 void BoardDisp::delayChanged(int newDelay)
 {
+    // Set new delay
     timer->setInterval(newDelay);
 }
 
@@ -84,7 +95,8 @@ void BoardDisp::changeState(bool play)
 void BoardDisp::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-
+    
+    // Draw lines
     if(zoom >= 3)
     {
         painter.setPen(palette().foreground().color());
@@ -99,7 +111,8 @@ void BoardDisp::paintEvent(QPaintEvent *event)
             painter.drawLine(0, zoom * j, zoom * image.width(), zoom * j);
         }
     }
-
+    
+    // Update only areas that need it.
     for(int i = 0; i < image.width(); ++i)
     {
         for(int j = 0; j < image.height(); ++j)
@@ -116,6 +129,7 @@ void BoardDisp::paintEvent(QPaintEvent *event)
 
 void BoardDisp::updateImage()
 {
+    // Loop over board, pulling values for image.
     for(int y = image.height() - 1; y >= 0; --y)
     {
         for(int x = 0; x < image.width(); ++x)
