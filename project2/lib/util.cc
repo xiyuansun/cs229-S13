@@ -62,7 +62,7 @@ int get_int(std::string s)
 
     if(endptr != '\0')
     {
-        throw runtime_error("Could not convert " + s + " to an integer.");
+        throw std::runtime_error("Could not convert " + s + " to an integer.");
     }
 
     return ret;

@@ -1,7 +1,9 @@
 #include <ncurses.h>
 #include <iostream>
 #include <cstring>
+#include <cstdlib>
 #include <string>
+#include <stdexcept>
 
 #include "lib/board.h"
 #include "lib/io/aut.h"
@@ -40,236 +42,264 @@ int main(int argc, char* argv[])
     int* x_range = NULL;
     int* y_range = NULL;
     ifstream* input = NULL;
-
-    for(int i = 1; i < argc; ++i)
+    
+    try
     {
-        cur_arg = argv[i];
+        for(int i = 1; i < argc; ++i)
+        {
+            cur_arg = argv[i];
 
-        if(strcmp(cur_arg, "-h") == 0)
-        {
-            print_usage(0);
-        }
-        else if(strcmp(cur_arg, "-tx") == 0)
-        {
-            if(i + 1 < argc)
+            if(strcmp(cur_arg, "-h") == 0)
             {
-                vector<string>* sp = split(string(argv[i + 1]), ',');
-
-                if(sp->size() != 2)
+                print_usage(0);
+            }
+            else if(strcmp(cur_arg, "-tx") == 0)
+            {
+                if(i + 1 < argc)
                 {
-                    delete sp;
-                    //TODO: Barf
-                }
+                    vector<string>* sp = split(string(argv[i + 1]), ',');
+
+                    if(sp->size() != 2)
+                    {
+                        delete sp;
+                        throw runtime_error("-tx needs a low and a high value.\nUse " + string(argv[0]) + " -h for more details.");
+                    }
                 
-                x_range = new int[2];
+                    x_range = new int[2];
 
-                x_range[0] = get_int((*sp)[0]);
-                x_range[1] = get_int((*sp)[1]);
-                ++i;
+                    x_range[0] = get_int((*sp)[0]);
+                    x_range[1] = get_int((*sp)[1]);
+                    ++i;
 
-                delete sp;
+                    delete sp;
+                }
+                else
+                {
+                    throw runtime_error("The -tx switch requires an argument.\nUse " + string(argv[0]) + " -h for more details.");
+                }
+            }
+            else if(strcmp(cur_arg, "-ty") == 0)
+            {
+                if(i + 1 < argc)
+                {
+                    vector<string>* sp = split(string(argv[i + 1]), ',');
+
+                    if(sp->size() != 2)
+                    {
+                        delete sp;
+                        throw runtime_error("-ty needs a low and a high value.\nUse " + string(argv[0]) + " -h for more details.");
+                    }
+                
+                    y_range = new int[2];
+
+                    y_range[0] = get_int((*sp)[0]);
+                    y_range[1] = get_int((*sp)[1]);
+                    ++i;
+
+                    delete sp;
+                }
+                else
+                {
+
+                    throw runtime_error("The -ty switch requires an argument.\nUse " + string(argv[0]) + " -h for more details.");
+                }
+            }
+            else if(file == "")
+            {
+                file = cur_arg;
+            }
+            else
+            {
+                throw runtime_error("Unrecognized switch " + string(cur_arg) + ".");
             }
         }
-        else if(strcmp(cur_arg, "-ty") == 0)
+
+        if(file == "")
         {
-            if(i + 1 < argc)
-            {
-                vector<string>* sp = split(string(argv[i + 1]), ',');
-
-                if(sp->size() != 2)
-                {
-                    delete sp;
-                    //TODO: Barf
-                }
-                
-                y_range = new int[2];
-
-                y_range[0] = get_int((*sp)[0]);
-                y_range[1] = get_int((*sp)[1]);
-                ++i;
-
-                delete sp;
-            }
+            throw runtime_error("No file was specifited.\nTry " + string(argv[0]) + " -h for more details.");
         }
-        else if(file == "")
-        {
-            file = cur_arg;
-        }
-        else
-        {
-            //TODO: Barf
-        }
-    }
 
-    if(file == "")
-    {
-        //TODO: Barf
-        input = (ifstream*) &cin;
-    }
-    else
-    {
         input = new ifstream();
         input->open(file.c_str());
-    }
-
-    AutFile* a = new AutFile(input, x_range, y_range, x_range, y_range);
-    Board* b = a->get();
-
-    initscr();
-    raw();
-    curs_set(0);
-    keypad(stdscr, TRUE);
-    timeout(delay);
-    noecho();
     
-    height = LINES - 3;
-    width = COLS;
-    start_y = 2;
-    start_x = 0;
-    refresh();
-    board_win = make_win(height, width, start_y, start_x);
+        if(input->fail()) throw runtime_error("Failed attempting to open " + file);
+
+        AutFile* a = new AutFile(input, x_range, y_range, x_range, y_range);
+        Board* b = a->get();
+
+        initscr();
+        raw();
+        curs_set(0);
+        keypad(stdscr, TRUE);
+        timeout(delay);
+        noecho();
+    
+        height = LINES - 3;
+        width = COLS;
+        start_y = 2;
+        start_x = 0;
+        refresh();
+        board_win = make_win(height, width, start_y, start_x);
    
-    string board_name = a->get_name();
+        string board_name = a->get_name();
 
-    mvwprintw(stdscr, 0, COLS/2 - board_name.length()/2, board_name.c_str());
-    mvwprintw(stdscr, 1, 0, "Delay: %5d (+/-)", delay);
-    mvwprintw(stdscr, 1, COLS - 16, "Generation %5d", generation);
-    mvwprintw(stdscr, LINES - 1, 0, "(Q)UIT  (P)LAY/PAUSE  (S)TEP  Arrows: scroll");
+        mvwprintw(stdscr, 0, COLS/2 - board_name.length()/2, board_name.c_str());
+        mvwprintw(stdscr, 1, 0, "Delay: %5d (+/-)", delay);
+        mvwprintw(stdscr, 1, COLS - 16, "Generation %5d", generation);
+        mvwprintw(stdscr, LINES - 1, 0, "(Q)UIT  (P)LAY/PAUSE  (S)TEP  Arrows: scroll");
     
-    x_shown = (a->get_x_high() - a->get_x_low()) / (width - 2.0);
-    y_shown = (a->get_y_high() - a->get_y_low()) / (height - 2.0);
-    max_x = a->get_x_high() - (width - 2);
-    min_y = a->get_y_low() + (height - 2);
-    disp_start_x = a->get_x_low();
-    disp_start_y = a->get_y_high();
-    x_scroll_size = max((int) (1/x_shown * (width - 4)), 1);
-    y_scroll_size = max((int) (1/y_shown * (height - 4)), 1);
-    y_scroll_start = 2;
-    x_scroll_start = 2;
+        x_shown = (a->get_x_high() - a->get_x_low()) / (width - 2.0);
+        y_shown = (a->get_y_high() - a->get_y_low()) / (height - 2.0);
+        max_x = a->get_x_high() - (width - 2);
+        min_y = a->get_y_low() + (height - 2);
+        disp_start_x = a->get_x_low();
+        disp_start_y = a->get_y_high();
+        x_scroll_size = max((int) (1/x_shown * (width - 4)), 1);
+        y_scroll_size = max((int) (1/y_shown * (height - 4)), 1);
+        y_scroll_start = 2;
+        x_scroll_start = 2;
 
 
-    enable_x_scroll = x_shown >= 1;
-    enable_y_scroll = y_shown >= 1;
+        enable_x_scroll = x_shown >= 1;
+        enable_y_scroll = y_shown >= 1;
 
-    print_gen(board_win, b, disp_start_y, disp_start_x, height - 1, width - 2);
+        print_gen(board_win, b, disp_start_y, disp_start_x, height - 1, width - 2);
 
-    if(enable_x_scroll)
-    {
-        disp_x_scroll(board_win, height - 1, x_scroll_start, x_scroll_size, width);
-    }
-
-    if(enable_y_scroll)
-    {
-        disp_y_scroll(board_win, width - 1, y_scroll_start, y_scroll_size, height);
-    }
-
-    while(!done)
-    {
-        step = false;
-        update = false;
-        ch = getch();
-
-        switch(ch)
+        if(enable_x_scroll)
         {
-            case KEY_LEFT:
-                if(enable_x_scroll && disp_start_x > a->get_x_low())
-                {
-                    --disp_start_x;
-                    x_scroll_start = (int) ((1.0 * disp_start_x - a->get_x_low())/(max_x - a->get_x_low()) * (width - 4 - x_scroll_size) + 2);
-                    disp_x_scroll(board_win, height - 1, x_scroll_start, x_scroll_size, width);
-                    update = true;
-                }
-                break;
-            case KEY_RIGHT:
-                if(enable_x_scroll && disp_start_x < max_x)
-                {
-                    ++disp_start_x;
-                    x_scroll_start = (int) ((1.0 * disp_start_x - a->get_x_low())/(max_x - a->get_x_low()) * (width - 4 - x_scroll_size) + 2);
-                    disp_x_scroll(board_win, height - 1, x_scroll_start, x_scroll_size, width);
-                    update = true;
-                }
-                break;
-            case KEY_UP:
-                if(enable_y_scroll && disp_start_y < a->get_y_high())
-                {
-                    ++disp_start_y;
-                    y_scroll_start = (int) ((1.0 * a->get_y_high() - disp_start_y)/(a->get_y_high() - min_y) * (height - 4 - y_scroll_size) + 2);
-                    disp_y_scroll(board_win, width - 1, y_scroll_start, y_scroll_size, height);
-                    update = true;
-                }
-                break;
-            case KEY_DOWN:
-                if(enable_y_scroll && disp_start_y > min_y)
-                {
-                    --disp_start_y;
-                    y_scroll_start = (int) ((1.0 * a->get_y_high() - disp_start_y)/(a->get_y_high() - min_y) * (height - 4 - y_scroll_size) + 2);
-                    disp_y_scroll(board_win, width - 1, y_scroll_start, y_scroll_size, height);
-                    update = true;
-                }
-                break;
-            case 'q':
-            case 'Q':
-                paused = true;
-                done = true;
-                break;
-            case 'p':
-            case 'P':
-                paused = !paused;
-                break;
-            case 's':
-            case 'S':
-                step = true;
-                break;
-            case '+':
-                ++delay;
-                timeout(delay);
-                mvwprintw(stdscr, 1, 0, "Delay: %5d (+/-)", delay);
-                break;
-            case '-':
-                --delay;
-                if(delay <= 0) delay = 1;
-                timeout(delay);
-                mvwprintw(stdscr, 1, 0, "Delay: %5d (+/-)", delay);
-                break;
-            default:
-                break;
+            disp_x_scroll(board_win, height - 1, x_scroll_start, x_scroll_size, width);
         }
 
-        if(!paused || step)
+        if(enable_y_scroll)
         {
-            b->next_generation();
-            update = true;
-            ++generation;
-            mvwprintw(stdscr, 1, COLS - 16, "Generation %5d", generation);
+            disp_y_scroll(board_win, width - 1, y_scroll_start, y_scroll_size, height);
         }
 
-        if(update)
+        while(!done)
         {
-            print_gen(board_win, b, disp_start_y, disp_start_x, height - 1, width - 2);
-        }
+            step = false;
+            update = false;
+            ch = getch();
 
-        wrefresh(board_win);
-    }
+            switch(ch)
+            {
+                case KEY_LEFT:
+                    if(enable_x_scroll && disp_start_x > a->get_x_low())
+                    {
+                        --disp_start_x;
+                        x_scroll_start = (int) ((1.0 * disp_start_x - a->get_x_low())/(max_x - a->get_x_low()) * (width - 4 - x_scroll_size) + 2);
+                        disp_x_scroll(board_win, height - 1, x_scroll_start, x_scroll_size, width);
+                        update = true;
+                    }
+                    break;
+                case KEY_RIGHT:
+                    if(enable_x_scroll && disp_start_x < max_x)
+                    {
+                        ++disp_start_x;
+                        x_scroll_start = (int) ((1.0 * disp_start_x - a->get_x_low())/(max_x - a->get_x_low()) * (width - 4 - x_scroll_size) + 2);
+                        disp_x_scroll(board_win, height - 1, x_scroll_start, x_scroll_size, width);
+                        update = true;
+                    }
+                    break;
+                case KEY_UP:
+                    if(enable_y_scroll && disp_start_y < a->get_y_high())
+                    {
+                        ++disp_start_y;
+                        y_scroll_start = (int) ((1.0 * a->get_y_high() - disp_start_y)/(a->get_y_high() - min_y) * (height - 4 - y_scroll_size) + 2);
+                        disp_y_scroll(board_win, width - 1, y_scroll_start, y_scroll_size, height);
+                        update = true;
+                    }
+                    break;
+                case KEY_DOWN:
+                    if(enable_y_scroll && disp_start_y > min_y)
+                    {
+                        --disp_start_y;
+                        y_scroll_start = (int) ((1.0 * a->get_y_high() - disp_start_y)/(a->get_y_high() - min_y) * (height - 4 - y_scroll_size) + 2);
+                        disp_y_scroll(board_win, width - 1, y_scroll_start, y_scroll_size, height);
+                        update = true;
+                    }
+                    break;
+                case 'q':
+                case 'Q':
+                    paused = true;
+                    done = true;
+                    break;
+                case 'p':
+                case 'P':
+                    paused = !paused;
+                    break;
+                case 's':
+                case 'S':
+                    step = true;
+                    break;
+                case '+':
+                    ++delay;
+                    timeout(delay);
+                    mvwprintw(stdscr, 1, 0, "Delay: %5d (+/-)", delay);
+                    break;
+                case '-':
+                    --delay;
+                    if(delay <= 0) delay = 1;
+                    timeout(delay);
+                    mvwprintw(stdscr, 1, 0, "Delay: %5d (+/-)", delay);
+                    break;
+                default:
+                    break;
+            }
+
+            if(!paused || step)
+            {
+                b->next_generation();
+                update = true;
+                ++generation;
+                mvwprintw(stdscr, 1, COLS - 16, "Generation %5d", generation);
+            }
+
+            if(update)
+            {
+                print_gen(board_win, b, disp_start_y, disp_start_x, height - 1, width - 2);
+            }
+
+            wrefresh(board_win);
+        }
     
-    destroy_win(board_win);
-    endwin();
-    delwin(stdscr);
+        destroy_win(board_win);
+        endwin();
+        delwin(stdscr);
 
-    if(*input != cin)
-    {
-        delete input;
+        if(*input != cin)
+        {
+            delete input;
+        }
+
+        delete a;
+        delete[] x_range;
+        delete[] y_range;
+
+        return 0;
     }
-
-    delete a;
-    delete[] x_range;
-    delete[] y_range;
-
-    return 0;
+    catch(runtime_error &e)
+    {
+        endwin();
+        delwin(stdscr);
+        cerr << "ERROR: " << e.what() << "\n";
+        exit(1);
+    }
 }
 
 void print_usage(int status)
 {
-    return;
+    cout << "sim-tui reads in a single .aut file passed as an argument, specifying the\nsize and initial configuration of the terrain for generation 0.\n";
+    cout << "It then determinesand displays the state of each cell as generations advance.\n";
+    cout << "\nOPTIONS:\n";
+    cout << "\t-h\t\tDisplays this help screen.\n";
+    cout << "\t-tx L,H\t\tSet the x range of the terrain from L (low) to H (high).\n\t\t\tThis overrides the input file.\n";
+    cout << "\t-ty L,H\t\tSet the y range of the terrain from L (low) to H (high).\n\t\t\tThis overrides the input file.\n";
+    cout << "\nWhen the TUI is running:\n\tP starts or stops the simulation\n\tS advances the simulation by 1 generation\n";
+    cout << "\tQ quits sim-tui\n";
+    cout << "\t'+' increases the delay between generations\n\t'-' decreases the delay between generations.\n";
+    cout << "\tIf the range of the terrain is too large to display, the arrow keys scroll the view.\n";
+    exit(status);
 }
 
 WINDOW* make_win(int height, int width, int starty, int startx)
@@ -285,22 +315,7 @@ WINDOW* make_win(int height, int width, int starty, int startx)
 
 void destroy_win(WINDOW* local_win)
 {	
-	/* box(local_win, ' ', ' '); : This won't produce the desired
-	 * result of erasing the window. It will leave it's four corners 
-	 * and so an ugly remnant of window. 
-	 */
 	wborder(local_win, ' ', ' ', ' ',' ',' ',' ',' ',' ');
-	/* The parameters taken are 
-	 * 1. win: the window on which to operate
-	 * 2. ls: character to be used for the left side of the window 
-	 * 3. rs: character to be used for the right side of the window 
-	 * 4. ts: character to be used for the top side of the window 
-	 * 5. bs: character to be used for the bottom side of the window 
-	 * 6. tl: character to be used for the top left corner of the window 
-	 * 7. tr: character to be used for the top right corner of the window 
-	 * 8. bl: character to be used for the bottom left corner of the window 
-	 * 9. br: character to be used for the bottom right corner of the window
-	 */
 	wrefresh(local_win);
 	delwin(local_win);
 }

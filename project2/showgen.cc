@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
             }
             else
             {
-                throw runtime_error("Unrecognized argument " + string(cur_arg) + ".");
+                throw runtime_error("Unrecognized switch " + string(cur_arg) + ".");
             }
         }
 
@@ -197,13 +197,22 @@ int main(int argc, char* argv[])
     }
     catch (exception &e)
     {
-        cout << "ERROR: " << e.what() << "\n";
+        cerr << "ERROR: " << e.what() << "\n";
         exit(1);
     }
 }
 
 void print_usage(int status)
 {
-    cout << "This is where usage goes.\n";
+    cout << "Usage: showgen [OPTIONS]... [FILE]\n";
+    cout << "Determines and displays the state of each cell at generation n.\n";
+    cout << "\nOPTIONS:\n";
+    cout << "\t-a\t\tSpecifies output should be in .aut format. Otherwise, output ASCII grid.\n";
+    cout << "\t-g N\t\tSpecifies the desired generation number N. Default is N = 0\n";
+    cout << "\t-h\t\tShows this help screen.\n";
+    cout << "\t-tx L,H\t\tSet the x range of the terrain from L (low) to H (high). This overrides the input file.\n";
+    cout << "\t-ty L,H\t\tSet the y range of the terrain from L (low) to H (high). This overrides the input file.\n";
+    cout << "\t-wx L,H\t\tSet the x range of the output view from L (low) to H (high). This overrides the input file.\n";
+    cout << "\t-wy L,H\t\tSet the y range of the output view from L (low) to H (high). This overrides the input file.\n";
     exit(status);
 }

@@ -1,9 +1,10 @@
+#include <iostream>
+#include <cstdlib>
+#include <stdexcept>
+
 #include "aut.h"
 #include "scanner.h"
 #include "../util.h"
-
-#include <iostream>
-#include <cstdlib>
 
 AutFile::AutFile(std::ifstream* in, int* x_range, int* y_range, int* x_view, int* y_view)
 {
@@ -122,7 +123,7 @@ void AutFile::parse(std::ifstream* in)
         {
             if(x_range == NULL || y_range == NULL || x_disp_range == NULL || y_disp_range == NULL)
             {
-                throw runtime_error("The Initial keyword must be the last keyword in the aut file.");
+                throw std::runtime_error("The Initial keyword must be the last keyword in the aut file.");
             }
 
             std::string in_stmnt("");

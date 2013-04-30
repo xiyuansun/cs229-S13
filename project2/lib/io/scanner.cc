@@ -84,7 +84,7 @@ std::string Scanner::next()
     }
     else
     {
-       throw runtime_error("Scanner has no next."); 
+       throw std::runtime_error("Scanner has no next."); 
     }
     
     return ret;
@@ -97,7 +97,7 @@ int Scanner::next_int()
 
     if(source->fail())
     {
-        throw runtime_error("Next token is not an integer.");
+        throw std::runtime_error("Next token is not an integer.");
     }
 
     return ret;

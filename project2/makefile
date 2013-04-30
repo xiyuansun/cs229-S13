@@ -22,7 +22,7 @@ sim-gui: build/sim-gui
 bug: debug/showgen debug/sim-tui
 
 clean:
-	rm -rf build debug cfogerty-aut.tar.gz
+	rm -rf build debug cfogerty-aut.tar.gz; rm sim-gui/sim-gui.pro
 
 tarball:
 	tar -czvf cfogerty-aut.tar.gz $(PROGS) lib/* makefile README
@@ -39,7 +39,7 @@ build/objects: | build
 debug/objects: | debug
 	mkdir debug/objects
 
-build/sim-gui: $(BOBJS) | build
+build/sim-gui: $(BOBJS) sim-gui/sim-gui.cc sim-gui/widgets/boarddisp.h sim-gui/widgets/optionsdialog.h lib/util.h lib/board.h lib/io/aut.h lib/io/scanner.h lib/color.h | build
 	make -f sim-gui/makefile
 
 #Links showgen
