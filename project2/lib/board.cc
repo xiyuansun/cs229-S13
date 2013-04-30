@@ -5,19 +5,29 @@
 
 Board::Board(int* x_range, int* y_range, int* x_disp_range, int* y_disp_range, std::string states, std::vector<Color>* colors)
 {
+    // Set x terrain bounds
     this->x_size = x_range[1] - x_range[0] + 1;
     this->x_offset = x_range[0];
+
+    // Set x display bounds
     this->x_disp_size = x_disp_range[1] - x_disp_range[0] + 1;
     this->x_disp_offset = x_disp_range[0];
     
+    // Set y terrain bounds
     this->y_size = y_range[1] - y_range[0] + 1;
     this->y_offset = y_range[0];
+    
+    // Set y display bounds
     this->y_disp_size = y_disp_range[1] - y_disp_range[0] + 1;
     this->y_disp_offset = y_disp_range[0];
-
+    
+    // Set states
     this->states = states;
-    this->colors = colors;
 
+    // Set colors
+    this->colors = colors;
+    
+    // Create board and initialize to state 0.
     this->board = (int**) malloc(sizeof(int*) * this->x_size);
 
     for(unsigned int x = 0; x < x_size; ++x)
@@ -33,6 +43,7 @@ Board::Board(int* x_range, int* y_range, int* x_disp_range, int* y_disp_range, s
 
 Board::~Board()
 {
+    // Free int** board
     for(unsigned int x = 0; x < x_size; ++x)
     {
         free(board[x]);
@@ -40,21 +51,12 @@ Board::~Board()
     free(board);
 }
 
-char Board::get_state_char(unsigned int state)
-{
-    return this->states[state];
-}
-
-Color Board::get_state_color(unsigned int state)
-{
-    return (*colors)[state];
-}
-
 void Board::next_generation()
 {
     int x_max = this->x_offset + this->x_size;
     int y_max = this->y_offset + this->y_size;
-
+    
+    // Update neighbor count
     for(int x = this->x_offset; x < x_max; ++x)
     {
         int x_ind = x - this->x_offset;
@@ -68,7 +70,8 @@ void Board::next_generation()
             this->board[x_ind][y_ind] += neighbors;
         }
     }
-
+    
+    // Update cell based on neighbor count
     for(int x = this->x_offset; x < x_max; ++x)
     {
         for(int y = this->y_offset; y < y_max; ++y)
@@ -105,6 +108,8 @@ unsigned int Board::get_state(int x, int y, bool shift)
         y_ind = y;
     }
 
+    // if x_ind, y_ind in range, return the state.
+    // else, return 0.
     if(x_ind >= x_size || y_ind >= y_size)
     {
         ret = 0; 
@@ -117,29 +122,30 @@ unsigned int Board::get_state(int x, int y, bool shift)
     return ret;
 }
 
-unsigned int Board::get_neighbors(int x, int y)
+unsigned int Board::count_neighbors(int x, int y)
 {
-    unsigned int ret;
-    unsigned int x_ind = x - x_offset;
-    unsigned int y_ind = y - y_offset;
-
-    if(x_ind >= x_size || y_ind >= y_size)
+    // Loop over neighbors and find the live ones.
+    unsigned int count = 0;
+    for(int i = x-1; i <= x+1; ++i)
     {
-        ret = 0; 
-    }
-    else
-    {
-        ret = (this->board[x_ind][y_ind]) % 10;
+        for(int j = y-1; j <= y+1; ++j)
+        {
+            if(i != x || j != y)
+            {
+                if(get_state(i, j) > 0) ++count;
+            }
+        }
     }
 
-    return ret;
+    return count;
 }
 
 void Board::set_state(int x, int y, unsigned int state)
 {
     unsigned int x_ind = x - x_offset;
     unsigned int y_ind = y - y_offset;
-
+    
+    // If x_ind and y_ind in range, set the state to state.
     if(x_ind < x_size && y_ind < y_size && state < states.length())
     {
         board[x_ind][y_ind] = state * 10 + count_neighbors(x, y);
@@ -157,7 +163,8 @@ std::string Board::to_string()
 std::string Board::to_string(int start_x, int start_y, int max_x, int max_y)
 {
     std::string ret("");
-
+    
+    //Loop over ranges and call get_state for each (x,y) pair
     for(int y = max_y - 1; y >= start_y; --y)
     {
         for(int x = start_x; x < max_x; ++x)
@@ -180,12 +187,15 @@ std::string Board::to_aut()
 
     bool added_ystmnt;
 
+    // Loop over y values to find live cells
     for(int y = y_max - 1; y >= this->y_offset; --y)
     {
         added_ystmnt = false;
 
+        // Loop over x values to find live cells
         for(int x = this->x_offset; x < x_max; ++x)
         {
+            // live cell, add to list.
             if(this->get_state(x, y) == 1)
             {
                 if(!added_ystmnt)
@@ -203,29 +213,26 @@ std::string Board::to_aut()
         if(added_ystmnt) out << ";\n";
     }
 
+    // Close the initial statement
     out << "};";
     
     return out.str();
 }
 
-void Board::set_state_char(unsigned int state, char c)
+unsigned int Board::get_neighbors(int x, int y)
 {
-    this->states[state] = c;
-}
+    unsigned int ret;
+    unsigned int x_ind = x - x_offset;
+    unsigned int y_ind = y - y_offset;
 
-unsigned int Board::count_neighbors(int x, int y)
-{
-    unsigned int count = 0;
-    for(int i = x-1; i <= x+1; ++i)
+    if(x_ind >= x_size || y_ind >= y_size)
     {
-        for(int j = y-1; j <= y+1; ++j)
-        {
-            if(i != x || j != y)
-            {
-                if(get_state(i, j) > 0) ++count;
-            }
-        }
+        ret = 0; 
+    }
+    else
+    {
+        ret = (this->board[x_ind][y_ind]) % 10;
     }
 
-    return count;
+    return ret;
 }

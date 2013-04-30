@@ -226,9 +226,6 @@ int main(int argc, char* argv[])
         enable_x_scroll = x_shown >= 1;
         enable_y_scroll = y_shown >= 1;
         
-        // Display the 0th generation.
-        print_gen(board_win, b, disp_start_y, disp_start_x, height - 1, width - 2);
-        wrefresh(board_win);
 
         // Write out initial scroll bars, if necessary
         if(enable_x_scroll)
@@ -240,6 +237,10 @@ int main(int argc, char* argv[])
         {
             disp_y_scroll(board_win, width - 1, y_scroll_start, y_scroll_size, height);
         }
+
+        // Display the 0th generation.
+        print_gen(board_win, b, disp_start_y, disp_start_x, height - 1, width - 2);
+        wrefresh(board_win);
         
         // Main loop
         while(!done)
@@ -336,12 +337,12 @@ int main(int argc, char* argv[])
                 update = true;
                 ++generation;
                 mvwprintw(stdscr, 1, COLS - 16, "Generation %5d", generation);
-                print_gen(board_win, b, disp_start_y, disp_start_x, height - 1, width - 2);
             }
             
             // Refresh window.
             if(update)
             {
+                print_gen(board_win, b, disp_start_y, disp_start_x, height - 1, width - 2);
                 wrefresh(board_win);
             }
 
@@ -359,8 +360,6 @@ int main(int argc, char* argv[])
         }
 
         delete a;
-        delete[] x_range;
-        delete[] y_range;
         
         return 0;
     }

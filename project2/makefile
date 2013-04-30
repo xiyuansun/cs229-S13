@@ -1,4 +1,6 @@
-PROGS = showgen.c
+PROGS = showgen.cc sim-tui.cc
+PROGS += sim-gui/widgets/*
+PROGS += sim-gui/makefile sim-gui/sim-gui.cc
 BOBJS = build/objects/aut.o build/objects/board.o build/objects/scanner.o build/objects/util.o
 DOBJS = debug/objects/aut.o debug/objects/board.o debug/objects/scanner.o debug/objects/util.o
 DEBUG = -g

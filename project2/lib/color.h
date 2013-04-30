@@ -1,6 +1,8 @@
 #ifndef COLOR_H
 #define COLOR_H
 
+// Used to easily pack and
+// communicate rgb values.
 class Color
 {
     public:

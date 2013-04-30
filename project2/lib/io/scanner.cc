@@ -4,6 +4,7 @@
 
 #include "scanner.h"
 
+// Make Scanner to parse string
 Scanner::Scanner(std::string &s, std::string d, char c)
 {
     source = new std::istringstream(s);
@@ -11,9 +12,12 @@ Scanner::Scanner(std::string &s, std::string d, char c)
     comment = c;
     hasNext = true;
     block = 0;
+
+    // Made a new istringstream. Must delete it later.
     del = true;
 }
 
+// Make Scanner to parse input stream.
 Scanner::Scanner(std::istream *is, std::string d, char c)
 {
     source = is;
@@ -21,6 +25,8 @@ Scanner::Scanner(std::istream *is, std::string d, char c)
     comment = c;
     hasNext = true;
     block = 0;
+
+    // Didn't make new stream, don't delete.
     del = false;
 }
 
@@ -29,25 +35,23 @@ Scanner::~Scanner()
     if(del) delete source;
 }
 
-void Scanner::set_delimiter(std::string d)
-{
-    delimiter = d;
-}
-
-void Scanner::set_comment(char c)
-{
-    comment = c;
-}
-
-bool Scanner::has_next() const
-{
-    return hasNext;
-}
-
 std::string Scanner::next()
 {
     std::string ret = "";
     char c = source->get();
+
+    // If this call is legal
+    //  1) Find the next non-delimiter character
+    //  2) Loop until we hit the end or we find
+    //     a delimiter character while we aren't
+    //     in a {} block.
+    //      a) set up a new block if necessary
+    //      b) else exit block if necessary
+    //      c) else, if comment, ignore
+    //      d) else safe to push to string.
+    //  3) Get next character, jump to 2
+    //  4) If we've hit the end of the stream,
+    //     calls to next() will no longer be legal.
     if(this->hasNext)
     {
         while(is_delimiter(c) && !source->eof())
@@ -55,7 +59,7 @@ std::string Scanner::next()
             c = source->get();
         }
 
-        while((!is_delimiter(c) || in_brace()) && !source->eof())
+        while((!is_delimiter(c) || in_brace() || in_str()) && !source->eof())
         {
             if(!in_str() && !in_brace() && (c == '"' || c == '{'))
             {
@@ -73,6 +77,8 @@ std::string Scanner::next()
             {
                 ret.push_back(c);
             }
+
+            if(in_str() && c == '"') ret.push_back(c);
 
             c = source->get();
         }
@@ -92,9 +98,11 @@ std::string Scanner::next()
 
 int Scanner::next_int()
 {
+    // Attempt to pull integer from source
     int ret = 0;
     (*source) >> ret;
-
+    
+    // Check for failure
     if(source->fail())
     {
         throw std::runtime_error("Next token is not an integer.");
@@ -105,6 +113,7 @@ int Scanner::next_int()
 
 char Scanner::next_char()
 {
+    // Pull next non-comment character
     char c = source->get();
     while(c == comment)
     {
@@ -117,6 +126,7 @@ char Scanner::next_char()
 
 std::string Scanner::next_line()
 {
+    // Get the next full line, or get to EOF
     std::string ret = "";
     char c = source->get();
     
@@ -132,6 +142,7 @@ std::string Scanner::next_line()
 
 bool Scanner::is_delimiter(char c)
 {
+    //Loop over delimiter to check for c
     unsigned int i;
     for(i = 0; i < delimiter.size(); ++i)
     {
@@ -140,14 +151,4 @@ bool Scanner::is_delimiter(char c)
     }
 
     return i != delimiter.size();
-}
-
-bool Scanner::in_str()
-{
-    return block == '"';
-}
-
-bool Scanner::in_brace()
-{
-    return block == '{';
 }

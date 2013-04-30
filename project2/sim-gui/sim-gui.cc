@@ -138,6 +138,10 @@ int main(int argc, char* argv[])
         cerr << "ERROR: " << e.what() << "\n";
         exit(1);
     }
+    catch(out_of_range &e)
+    {
+        cerr << "ERROR: aut file did not specifiy (enough) colors for the simulation.\n";
+    }
 }
 
 void print_usage(int status)
