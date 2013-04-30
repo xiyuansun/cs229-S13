@@ -11,22 +11,42 @@
 
 using namespace std;
 
+// Prints usage for the program, then exits with status status.
 void print_usage(int status);
 
 int main(int argc, char* argv[])
 {
+    // Keeps track of the current argument in the argparse loop
     char* cur_arg;
+
+    // Input filename
     string file("");
+
+    // Used to parse input
     AutFile* a;
+
+    // Stores number of generations to run
     int generations = 0;
+
+    // Output type
     string out_type = "terrain";
+
+    // Terrain and Window ranges
     int* x_range = NULL;
     int* y_range = NULL;
     int* x_disp_range = NULL;
     int* y_disp_range = NULL;
+
+    // Input stream
     ifstream* input = NULL;
+
     try
     {
+        // Argparse loop:
+        //  1) gets current argument
+        //  2) comparse against accepted switches
+        //  3) takes appropriate action
+
         for(int i = 1; i < argc; ++i)
         {
             cur_arg = argv[i];
@@ -48,7 +68,6 @@ int main(int argc, char* argv[])
                 }
                 else
                 {
-                    //TODO: Barf
                     throw runtime_error("The -g switch requires an argument.\nUse " + string(argv[0]) + " -h for more details.");
                 }
             }
@@ -161,19 +180,22 @@ int main(int argc, char* argv[])
                 throw runtime_error("Unrecognized switch " + string(cur_arg) + ".");
             }
         }
-
+        
         if(file == "")
         {
+            // If no input file was given, us standard input
             input = (ifstream*) &cin;
         }
         else
         {
+            // Attempt to open the input file.
             input = new ifstream();
             input->open(file.c_str());
 
             if(input->fail()) throw runtime_error("Failed attempting to open " + file);
         }
 
+        // Parse the input file and get the board so we can call next_generation()
         a = new AutFile(input, x_range, y_range, x_disp_range, y_disp_range);
         Board* b = a->get();
 
@@ -181,11 +203,21 @@ int main(int argc, char* argv[])
         {
             b->next_generation();
         }
-    
-        const string &last_gen = b->to_string();
+        
+        // Output
+        if(out_type == "terrain")
+        {
+            const string &last_gen = b->to_string();
 
-        cout << last_gen  << "\n";
-
+            cout << last_gen  << "\n";
+        }
+        else
+        {
+            a->update();
+            cout << a->to_string() << "\n";
+        }
+        
+        // Cleaning up memory.
         delete a;
     
         if(*input != cin)
@@ -197,6 +229,7 @@ int main(int argc, char* argv[])
     }
     catch (exception &e)
     {
+        //If we get an exception, we'll end up here.
         cerr << "ERROR: " << e.what() << "\n";
         exit(1);
     }
@@ -214,5 +247,6 @@ void print_usage(int status)
     cout << "\t-ty L,H\t\tSet the y range of the terrain from L (low) to H (high). This overrides the input file.\n";
     cout << "\t-wx L,H\t\tSet the x range of the output view from L (low) to H (high). This overrides the input file.\n";
     cout << "\t-wy L,H\t\tSet the y range of the output view from L (low) to H (high). This overrides the input file.\n";
+
     exit(status);
 }

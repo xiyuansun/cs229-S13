@@ -96,6 +96,14 @@ void OptionsDialog::playClicked()
 {
     bool playState = stepButton->isEnabled();
     stepButton->setEnabled(!playState);
+    if(playState)
+    {
+        playButton->setText("Pause");
+    }
+    else
+    {
+        playButton->setText("Play");
+    }
     emit changeState(playState);
 }
 

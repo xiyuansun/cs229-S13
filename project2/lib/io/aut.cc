@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <cstdlib>
 #include <stdexcept>
 
@@ -58,15 +59,25 @@ int AutFile::get_y_high() const
     return this->y_disp_range[1];
 }
 
-/*
-void AutFile::update(Board &b)
+void AutFile::update()
 {
+    statements.push_back(this->b->to_aut());
 }
-*/
 
 std::string AutFile::to_string() const
 {
-    return "Not implemented.";
+    std::string ret("");
+
+    for(unsigned int i = 0; i < statements.size(); ++i)
+    {
+        if(statements[i] != "")
+        {
+            ret += statements[i];
+            if(i != statements.size() - 1) ret += ";\n";
+        }
+    }
+
+    return ret;
 }
 
 void AutFile::parse(std::ifstream* in)
@@ -84,6 +95,7 @@ void AutFile::parse(std::ifstream* in)
 
         if(keyword == "Xrange")
         {
+            statements.push_back(n);
             int first = stmnt->next_int();
             int second = stmnt->next_int();
             if(x_range == NULL)
@@ -102,6 +114,7 @@ void AutFile::parse(std::ifstream* in)
         }
         else if(keyword == "Yrange")
         {
+            statements.push_back(n);
             int first = stmnt->next_int();
             int second = stmnt->next_int();
             
@@ -163,10 +176,12 @@ void AutFile::parse(std::ifstream* in)
         }
         else if(keyword == "Name")
         {
+            statements.push_back(n);
             this->name = stmnt->next();
         }
         else if(keyword == "Chars")
         {
+            statements.push_back(n);
             std::string in_stmnt("");
             while(stmnt->has_next())
             {
@@ -187,6 +202,7 @@ void AutFile::parse(std::ifstream* in)
         }
         else if(keyword == "Colors")
         {
+            statements.push_back(n);
             std::string in_stmnt("");
             while(stmnt->has_next())
             {
@@ -199,17 +215,16 @@ void AutFile::parse(std::ifstream* in)
 
             //TODO: Check size of clrs % 3 == 0 and size of clrs vs maxsize for rules
 
-            for(unsigned int i = 0; i < clrs->size()/3; ++i)
+            for(unsigned int i = 0; i < clrs->size(); i+=3)
             {
                 Color c;
 
                 std::string r = (*clrs)[i].substr(1);
                 std::string g = (*clrs)[i + 1];
                 std::string b = (*clrs)[i + 2];
-
                 c.set_red((unsigned char) get_int(r));
                 c.set_green((unsigned char) get_int(g));
-                c.set_blue((unsigned char) get_int(b.substr(0, b.length()-1)));
+                c.set_blue((unsigned char) get_int(b.substr(0, b.length() - 1)));
 
                 colors->push_back(c);
             }

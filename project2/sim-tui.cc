@@ -289,6 +289,7 @@ int main(int argc, char* argv[])
 
 void print_usage(int status)
 {
+    cout << "USAGE: sim-tui [OPTIONS]... FILE\n";
     cout << "sim-tui reads in a single .aut file passed as an argument, specifying the\nsize and initial configuration of the terrain for generation 0.\n";
     cout << "It then determinesand displays the state of each cell as generations advance.\n";
     cout << "\nOPTIONS:\n";

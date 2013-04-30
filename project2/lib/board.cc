@@ -1,6 +1,7 @@
 #include "board.h"
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 
 Board::Board(int* x_range, int* y_range, int* x_disp_range, int* y_disp_range, std::string states, std::vector<Color>* colors)
 {
@@ -171,7 +172,40 @@ std::string Board::to_string(int start_x, int start_y, int max_x, int max_y)
 
 std::string Board::to_aut()
 {
-    return "Not implemented.";
+    std::stringstream out;
+    out << "Initial {\n";
+    
+    int x_max = this->x_size + this->x_offset;
+    int y_max = this->y_size + this->y_offset;
+
+    bool added_ystmnt;
+
+    for(int y = y_max - 1; y >= this->y_offset; --y)
+    {
+        added_ystmnt = false;
+
+        for(int x = this->x_offset; x < x_max; ++x)
+        {
+            if(this->get_state(x, y) == 1)
+            {
+                if(!added_ystmnt)
+                {
+                    out <<  "Y=" << y << " : " << x;
+                    added_ystmnt = true;
+                }
+                else
+                {
+                    out << ", " << x;
+                }
+            }
+        }
+
+        if(added_ystmnt) out << ";\n";
+    }
+
+    out << "};";
+    
+    return out.str();
 }
 
 void Board::set_state_char(unsigned int state, char c)

@@ -18,7 +18,7 @@ class AutFile
         int get_x_high() const;
         int get_y_low() const;
         int get_y_high() const;
-        //void update(Board &b);
+        void update();
         std::string to_string() const;
     private:
         int* x_range;

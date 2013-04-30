@@ -94,7 +94,12 @@ int main(int argc, char* argv[])
                 throw runtime_error("Unrecognized switch " + string(cur_arg) + ".");
             }
         }
-    
+        
+        if(file == "")
+        {
+            throw runtime_error("No file was specifited.\nTry " + string(argv[0]) + " -h for more details.");
+        }
+
         input = new ifstream();
         input->open(file.c_str());
 

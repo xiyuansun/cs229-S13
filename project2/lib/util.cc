@@ -60,7 +60,7 @@ int get_int(std::string s)
     char* endptr;
     int ret = strtol(s.c_str(), &endptr, 10);
 
-    if(endptr != '\0')
+    if(*endptr != '\0')
     {
         throw std::runtime_error("Could not convert " + s + " to an integer.");
     }
