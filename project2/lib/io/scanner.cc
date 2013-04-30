@@ -1,6 +1,8 @@
-#include "scanner.h"
 #include <iostream>
 #include <cstdlib>
+#include <stdexcept>
+
+#include "scanner.h"
 
 Scanner::Scanner(std::string &s, std::string d, char c)
 {
@@ -82,8 +84,7 @@ std::string Scanner::next()
     }
     else
     {
-        //TODO: Barf
-        exit(1);
+       throw runtime_error("Scanner has no next."); 
     }
     
     return ret;
@@ -96,8 +97,7 @@ int Scanner::next_int()
 
     if(source->fail())
     {
-        //TODO: Barf
-        exit(1);
+        throw runtime_error("Next token is not an integer.");
     }
 
     return ret;

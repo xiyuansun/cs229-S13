@@ -120,7 +120,11 @@ void AutFile::parse(std::ifstream* in)
         }
         else if(keyword == "Initial" || keyword == "Initial{")
         {
-            //TODO: Check for keyword order
+            if(x_range == NULL || y_range == NULL || x_disp_range == NULL || y_disp_range == NULL)
+            {
+                throw runtime_error("The Initial keyword must be the last keyword in the aut file.");
+            }
+
             std::string in_stmnt("");
 
             while(stmnt->has_next())
@@ -193,6 +197,7 @@ void AutFile::parse(std::ifstream* in)
             std::vector<std::string>* clrs = split(in_stmnt, ',');
 
             //TODO: Check size of clrs % 3 == 0 and size of clrs vs maxsize for rules
+
             for(unsigned int i = 0; i < clrs->size()/3; ++i)
             {
                 Color c;

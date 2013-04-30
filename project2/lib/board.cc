@@ -155,7 +155,7 @@ std::string Board::to_string()
 
 std::string Board::to_string(int start_x, int start_y, int max_x, int max_y)
 {
-    std::string ret(""); // = new std::string("");
+    std::string ret("");
 
     for(int y = max_y - 1; y >= start_y; --y)
     {
