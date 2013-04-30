@@ -8,12 +8,15 @@ DCFLAGS = -Wall -c
 DLFLAGS = -Wall
 CC = g++
 
-all: showgen sim-tui
+all: showgen sim-tui sim-gui
 
 showgen: build/showgen
 	@
 
 sim-tui: build/sim-tui
+	@
+
+sim-gui: build/sim-gui
 	@
 
 bug: debug/showgen debug/sim-tui
@@ -35,6 +38,9 @@ build/objects: | build
 
 debug/objects: | debug
 	mkdir debug/objects
+
+build/sim-gui: $(BOBJS) | build
+	make -f sim-gui/makefile
 
 #Links showgen
 build/showgen: $(BOBJS) build/objects/showgen.o | build

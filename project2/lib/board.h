@@ -3,15 +3,17 @@
 
 #include <string>
 #include <vector>
+#include "color.h"
 
 class Board
 {
     public:
-        Board(int* x_range, int* y_range, int* x_disp_range, int* y_disp_range, std::string states);
+        Board(int* x_range, int* y_range, int* x_disp_range, int* y_disp_range, std::string states, std::vector<Color>* colors);
         ~Board();
         char get_state_char(unsigned int state);
+        Color get_state_color(unsigned int state);
         void next_generation();
-        unsigned int get_state(int x, int y);
+        unsigned int get_state(int x, int y, bool shift=true);
         unsigned int get_neighbors(int x, int y);
         void set_state(int x, int y, unsigned int state);
         std::string to_string();
@@ -29,6 +31,7 @@ class Board
         int y_disp_offset;
 
         std::string states;
+        std::vector<Color>* colors;
         int** board;
 
         void set_state_char(unsigned int state, char c);

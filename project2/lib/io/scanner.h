@@ -15,7 +15,7 @@ class Scanner
         void set_delimiter(std::string d);
         void set_comment(char c);
         std::string next();
-        bool const has_next();
+        bool has_next() const;
         int next_int();
         char next_char();
         std::string next_line();

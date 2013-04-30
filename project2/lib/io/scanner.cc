@@ -37,7 +37,7 @@ void Scanner::set_comment(char c)
     comment = c;
 }
 
-bool const Scanner::has_next()
+bool Scanner::has_next() const
 {
     return hasNext;
 }

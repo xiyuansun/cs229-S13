@@ -13,6 +13,7 @@ AutFile::AutFile(std::ifstream* in, int* x_range, int* y_range, int* x_view, int
     this->y_disp_range = y_view;
     this->states = "~123456789";
     this->name = "Game of Life";
+    this->colors = new std::vector<Color>();
     this->parse(in);
 }
 
@@ -23,6 +24,7 @@ AutFile::~AutFile()
     delete[] this->x_disp_range;
     delete[] this->y_disp_range;
     delete this->b;
+    delete this->colors;
 }
 
 Board* AutFile::get() const
@@ -126,7 +128,7 @@ void AutFile::parse(std::ifstream* in)
                 in_stmnt += stmnt->next();
             }
 
-            this->b = new Board(x_range, y_range, x_disp_range, y_disp_range, states);
+            this->b = new Board(x_range, y_range, x_disp_range, y_disp_range, states, colors);
 
             std::vector<std::string>* inner_stmnts = split(in_stmnt, ';');
             for(unsigned int i = 0; i < inner_stmnts->size(); ++i)
@@ -180,6 +182,33 @@ void AutFile::parse(std::ifstream* in)
         }
         else if(keyword == "Colors")
         {
+            std::string in_stmnt("");
+            while(stmnt->has_next())
+            {
+                in_stmnt += stmnt->next();
+            }
+
+            remove_whitespace(in_stmnt);
+
+            std::vector<std::string>* clrs = split(in_stmnt, ',');
+
+            //TODO: Check size of clrs % 3 == 0 and size of clrs vs maxsize for rules
+            for(unsigned int i = 0; i < clrs->size()/3; ++i)
+            {
+                Color c;
+
+                std::string r = (*clrs)[i].substr(1);
+                std::string g = (*clrs)[i + 1];
+                std::string b = (*clrs)[i + 2];
+
+                c.set_red((unsigned char) get_int(r));
+                c.set_green((unsigned char) get_int(g));
+                c.set_blue((unsigned char) get_int(b.substr(0, b.length()-1)));
+
+                colors->push_back(c);
+            }
+
+            delete clrs;
         }
         else
         {

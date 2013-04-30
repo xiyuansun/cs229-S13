@@ -103,6 +103,7 @@ int main(int argc, char* argv[])
 
     if(file == "")
     {
+        //TODO: Barf
         input = (ifstream*) &cin;
     }
     else

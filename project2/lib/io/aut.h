@@ -2,6 +2,7 @@
 #define __AUT__
 
 #include "../board.h"
+#include "../color.h"
 #include <string>
 #include <vector>
 #include <fstream>
@@ -29,5 +30,6 @@ class AutFile
         void parse(std::ifstream* in);
         std::vector<std::string> statements;
         Board* b;
+        std::vector<Color>* colors;
 };
 #endif

@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 
-Board::Board(int* x_range, int* y_range, int* x_disp_range, int* y_disp_range, std::string states)
+Board::Board(int* x_range, int* y_range, int* x_disp_range, int* y_disp_range, std::string states, std::vector<Color>* colors)
 {
     this->x_size = x_range[1] - x_range[0] + 1;
     this->x_offset = x_range[0];
@@ -15,6 +15,7 @@ Board::Board(int* x_range, int* y_range, int* x_disp_range, int* y_disp_range, s
     this->y_disp_offset = y_disp_range[0];
 
     this->states = states;
+    this->colors = colors;
 
     this->board = (int**) malloc(sizeof(int*) * this->x_size);
 
@@ -41,6 +42,11 @@ Board::~Board()
 char Board::get_state_char(unsigned int state)
 {
     return this->states[state];
+}
+
+Color Board::get_state_color(unsigned int state)
+{
+    return (*colors)[state];
 }
 
 void Board::next_generation()
@@ -84,13 +90,21 @@ void Board::next_generation()
     }
 }
 
-unsigned int Board::get_state(int x, int y)
+unsigned int Board::get_state(int x, int y, bool shift)
 {
-    unsigned int ret;
-    unsigned int x_ind = x - x_offset;
-    unsigned int y_ind = y - y_offset;
+    unsigned int ret, x_ind, y_ind;
+    if(shift)
+    {
+        x_ind = x - x_offset;
+        y_ind = y - y_offset;
+    }
+    else
+    {
+        x_ind = x;
+        y_ind = y;
+    }
 
-    if(x_ind < 0 || x_ind >= x_size || y_ind < 0 || y_ind >= y_size)
+    if(x_ind >= x_size || y_ind >= y_size)
     {
         ret = 0; 
     }
@@ -108,7 +122,7 @@ unsigned int Board::get_neighbors(int x, int y)
     unsigned int x_ind = x - x_offset;
     unsigned int y_ind = y - y_offset;
 
-    if(x_ind < 0 || x_ind >= x_size || y_ind < 0 || y_ind >= y_size)
+    if(x_ind >= x_size || y_ind >= y_size)
     {
         ret = 0; 
     }
@@ -125,7 +139,7 @@ void Board::set_state(int x, int y, unsigned int state)
     unsigned int x_ind = x - x_offset;
     unsigned int y_ind = y - y_offset;
 
-    if(x_ind >= 0 && x_ind < x_size && y_ind >= 0 && y_ind < y_size && state < states.length())
+    if(x_ind < x_size && y_ind < y_size && state < states.length())
     {
         board[x_ind][y_ind] = state * 10 + count_neighbors(x, y);
     }
