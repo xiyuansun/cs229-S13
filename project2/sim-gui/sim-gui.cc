@@ -15,18 +15,31 @@
 
 using namespace std;
 
+// Prints usage for the program, then exits with status status
 void print_usage(int status);
 
 int main(int argc, char* argv[])
 {
+    // Current argument of argparse loop
     char* cur_arg;
+
+    // Input file name
     string file("");
+
+    // Values for overriding XRange and YRange in aut file
     int* x_range = NULL;
     int* y_range = NULL;
+
+    // Input stream
     ifstream* input = NULL;
 
     try
     {
+        // Argparse loop
+        //  1) get current argument
+        //  2) compares against accepted switches
+        //  3) takes appropriate action
+
         for(int i = 1; i < argc; ++i)
         {
             cur_arg = argv[i];
@@ -95,20 +108,25 @@ int main(int argc, char* argv[])
             }
         }
         
+        // If no file was passed in as an argument
         if(file == "")
         {
             throw runtime_error("No file was specifited.\nTry " + string(argv[0]) + " -h for more details.");
         }
-
+        
+        // Attempt to open the file
         input = new ifstream();
         input->open(file.c_str());
 
         if(input->fail()) throw runtime_error("Failed attempting to open " + file);
-
+        
+        //Parse file
         AutFile* a = new AutFile(input, x_range, y_range, x_range, y_range);
-
+        
+        // Run app
         QApplication app(argc, argv);
-    
+        
+        // Create and display windows
         OptionsDialog* opt = new OptionsDialog(a);
         opt->show();
 
@@ -116,6 +134,7 @@ int main(int argc, char* argv[])
     }
     catch(runtime_error &e)
     {
+        // Show exception and exit
         cerr << "ERROR: " << e.what() << "\n";
         exit(1);
     }
@@ -132,5 +151,6 @@ void print_usage(int status)
     cout << "\t-h\t\tDisplays this help screen.\n";
     cout << "\t-tx L,H\t\tSet the x range of the terrain from L (low) to H (high).\n\t\t\tThis overrides the input file.\n";
     cout << "\t-ty L,H\t\tSet the y range of the terrain from L (low) to H (high).\n\t\t\tThis overrides the input file.\n";
+
     exit(status);
 }

@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
     {
         // Argparse loop:
         //  1) gets current argument
-        //  2) comparse against accepted switches
+        //  2) compares against accepted switches
         //  3) takes appropriate action
 
         for(int i = 1; i < argc; ++i)
