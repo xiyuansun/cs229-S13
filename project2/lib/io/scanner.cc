@@ -78,7 +78,7 @@ std::string Scanner::next()
                 ret.push_back(c);
             }
 
-            if(in_str() && c == '"') ret.push_back(c);
+            if(c == '"') ret.push_back(c);
 
             c = source->get();
         }

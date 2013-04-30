@@ -179,8 +179,8 @@ void AutFile::parse(std::ifstream* in)
         {
             // Name keyword
             statements.push_back(n);
-            statements.back()[statements.back().length()-1] = '"';
-            this->name = stmnt->next().substr(1);
+            std::string s = stmnt->next();
+            this->name = s.substr(1, s.length() - 2);
         }
         else if(keyword == "Chars")
         {
