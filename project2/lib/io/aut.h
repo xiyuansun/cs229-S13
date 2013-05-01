@@ -102,6 +102,9 @@ class AutFile
         // Terrain representation of
         // the aut file.
         Board* b;
+        
+        // The ruleset to use
+        std::string ruleset;
 
         // Colors parsed from the aut file
         std::vector<Color>* colors;

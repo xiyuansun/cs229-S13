@@ -6,6 +6,9 @@
 #include "aut.h"
 #include "scanner.h"
 #include "../util.h"
+#include "../wireworld.h"
+#include "../briansbrain.h"
+#include "../langtonsant.h"
 
 AutFile::AutFile(std::ifstream* in, int* x_range, int* y_range, int* x_view, int* y_view)
 {
@@ -20,6 +23,7 @@ AutFile::AutFile(std::ifstream* in, int* x_range, int* y_range, int* x_view, int
     this->states = "~123456789";
     this->name = "Game of Life";
     this->colors = new std::vector<Color>();
+    this->ruleset = "ConwaysLife";
 
     // Parse the aut file.
     this->parse(in);
@@ -139,10 +143,21 @@ void AutFile::parse(std::ifstream* in)
             }
 
             // Create the board
-            this->b = new Board(x_range, y_range, x_disp_range, y_disp_range, states, colors);
-            
+            if(this->ruleset == "ConwaysLife")
+                this->b = new Board(x_range, y_range, x_disp_range, y_disp_range, states, colors);
+            else if(this->ruleset == "WireWorld")
+                this->b = new WireWorld(x_range, y_range, x_disp_range, y_disp_range, states, colors);
+            else if(this->ruleset == "BriansBrain")
+                this->b = new BriansBrain(x_range, y_range, x_disp_range, y_disp_range, states, colors);
+            else if(this->ruleset == "LangtonsAnt")
+                this->b = new LangtonsAnt(x_range, y_range, x_disp_range, y_disp_range, states, colors);
+            else
+                throw std::runtime_error("Unrecongnized ruleset " + ruleset);
+
             // Parse the inner statements
             std::vector<std::string>* inner_stmnts = split(in_stmnt, ';');
+            
+            int current_state = 1;
 
             for(unsigned int i = 0; i < inner_stmnts->size(); ++i)
             {
@@ -160,14 +175,15 @@ void AutFile::parse(std::ifstream* in)
                     for(unsigned int j = 0; j < x_pos->size(); ++j)
                     {
                         int x = get_int((*x_pos)[j].c_str());
-                        this->b->set_state(x, y, 1);
+                        this->b->set_state(x, y, current_state);
                     }
                     
                     delete x_pos;
                 }
                 else
                 {
-                    throw std::runtime_error("Invalid Initial block in aut file.");
+                    current_state = get_int((*inner_stmnts)[i].substr((*inner_stmnts)[i].length() - 1, 1));
+                    //throw std::runtime_error("Invalid Initial block in aut file.");
                 }
 
                 delete sub_stmnts;
@@ -249,6 +265,11 @@ void AutFile::parse(std::ifstream* in)
             }
 
             delete clrs;
+        }
+        else if(keyword == "Rules")
+        {
+            statements.push_back(n);
+            ruleset = stmnt->next();
         }
         else
         {

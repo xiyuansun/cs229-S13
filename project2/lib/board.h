@@ -10,7 +10,7 @@ class Board
 {
     public:
         Board(int* x_range, int* y_range, int* x_disp_range, int* y_disp_range, std::string states, std::vector<Color>* colors);
-        ~Board();
+        virtual ~Board();
 
         // Gets the character associate with state state.
         //
@@ -24,7 +24,7 @@ class Board
 
         // Calculates the next generation according
         // to Conway's Game of Life ruleset.
-        void next_generation();
+        virtual void next_generation();
 
         // Gets the state of the board at (x, y).
         // Shifts the coordinates from the real
@@ -44,13 +44,13 @@ class Board
         //
         // RETURN: the number of live neighbors
         //         for the cell at (x, y)
-        unsigned int count_neighbors(int x, int y);
+        virtual unsigned int count_neighbors(int x, int y);
 
         // Sets the state of the cell at (x, y)
         // to state state. x and y are shifted
         // from real board values to array-
         // appropriate values.
-        void set_state(int x, int y, unsigned int state);
+        void set_state(int x, int y, unsigned int state, bool add_neighbors=true);
 
         // Returns a string representing the
         // board over the whole display range.
@@ -78,7 +78,7 @@ class Board
         //         Initial statement.
         std::string to_aut();
 
-    private:
+    protected:
         // Keeps track of the x terrain
         unsigned int x_size;
         int x_offset;

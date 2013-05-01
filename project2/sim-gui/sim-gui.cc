@@ -12,6 +12,9 @@
 #include "../lib/util.h"
 #include "../lib/io/scanner.h"
 #include "../lib/color.h"
+#include "../lib/briansbrain.h"
+#include "../lib/wireworld.h"
+#include "../lib/langtonsant.h"
 
 using namespace std;
 

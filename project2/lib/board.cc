@@ -140,7 +140,7 @@ unsigned int Board::count_neighbors(int x, int y)
     return count;
 }
 
-void Board::set_state(int x, int y, unsigned int state)
+void Board::set_state(int x, int y, unsigned int state, bool add_neighbors)
 {
     unsigned int x_ind = x - x_offset;
     unsigned int y_ind = y - y_offset;
@@ -148,7 +148,8 @@ void Board::set_state(int x, int y, unsigned int state)
     // If x_ind and y_ind in range, set the state to state.
     if(x_ind < x_size && y_ind < y_size && state < states.length())
     {
-        board[x_ind][y_ind] = state * 10 + count_neighbors(x, y);
+        board[x_ind][y_ind] = state * 10;
+        if(add_neighbors) board[x_ind][y_ind] += count_neighbors(x, y);
     }
 }
 

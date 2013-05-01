@@ -3,6 +3,6 @@
 
 // Values defined as whitespace.
 // Used in some utility and scanner functions.
-#define WHITESPACE " \t\n\f"
+#define WHITESPACE " \t\r\n\f"
 
 #endif

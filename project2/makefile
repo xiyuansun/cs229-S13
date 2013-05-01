@@ -1,8 +1,8 @@
 PROGS = showgen.cc sim-tui.cc
 PROGS += sim-gui/widgets/*
 PROGS += sim-gui/makefile sim-gui/sim-gui.cc
-BOBJS = build/objects/aut.o build/objects/board.o build/objects/scanner.o build/objects/util.o
-DOBJS = debug/objects/aut.o debug/objects/board.o debug/objects/scanner.o debug/objects/util.o
+BOBJS = build/objects/aut.o build/objects/board.o build/objects/scanner.o build/objects/util.o build/objects/briansbrain.o build/objects/wireworld.o build/objects/langtonsant.o
+DOBJS = debug/objects/aut.o debug/objects/board.o debug/objects/scanner.o debug/objects/util.o debug/objects/briansbrain.o debug/objects/wireworld.o build/objects/langtonsant.o
 DEBUG = -g
 CFLAGS = -Wall -O3 -c
 LFLAGS = -Wall -O3
@@ -84,13 +84,37 @@ build/objects/aut.o: lib/io/aut.cc lib/io/aut.h lib/io/scanner.h lib/board.h lib
 debug/objects/aut.o: lib/io/aut.cc lib/io/aut.h lib/io/scanner.h lib/board.h lib/util.h | debug/objects
 	$(CC) $(DCFLAGS) $(DEBUG) lib/io/aut.cc -o debug/objects/aut.o
 
-#Complies board.o
-build/objects/board.o: lib/board.cc lib/board.h | build/objects
+#Compiles board.o
+build/objects/board.o: lib/board.cc lib/board.h lib/color.h | build/objects
 	$(CC) $(CFLAGS) lib/board.cc -o build/objects/board.o
 
-#Complies debug version of board.o
-debug/objects/board.o: lib/board.cc lib/board.h | debug/objects
+#Compiles debug version of board.o
+debug/objects/board.o: lib/board.cc lib/board.h lib/color.h | debug/objects
 	$(CC) $(DCFLAGS) $(DEBUG) lib/board.cc -o debug/objects/board.o
+
+#Compiles briansbrain.o
+build/objects/briansbrain.o: lib/briansbrain.cc lib/board.cc lib/briansbrain.h lib/board.h lib/color.h | build/objects
+	$(CC) $(CFLAGS) lib/briansbrain.cc -o build/objects/briansbrain.o
+
+#Compiles debug version of briansbrain.o
+debug/objects/briansbrain.o: lib/briansbrain.cc lib/board.cc lib/briansbrain.h lib/board.h lib/color.h | debug/objects
+	$(CC) $(DCFLAGS) lib/briansbrain.cc -o debug/objects/briansbrain.o
+
+#Compiles wireworld.o
+build/objects/wireworld.o: lib/wireworld.cc lib/board.cc lib/wireworld.h lib/board.h lib/color.h | build/objects
+	$(CC) $(CFLAGS) lib/wireworld.cc -o build/objects/wireworld.o
+
+#Compiles debug version of wireworld.o
+debug/objects/wireworld.o: lib/wireworld.cc lib/board.cc lib/wireworld.h lib/board.h lib/color.h | debug/objects
+	$(CC) $(DCFLAGS) lib/wireworld.cc -o debug/objects/wireworld.o
+
+#Compiles langtonsant.o
+build/objects/langtonsant.o: lib/langtonsant.cc lib/board.cc lib/langtonsant.h lib/board.h lib/color.h | build/objects
+	$(CC) $(CFLAGS) lib/langtonsant.cc -o build/objects/langtonsant.o
+
+#Compiles debug version of langtonsant.o
+debug/objects/langtonsant.o: lib/langtonsant.cc lib/board.cc lib/langtonsant.h lib/board.h lib/color.h | debug/objects
+	$(CC) $(DCFLAGS) lib/langtonsant.cc -o debug/objects/langtonsant.o
 
 #Compiles scanner.o
 build/objects/scanner.o: lib/io/scanner.cc lib/io/scanner.h lib/constants.h | build/objects

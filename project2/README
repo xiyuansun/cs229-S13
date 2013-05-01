@@ -1,0 +1,101 @@
+*******************************************************************************
+*                   CS229 PROJECT 2 - CELLULAR AUTOMATA                       *
+*******************************************************************************
+
+The goal of this project was to make a set of utilities that read in a custom
+file format (aut files). The project was presented in such a way that we needed
+to think about design as we were programing. This was due to the project being
+released in 3 parts of varying difficulty, with each part building off the
+previous parts. The utilities are listed with a short description below:
+
+    showgen: Displays a generation calculated from an aut file.
+
+    sim-tui: Displays a Textual User Interface for simulating aut files.
+             Requires ncurses to build properly.
+
+    sim-gui: Displays a Graphical User Interface for simulating aut files.
+             Requires QT4 to build properly.
+
+*******************************************************************************
+*                            BUILD INSTRUCTIONS                               *
+*******************************************************************************
+
+To build all utilityies, run the command 'make' in a terminal pointing to the
+project directory ('make all' works as well). Each individual utility can be
+build using the command 'make' followed by the utility name. All binaries are
+stored in the build folder, and all .o files are stored in the build/objects
+folder.
+
+It is also possible to build debug versions of the utilites (except sim-gui)
+with the 'make bug' command. The debug binaries are stored in the debug folder,
+and the debug .o files are stored in the debug/objects folder.
+
+Other make commands that have been included:
+    make clean              : Clears all files created by the build process
+    make tarball            : Makes a .tar.gz file with all source files.
+    make debug/[utility]    : Makes the debug version of a specific utility.
+                              Once again, this does not include sim-gui.
+
+*******************************************************************************
+*                                SOURCE FILES                                 *
+*******************************************************************************
+
+Here lies a list of every source file included in the tarball, as well as a
+short description of that file's contents. For a more detailed description,
+please check the header files.
+
+Files in the root directory
++-----------------------------------------------------+
+|   FILE     |              DESCRIPTION               |
++------------+----------------------------------------+
+| showgen.cc | Contains the functionality specific to |
+|            | the showgen utility.                   |
++------------+----------------------------------------+
+| sim-tui.cc | Contains the functionality specific to |
+|            | the sim-tui utility.                   |
++------------+----------------------------------------+
+| sim-gui.cc | Contains the functionality specific to |
+|            | the sim-gui utility.                   |
++------------+----------------------------------------+
+
+Files in the root directory
++---------------------------------------------------------+
+|   FILE         |              DESCRIPTION               |
++----------------+----------------------------------------+
+| board.cc       | Contains the board class. This class   |
+|                | runs Conway's Game of Life             |
++----------------+----------------------------------------+
+| board.h        | Contains the Board class definition.   |
++----------------+----------------------------------------+
+| briansbrain.cc | Contains logic for BriansBrain         |
+|                | cellular automata.                     |
++----------------+----------------------------------------+
+| briansbrain.h  | Contains the BriansBrain class         |
+|                | definition.                            |
++----------------+----------------------------------------+
+| color.h        | Contains the Color class definition.   |
++----------------+----------------------------------------+
+| constants.h    | Contains #defines for constants.       |
++----------------+----------------------------------------+
+| langtonsant.cc | Contains logic for LangtonsAnt         |
+|                | cellular automata                      |
++----------------+----------------------------------------+
+| langtonsant.h  | Contains the LangtonsAnt class         |
+|                | definition.                            |
++----------------+----------------------------------------+
+| util.cc        | Contains utility functions.            |
++----------------+----------------------------------------+
+| util.h         | Contains method stubs for utility      |
+|                | functions.                             |
++----------------+----------------------------------------+
+| wireworld.cc   | Contains logic for WireWorld cellular  |
+|                | automata.                              |
++----------------+----------------------------------------+
+| wireworld.h    | Contains the WireWorld class           |
+|                | definition.                            |
++----------------+----------------------------------------+
+
+*******************************************************************************
+*                            CONTACT INFORMATION                              *
+*******************************************************************************
+Chris Fogerty (cfogerty@iastate.edu)
