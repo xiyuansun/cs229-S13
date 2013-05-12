@@ -2,11 +2,11 @@ PROGS = showgen.cc sim-tui.cc
 PROGS += sim-gui/widgets/*
 PROGS += sim-gui/makefile sim-gui/sim-gui.cc
 BOBJS = build/objects/aut.o build/objects/board.o build/objects/scanner.o build/objects/util.o build/objects/briansbrain.o build/objects/wireworld.o build/objects/langtonsant.o
-DOBJS = debug/objects/aut.o debug/objects/board.o debug/objects/scanner.o debug/objects/util.o debug/objects/briansbrain.o debug/objects/wireworld.o build/objects/langtonsant.o
+DOBJS = debug/objects/aut.o debug/objects/board.o debug/objects/scanner.o debug/objects/util.o debug/objects/briansbrain.o debug/objects/wireworld.o debug/objects/langtonsant.o
 DEBUG = -g
 CFLAGS = -Wall -O3 -c
 LFLAGS = -Wall -O3
-DCFLAGS = -Wall -c
+DCFLAGS = $(DEBUG) -Wall -c
 DLFLAGS = -Wall
 CC = g++
 
@@ -66,7 +66,7 @@ build/objects/showgen.o: showgen.cc lib/util.h lib/board.h lib/io/aut.h | build/
 
 #Compiles debug version of showgen.o
 debug/objects/showgen.o: showgen.cc lib/board.h lib/io/aut.h | debug/objects
-	$(CC) $(DCFLAGS) $(DEBUG) showgen.cc -o debug/objects/showgen.o
+	$(CC) $(DCFLAGS) showgen.cc -o debug/objects/showgen.o
 
 #Compiles sim-tui.o
 build/objects/sim-tui.o: sim-tui.cc lib/util.h lib/board.h lib/io/aut.h | build/objects
@@ -74,7 +74,7 @@ build/objects/sim-tui.o: sim-tui.cc lib/util.h lib/board.h lib/io/aut.h | build/
 
 #Compiles debug version of sim-tui.o
 debug/objects/sim-tui.o: sim-tui.cc lib/util.h lib/board.h lib/io/aut.h | debug/objects
-	$(CC) $(DCFLAGS) $(DEBUG) sim-tui.cc -o debug/objects/sim-tui.o -lncurses
+	$(CC) $(DCFLAGS) sim-tui.cc -o debug/objects/sim-tui.o -lncurses
 
 #Compiles aut.o
 build/objects/aut.o: lib/io/aut.cc lib/io/aut.h lib/io/scanner.h lib/board.h lib/util.h | build/objects
@@ -82,7 +82,7 @@ build/objects/aut.o: lib/io/aut.cc lib/io/aut.h lib/io/scanner.h lib/board.h lib
 
 #Compiles debug version aut.o
 debug/objects/aut.o: lib/io/aut.cc lib/io/aut.h lib/io/scanner.h lib/board.h lib/util.h | debug/objects
-	$(CC) $(DCFLAGS) $(DEBUG) lib/io/aut.cc -o debug/objects/aut.o
+	$(CC) $(DCFLAGS) lib/io/aut.cc -o debug/objects/aut.o
 
 #Compiles board.o
 build/objects/board.o: lib/board.cc lib/board.h lib/color.h | build/objects
@@ -90,7 +90,7 @@ build/objects/board.o: lib/board.cc lib/board.h lib/color.h | build/objects
 
 #Compiles debug version of board.o
 debug/objects/board.o: lib/board.cc lib/board.h lib/color.h | debug/objects
-	$(CC) $(DCFLAGS) $(DEBUG) lib/board.cc -o debug/objects/board.o
+	$(CC) $(DCFLAGS) lib/board.cc -o debug/objects/board.o
 
 #Compiles briansbrain.o
 build/objects/briansbrain.o: lib/briansbrain.cc lib/board.cc lib/briansbrain.h lib/board.h lib/color.h | build/objects
@@ -122,7 +122,7 @@ build/objects/scanner.o: lib/io/scanner.cc lib/io/scanner.h lib/constants.h | bu
 
 #Compiles debug version of scanner.o
 debug/objects/scanner.o: lib/io/scanner.cc lib/io/scanner.h lib/constants.h | debug/objects
-	$(CC) $(DCFLAGS) $(DEBUG) lib/io/scanner.cc -o debug/objects/scanner.o
+	$(CC) $(DCFLAGS) lib/io/scanner.cc -o debug/objects/scanner.o
 
 #Compiles util.o
 build/objects/util.o: lib/util.cc lib/util.h lib/constants.h | build/objects
@@ -130,4 +130,4 @@ build/objects/util.o: lib/util.cc lib/util.h lib/constants.h | build/objects
 
 #Compiles debug version of util.o
 debug/objects/util.o: lib/util.cc lib/util.h lib/constants.h | debug/objects
-	$(CC) $(DCFLAGS) $(DEBUG) lib/util.cc -o debug/objects/util.o
+	$(CC) $(DCFLAGS) lib/util.cc -o debug/objects/util.o

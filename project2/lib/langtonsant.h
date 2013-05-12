@@ -11,13 +11,16 @@ class LangtonsAnt : public Board
         // Overridden from Board
         void next_generation();
 
-        // Overridden from Board
-        unsigned int count_neighbors(int x, int y);
-
     private:
         // Returns true if cell is white,
         // false if cell is black.
         bool check_color(int x, int y);
+
+        //Sets the marker for a collision at location
+        void set_collision(int x, int y);
+
+        //Sets the marker for the next state at location
+        void set_next_state(int x, int y, unsigned int ns);
 };
 
 #endif
